@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Marketing</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #0d6efd;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #0b5ed7;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .link span {
+            color: #0d6efd;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div class="container" id="loginBox">
+        <h2>Acesse sua conta</h2>
+
+        <input type="text" placeholder="Seu nome" id="loginNome">
+        <input type="tel" placeholder="Seu telefone" id="loginTelefone">
+
+        <button onclick="entrar()">Entrar</button>
+
+        <div class="link">
+            Não tem conta? <span onclick="mostrarCadastro()">Cadastre-se</span>
+        </div>
+    </div>
+
+    <!-- CADASTRO -->
+    <div class="container hidden" id="cadastroBox">
+        <h2>Criar sua conta</h2>
+
+        <input type="text" placeholder="Nome" id="cadNome">
+        <input type="text" placeholder="Sobrenome" id="cadSobrenome">
+        <input type="email" placeholder="E-mail" id="cadEmail">
+        <input type="password" placeholder="Senha" id="cadSenha">
+
+        <button onclick="cadastrar()">Criar Conta</button>
+
+        <div class="link">
+            Já tem conta? <span onclick="mostrarLogin()">Entrar</span>
+        </div>
+    </div>
+
+<script>
+    function mostrarCadastro() {
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("cadastroBox").classList.remove("hidden");
+    }
+
+    function mostrarLogin() {
+        document.getElementById("cadastroBox").classList.add("hidden");
+        document.getElementById("loginBox").classList.remove("hidden");
+    }
+
+    function entrar() {
+        alert("Login enviado (implementar backend)");
+    }
+
+    function cadastrar() {
+        alert("Cadastro enviado (implementar backend)");
+    }
+</script>
+
+</body>
+</html>
