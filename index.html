@@ -79,8 +79,8 @@
     <div class="container" id="loginBox">
         <h2>Acesse sua conta</h2>
 
-        <input type="text" placeholder="Seu nome" id="loginNome">
         <input type="email" placeholder="Seu e-mail" id="loginEmail">
+        <input type="password" placeholder="Sua senha" id="loginSenha">
 
         <button onclick="entrar()">Entrar</button>
 
@@ -106,6 +106,8 @@
     </div>
 
 <script>
+
+    // ===== TROCAR TELAS =====
     function mostrarCadastro() {
         document.getElementById("loginBox").classList.add("hidden");
         document.getElementById("cadastroBox").classList.remove("hidden");
@@ -116,15 +118,54 @@
         document.getElementById("loginBox").classList.remove("hidden");
     }
 
-    function entrar() {
-        // Redirecionamento para o dashboard
+    // ===== CADASTRO =====
+    function cadastrar() {
+        const nome = document.getElementById("cadNome").value;
+        const sobrenome = document.getElementById("cadSobrenome").value;
+        const email = document.getElementById("cadEmail").value;
+        const senha = document.getElementById("cadSenha").value;
+
+        if (!nome || !sobrenome || !email || !senha) {
+            alert("Preencha todos os campos!");
+            return;
+        }
+
+        let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+        // Verificar se o usuário já existe
+        if (usuarios.some(user => user.email === email)) {
+            alert("Este e-mail já está cadastrado!");
+            return;
+        }
+
+        // Salvar novo usuário
+        usuarios.push({ nome, sobrenome, email, senha });
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+        alert("Cadastro realizado com sucesso!");
         window.location.href = "dashboard.html";
     }
 
-    function cadastrar() {
-        // Depois você pode salvar em backend, por agora apenas redireciona
+    // ===== LOGIN =====
+    function entrar() {
+        const email = document.getElementById("loginEmail").value;
+        const senha = document.getElementById("loginSenha").value;
+
+        let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+        const user = usuarios.find(u => u.email === email && u.senha === senha);
+
+        if (!user) {
+            alert("E-mail ou senha incorretos!");
+            return;
+        }
+
+        // Salvar usuário logado na sessão
+        localStorage.setItem("usuarioLogado", JSON.stringify(user));
+
         window.location.href = "dashboard.html";
     }
+
 </script>
 
 </body>
