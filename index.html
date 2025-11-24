@@ -23,17 +23,11 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 0 12px rgba(0,0,0,0.1);
-
-            /* CENTRALIZAR INTERNAMENTE */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center; 
             text-align: center;
         }
 
         h2 {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: #333;
         }
 
@@ -76,12 +70,22 @@
         .hidden {
             display: none;
         }
+
+        .logo {
+            width: 150px;
+            margin: 0 auto 20px;
+            display: block;
+        }
     </style>
 </head>
 <body>
 
     <!-- LOGIN -->
     <div class="container" id="loginBox">
+        
+        <!-- LOGO -->
+        <img src="/mnt/data/Screenshot_1-removebg-preview.png" class="logo">
+
         <h2>Acesse sua conta</h2>
 
         <input type="email" placeholder="Seu e-mail" id="loginEmail">
@@ -96,6 +100,10 @@
 
     <!-- CADASTRO -->
     <div class="container hidden" id="cadastroBox">
+
+        <!-- LOGO -->
+        <img src="/mnt/data/Screenshot_1-removebg-preview.png" class="logo">
+
         <h2>Criar sua conta</h2>
 
         <input type="text" placeholder="Nome" id="cadNome">
@@ -121,33 +129,14 @@
         document.getElementById("loginBox").classList.remove("hidden");
     }
 
-    function cadastrar() {
-        const nome = document.getElementById("cadNome").value;
-        const sobrenome = document.getElementById("cadSobrenome").value;
-        const email = document.getElementById("cadEmail").value;
-        const senha = document.getElementById("cadSenha").value;
-
-        if (!nome || !sobrenome || !email || !senha) {
-            alert("Preencha todos os campos!");
-            return;
-        }
-
-        const user = { nome, sobrenome, email, senha };
-
-        localStorage.setItem("usuario", JSON.stringify(user));
-
-        alert("Conta criada com sucesso!");
-        mostrarLogin();
-    }
-
     function entrar() {
         const email = document.getElementById("loginEmail").value;
         const senha = document.getElementById("loginSenha").value;
 
-        const user = JSON.parse(localStorage.getItem("usuario"));
+        const user = JSON.parse(localStorage.getItem("user"));
 
         if (!user) {
-            alert("Nenhum usuário cadastrado!");
+            alert("Nenhuma conta cadastrada!");
             return;
         }
 
@@ -156,6 +145,21 @@
         } else {
             alert("E-mail ou senha incorretos!");
         }
+    }
+
+    function cadastrar() {
+        const nome = document.getElementById("cadNome").value;
+        const sobrenome = document.getElementById("cadSobrenome").value;
+        const email = document.getElementById("cadEmail").value;
+        const senha = document.getElementById("cadSenha").value;
+
+        const user = { nome, sobrenome, email, senha };
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        alert("Conta criada com sucesso!");
+
+        window.location.href = "dashboard.html";
     }
 </script>
 
