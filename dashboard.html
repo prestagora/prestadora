@@ -113,7 +113,10 @@
         <h2>Marketing ADS</h2>
 
         <a href="#">Dashboard</a>
-        <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span class="seta" id="seta">▼</span></a>
+
+        <a href="#contas" onclick="toggleContas()">Contas Meta Ads 
+            <span class="seta" id="seta">▼</span>
+        </a>
 
         <div class="contas-lista" id="listaContas"></div>
 
@@ -142,10 +145,10 @@
     <script>
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : 'SEU_APP_ID_AQUI',
+                appId      : '1224065886236647', 
                 cookie     : true,
                 xfbml      : true,
-                version    : 'v18.0'
+                version    : 'v19.0'
             });
         };
 
@@ -166,8 +169,10 @@
                 if (response.status === 'connected') {
                     document.getElementById("btnMeta").innerText = "Conectado ✓";
                     carregarContasMeta();
+                } else {
+                    alert("Você precisa permitir o acesso para continuar.");
                 }
-            }, {scope: 'ads_management,business_management'});
+            }, {scope: 'ads_read,ads_management,business_management'});
         }
 
         // Carrega contas de anúncio do usuário
@@ -176,6 +181,8 @@
                 if(response && !response.error) {
                     localStorage.setItem("contas_meta", JSON.stringify(response.data));
                     mostrarContas();
+                } else {
+                    alert("Erro ao carregar contas Meta Ads.");
                 }
             });
         }
