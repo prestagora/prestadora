@@ -82,10 +82,7 @@
 
     <!-- LOGIN -->
     <div class="container" id="loginBox">
-        
-        <!-- LOGO -->
         <img src="logo.png" class="logo">
-
         <h2>Acesse sua conta</h2>
 
         <input type="email" placeholder="Seu e-mail" id="loginEmail">
@@ -94,16 +91,17 @@
         <button onclick="entrar()">Entrar</button>
 
         <div class="link">
+            <span onclick="mostrarRecuperarSenha()">Esqueci minha senha</span>
+        </div>
+
+        <div class="link">
             Não tem conta? <span onclick="mostrarCadastro()">Cadastre-se</span>
         </div>
     </div>
 
     <!-- CADASTRO -->
     <div class="container hidden" id="cadastroBox">
-
-        <!-- LOGO -->
         <img src="logo.png" class="logo">
-
         <h2>Criar sua conta</h2>
 
         <input type="text" placeholder="Nome" id="cadNome">
@@ -118,17 +116,77 @@
         </div>
     </div>
 
+    <!-- RECUPERAR SENHA - PASSO 1 -->
+    <div class="container hidden" id="recuperarBox">
+        <img src="logo.png" class="logo">
+        <h2>Recuperar Senha</h2>
+
+        <input type="email" placeholder="Digite seu e-mail" id="recEmail">
+
+        <button onclick="enviarCodigo()">Enviar código</button>
+
+        <div class="link">
+            <span onclick="mostrarLogin()">Voltar</span>
+        </div>
+    </div>
+
+    <!-- VERIFICAR CÓDIGO - PASSO 2 -->
+    <div class="container hidden" id="codigoBox">
+        <img src="logo.png" class="logo">
+        <h2>Verificar Código</h2>
+
+        <p id="codigoSimulado" style="color: green; font-size: 14px;"></p>
+
+        <input type="text" placeholder="Insira o código recebido" id="codigoInput">
+
+        <button onclick="verificarCodigo()">Verificar</button>
+
+        <div class="link">
+            <span onclick="mostrarRecuperarSenha()">Voltar</span>
+        </div>
+    </div>
+
+    <!-- REDEFINIR SENHA - PASSO 3 -->
+    <div class="container hidden" id="novaSenhaBox">
+        <img src="logo.png" class="logo">
+        <h2>Nova Senha</h2>
+
+        <input type="password" placeholder="Digite a nova senha" id="novaSenha">
+
+        <button onclick="salvarNovaSenha()">Salvar nova senha</button>
+    </div>
+
 <script>
     function mostrarCadastro() {
-        document.getElementById("loginBox").classList.add("hidden");
+        esconderTudo();
         document.getElementById("cadastroBox").classList.remove("hidden");
     }
 
     function mostrarLogin() {
-        document.getElementById("cadastroBox").classList.add("hidden");
+        esconderTudo();
         document.getElementById("loginBox").classList.remove("hidden");
     }
 
+    function mostrarRecuperarSenha() {
+        esconderTudo();
+        document.getElementById("recuperarBox").classList.remove("hidden");
+    }
+
+    function mostrarCodigo() {
+        esconderTudo();
+        document.getElementById("codigoBox").classList.remove("hidden");
+    }
+
+    function mostrarNovaSenha() {
+        esconderTudo();
+        document.getElementById("novaSenhaBox").classList.remove("hidden");
+    }
+
+    function esconderTudo() {
+        document.querySelectorAll(".container").forEach(c => c.classList.add("hidden"));
+    }
+
+    // LOGIN
     function entrar() {
         const email = document.getElementById("loginEmail").value;
         const senha = document.getElementById("loginSenha").value;
@@ -147,19 +205,67 @@
         }
     }
 
+    // CADASTRO
     function cadastrar() {
-        const nome = document.getElementById("cadNome").value;
-        const sobrenome = document.getElementById("cadSobrenome").value;
-        const email = document.getElementById("cadEmail").value;
-        const senha = document.getElementById("cadSenha").value;
-
-        const user = { nome, sobrenome, email, senha };
+        const user = {
+            nome: document.getElementById("cadNome").value,
+            sobrenome: document.getElementById("cadSobrenome").value,
+            email: document.getElementById("cadEmail").value,
+            senha: document.getElementById("cadSenha").value
+        };
 
         localStorage.setItem("user", JSON.stringify(user));
 
         alert("Conta criada com sucesso!");
 
         window.location.href = "dashboard.html";
+    }
+
+    // RECUPERAÇÃO - PASSO 1
+    let codigoGerado = "";
+
+    function enviarCodigo() {
+        const email = document.getElementById("recEmail").value;
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (!user || email !== user.email) {
+            alert("E-mail não encontrado!");
+            return;
+        }
+
+        // Gerar código de 6 dígitos
+        codigoGerado = Math.floor(100000 + Math.random() * 900000).toString();
+
+        mostrarCodigo();
+
+        // SIMULA ENVIO DO CÓDIGO
+        document.getElementById("codigoSimulado").innerText = 
+            "Seu código de recuperação: " + codigoGerado;
+    }
+
+    // RECUPERAÇÃO - PASSO 2
+    function verificarCodigo() {
+        const codigoDigitado = document.getElementById("codigoInput").value;
+
+        if (codigoDigitado === codigoGerado) {
+            mostrarNovaSenha();
+        } else {
+            alert("Código incorreto!");
+        }
+    }
+
+    // RECUPERAÇÃO - PASSO 3
+    function salvarNovaSenha() {
+        const novaSenha = document.getElementById("novaSenha").value;
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        user.senha = novaSenha;
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        alert("Senha atualizada com sucesso!");
+
+        mostrarLogin();
     }
 </script>
 
