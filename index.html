@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Marketing</title>
+
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
             background: #f3f3f3;
+            height: 100vh;
+
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            text-align: center;
         }
 
         .container {
@@ -23,12 +26,12 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 0 12px rgba(0,0,0,0.1);
-            text-align: center;
+            margin: 0 auto;
         }
 
         h2 {
-            margin-bottom: 20px;
             color: #333;
+            margin-bottom: 20px;
         }
 
         input {
@@ -73,8 +76,7 @@
 
         .logo {
             width: 150px;
-            margin: 0 auto 20px;
-            display: block;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -83,6 +85,7 @@
     <!-- LOGIN -->
     <div class="container" id="loginBox">
         <img src="logo.png" class="logo">
+
         <h2>Acesse sua conta</h2>
 
         <input type="email" placeholder="Seu e-mail" id="loginEmail">
@@ -91,7 +94,7 @@
         <button onclick="entrar()">Entrar</button>
 
         <div class="link">
-            <span onclick="mostrarRecuperarSenha()">Esqueci minha senha</span>
+            <span onclick="mostrarRecuperar()">Esqueci minha senha</span>
         </div>
 
         <div class="link">
@@ -102,6 +105,7 @@
     <!-- CADASTRO -->
     <div class="container hidden" id="cadastroBox">
         <img src="logo.png" class="logo">
+
         <h2>Criar sua conta</h2>
 
         <input type="text" placeholder="Nome" id="cadNome">
@@ -116,12 +120,13 @@
         </div>
     </div>
 
-    <!-- RECUPERAR SENHA - PASSO 1 -->
+    <!-- RECUPERAR SENHA -->
     <div class="container hidden" id="recuperarBox">
         <img src="logo.png" class="logo">
+
         <h2>Recuperar Senha</h2>
 
-        <input type="email" placeholder="Digite seu e-mail" id="recEmail">
+        <input type="email" placeholder="Seu e-mail" id="recEmail">
 
         <button onclick="enviarCodigo()">Enviar código</button>
 
@@ -130,66 +135,55 @@
         </div>
     </div>
 
-    <!-- VERIFICAR CÓDIGO - PASSO 2 -->
+    <!-- CONFIRMAR CÓDIGO -->
     <div class="container hidden" id="codigoBox">
         <img src="logo.png" class="logo">
-        <h2>Verificar Código</h2>
 
-        <p id="codigoSimulado" style="color: green; font-size: 14px;"></p>
+        <h2>Digite o código enviado</h2>
 
-        <input type="text" placeholder="Insira o código recebido" id="codigoInput">
+        <input type="text" placeholder="Código recebido" id="codigoInput">
 
-        <button onclick="verificarCodigo()">Verificar</button>
-
-        <div class="link">
-            <span onclick="mostrarRecuperarSenha()">Voltar</span>
-        </div>
+        <button onclick="validarCodigo()">Validar código</button>
     </div>
 
-    <!-- REDEFINIR SENHA - PASSO 3 -->
+    <!-- NOVA SENHA -->
     <div class="container hidden" id="novaSenhaBox">
         <img src="logo.png" class="logo">
-        <h2>Nova Senha</h2>
 
-        <input type="password" placeholder="Digite a nova senha" id="novaSenha">
+        <h2>Definir nova senha</h2>
 
-        <button onclick="salvarNovaSenha()">Salvar nova senha</button>
+        <input type="password" placeholder="Nova senha" id="novaSenha">
+        <input type="password" placeholder="Confirmar senha" id="confirmarSenha">
+
+        <button onclick="salvarNovaSenha()">Salvar</button>
     </div>
 
 <script>
+    let codigoGerado = "";
+
     function mostrarCadastro() {
-        esconderTudo();
-        document.getElementById("cadastroBox").classList.remove("hidden");
+        loginBox.classList.add("hidden");
+        recuperarBox.classList.add("hidden");
+        cadastroBox.classList.remove("hidden");
     }
 
     function mostrarLogin() {
-        esconderTudo();
-        document.getElementById("loginBox").classList.remove("hidden");
+        cadastroBox.classList.add("hidden");
+        recuperarBox.classList.add("hidden");
+        codigoBox.classList.add("hidden");
+        novaSenhaBox.classList.add("hidden");
+        loginBox.classList.remove("hidden");
     }
 
-    function mostrarRecuperarSenha() {
-        esconderTudo();
-        document.getElementById("recuperarBox").classList.remove("hidden");
+    function mostrarRecuperar() {
+        loginBox.classList.add("hidden");
+        cadastroBox.classList.add("hidden");
+        recuperarBox.classList.remove("hidden");
     }
 
-    function mostrarCodigo() {
-        esconderTudo();
-        document.getElementById("codigoBox").classList.remove("hidden");
-    }
-
-    function mostrarNovaSenha() {
-        esconderTudo();
-        document.getElementById("novaSenhaBox").classList.remove("hidden");
-    }
-
-    function esconderTudo() {
-        document.querySelectorAll(".container").forEach(c => c.classList.add("hidden"));
-    }
-
-    // LOGIN
     function entrar() {
-        const email = document.getElementById("loginEmail").value;
-        const senha = document.getElementById("loginSenha").value;
+        const email = loginEmail.value;
+        const senha = loginSenha.value;
 
         const user = JSON.parse(localStorage.getItem("user"));
 
@@ -205,27 +199,22 @@
         }
     }
 
-    // CADASTRO
     function cadastrar() {
-        const user = {
-            nome: document.getElementById("cadNome").value,
-            sobrenome: document.getElementById("cadSobrenome").value,
-            email: document.getElementById("cadEmail").value,
-            senha: document.getElementById("cadSenha").value
-        };
+        const nome = cadNome.value;
+        const sobrenome = cadSobrenome.value;
+        const email = cadEmail.value;
+        const senha = cadSenha.value;
+
+        const user = { nome, sobrenome, email, senha };
 
         localStorage.setItem("user", JSON.stringify(user));
 
         alert("Conta criada com sucesso!");
-
         window.location.href = "dashboard.html";
     }
 
-    // RECUPERAÇÃO - PASSO 1
-    let codigoGerado = "";
-
     function enviarCodigo() {
-        const email = document.getElementById("recEmail").value;
+        const email = recEmail.value;
         const user = JSON.parse(localStorage.getItem("user"));
 
         if (!user || email !== user.email) {
@@ -233,37 +222,39 @@
             return;
         }
 
-        // Gerar código de 6 dígitos
         codigoGerado = Math.floor(100000 + Math.random() * 900000).toString();
+        alert("Seu código de recuperação é: " + codigoGerado);
 
-        mostrarCodigo();
-
-        // SIMULA ENVIO DO CÓDIGO
-        document.getElementById("codigoSimulado").innerText = 
-            "Seu código de recuperação: " + codigoGerado;
+        recuperarBox.classList.add("hidden");
+        codigoBox.classList.remove("hidden");
     }
 
-    // RECUPERAÇÃO - PASSO 2
-    function verificarCodigo() {
-        const codigoDigitado = document.getElementById("codigoInput").value;
+    function validarCodigo() {
+        const codigoDigitado = codigoInput.value;
 
         if (codigoDigitado === codigoGerado) {
-            mostrarNovaSenha();
+            codigoBox.classList.add("hidden");
+            novaSenhaBox.classList.remove("hidden");
         } else {
             alert("Código incorreto!");
         }
     }
 
-    // RECUPERAÇÃO - PASSO 3
     function salvarNovaSenha() {
-        const novaSenha = document.getElementById("novaSenha").value;
+        const nova = novaSenha.value;
+        const conf = confirmarSenha.value;
+
+        if (nova !== conf) {
+            alert("As senhas não coincidem!");
+            return;
+        }
 
         const user = JSON.parse(localStorage.getItem("user"));
-        user.senha = novaSenha;
+        user.senha = nova;
 
         localStorage.setItem("user", JSON.stringify(user));
 
-        alert("Senha atualizada com sucesso!");
+        alert("Senha alterada com sucesso!");
 
         mostrarLogin();
     }
