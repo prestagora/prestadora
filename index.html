@@ -4,19 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Marketing</title>
-
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
             background: #f3f3f3;
-            height: 100vh;
-
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            height: 100vh;
         }
 
         .container {
@@ -26,25 +23,31 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 0 12px rgba(0,0,0,0.1);
-            margin: 0 auto;
+            
+            /* CENTRALIZA TUDO DENTRO DO CONTAINER */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
         h2 {
-            color: #333;
             margin-bottom: 20px;
+            color: #333;
         }
 
         input {
-            width: 100%;
+            width: 90%;
             padding: 12px;
-            margin: 8px 0;
+            margin: 8px auto;
             border: 1px solid #aaa;
             border-radius: 5px;
             font-size: 15px;
+            display: block;
         }
 
         button {
-            width: 100%;
+            width: 90%;
             padding: 12px;
             background: #0d6efd;
             border: none;
@@ -76,7 +79,8 @@
 
         .logo {
             width: 150px;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
+            display: block;
         }
     </style>
 </head>
@@ -85,7 +89,6 @@
     <!-- LOGIN -->
     <div class="container" id="loginBox">
         <img src="logo.png" class="logo">
-
         <h2>Acesse sua conta</h2>
 
         <input type="email" placeholder="Seu e-mail" id="loginEmail">
@@ -94,7 +97,7 @@
         <button onclick="entrar()">Entrar</button>
 
         <div class="link">
-            <span onclick="mostrarRecuperar()">Esqueci minha senha</span>
+            <span onclick="mostrarRecuperarSenha()">Esqueci minha senha</span>
         </div>
 
         <div class="link">
@@ -105,7 +108,6 @@
     <!-- CADASTRO -->
     <div class="container hidden" id="cadastroBox">
         <img src="logo.png" class="logo">
-
         <h2>Criar sua conta</h2>
 
         <input type="text" placeholder="Nome" id="cadNome">
@@ -123,10 +125,9 @@
     <!-- RECUPERAR SENHA -->
     <div class="container hidden" id="recuperarBox">
         <img src="logo.png" class="logo">
-
         <h2>Recuperar Senha</h2>
 
-        <input type="email" placeholder="Seu e-mail" id="recEmail">
+        <input type="email" placeholder="Digite seu e-mail" id="recEmail">
 
         <button onclick="enviarCodigo()">Enviar código</button>
 
@@ -135,62 +136,51 @@
         </div>
     </div>
 
-    <!-- CONFIRMAR CÓDIGO -->
+    <!-- VERIFICAR CÓDIGO -->
     <div class="container hidden" id="codigoBox">
         <img src="logo.png" class="logo">
+        <h2>Verificar Código</h2>
 
-        <h2>Digite o código enviado</h2>
+        <p id="codigoSimulado" style="color: green; font-size: 14px;"></p>
 
-        <input type="text" placeholder="Código recebido" id="codigoInput">
+        <input type="text" placeholder="Insira o código recebido" id="codigoInput">
 
-        <button onclick="validarCodigo()">Validar código</button>
+        <button onclick="verificarCodigo()">Verificar</button>
+
+        <div class="link">
+            <span onclick="mostrarRecuperarSenha()">Voltar</span>
+        </div>
     </div>
 
     <!-- NOVA SENHA -->
     <div class="container hidden" id="novaSenhaBox">
         <img src="logo.png" class="logo">
+        <h2>Nova Senha</h2>
 
-        <h2>Definir nova senha</h2>
+        <input type="password" placeholder="Digite a nova senha" id="novaSenha">
 
-        <input type="password" placeholder="Nova senha" id="novaSenha">
-        <input type="password" placeholder="Confirmar senha" id="confirmarSenha">
-
-        <button onclick="salvarNovaSenha()">Salvar</button>
+        <button onclick="salvarNovaSenha()">Salvar nova senha</button>
     </div>
 
 <script>
-    let codigoGerado = "";
+    function mostrarCadastro() { esconderTudo(); cadastroBox.classList.remove("hidden"); }
+    function mostrarLogin() { esconderTudo(); loginBox.classList.remove("hidden"); }
+    function mostrarRecuperarSenha() { esconderTudo(); recuperarBox.classList.remove("hidden"); }
+    function mostrarCodigo() { esconderTudo(); codigoBox.classList.remove("hidden"); }
+    function mostrarNovaSenha() { esconderTudo(); novaSenhaBox.classList.remove("hidden"); }
 
-    function mostrarCadastro() {
-        loginBox.classList.add("hidden");
-        recuperarBox.classList.add("hidden");
-        cadastroBox.classList.remove("hidden");
+    function esconderTudo() {
+        document.querySelectorAll(".container").forEach(c => c.classList.add("hidden"));
     }
 
-    function mostrarLogin() {
-        cadastroBox.classList.add("hidden");
-        recuperarBox.classList.add("hidden");
-        codigoBox.classList.add("hidden");
-        novaSenhaBox.classList.add("hidden");
-        loginBox.classList.remove("hidden");
-    }
-
-    function mostrarRecuperar() {
-        loginBox.classList.add("hidden");
-        cadastroBox.classList.add("hidden");
-        recuperarBox.classList.remove("hidden");
-    }
-
+    // LOGIN
     function entrar() {
         const email = loginEmail.value;
         const senha = loginSenha.value;
 
         const user = JSON.parse(localStorage.getItem("user"));
 
-        if (!user) {
-            alert("Nenhuma conta cadastrada!");
-            return;
-        }
+        if (!user) return alert("Nenhuma conta cadastrada!");
 
         if (email === user.email && senha === user.senha) {
             window.location.href = "dashboard.html";
@@ -199,19 +189,23 @@
         }
     }
 
+    // CADASTRO
     function cadastrar() {
-        const nome = cadNome.value;
-        const sobrenome = cadSobrenome.value;
-        const email = cadEmail.value;
-        const senha = cadSenha.value;
-
-        const user = { nome, sobrenome, email, senha };
+        const user = {
+            nome: cadNome.value,
+            sobrenome: cadSobrenome.value,
+            email: cadEmail.value,
+            senha: cadSenha.value
+        };
 
         localStorage.setItem("user", JSON.stringify(user));
 
         alert("Conta criada com sucesso!");
         window.location.href = "dashboard.html";
     }
+
+    // RECUPERAÇÃO
+    let codigoGerado = "";
 
     function enviarCodigo() {
         const email = recEmail.value;
@@ -223,39 +217,26 @@
         }
 
         codigoGerado = Math.floor(100000 + Math.random() * 900000).toString();
-        alert("Seu código de recuperação é: " + codigoGerado);
 
-        recuperarBox.classList.add("hidden");
-        codigoBox.classList.remove("hidden");
+        mostrarCodigo();
+        codigoSimulado.innerText = "Seu código: " + codigoGerado;
     }
 
-    function validarCodigo() {
-        const codigoDigitado = codigoInput.value;
-
-        if (codigoDigitado === codigoGerado) {
-            codigoBox.classList.add("hidden");
-            novaSenhaBox.classList.remove("hidden");
+    function verificarCodigo() {
+        if (codigoInput.value === codigoGerado) {
+            mostrarNovaSenha();
         } else {
             alert("Código incorreto!");
         }
     }
 
     function salvarNovaSenha() {
-        const nova = novaSenha.value;
-        const conf = confirmarSenha.value;
-
-        if (nova !== conf) {
-            alert("As senhas não coincidem!");
-            return;
-        }
-
         const user = JSON.parse(localStorage.getItem("user"));
-        user.senha = nova;
+        user.senha = novaSenha.value;
 
         localStorage.setItem("user", JSON.stringify(user));
 
         alert("Senha alterada com sucesso!");
-
         mostrarLogin();
     }
 </script>
