@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Plataforma de Marketing</title>
+    <style>
+        body {
+            margin: 0;
+            background: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        /* MENU LATERAL */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #0d6efd;
+            color: #fff;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 30px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background: #0b5ed7;
+            cursor: pointer;
+        }
+
+        /* ÁREA PRINCIPAL */
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .btn {
+            background: #0d6efd;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #0b5ed7;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar">
+        <h2>Marketing ADS</h2>
+
+        <a href="#">Dashboard</a>
+        <a href="#">Contas Meta Ads</a>
+        <a href="#">Campanhas</a>
+        <a href="#">Relatórios</a>
+        <a href="#">Configurações</a>
+        <a href="#" onclick="sair()">Sair</a>
+    </div>
+
+    <!-- ÁREA PRINCIPAL -->
+    <div class="main">
+
+        <div class="topbar">
+            <h1>Dashboard</h1>
+            <button class="btn">Conectar Meta Ads</button>
+        </div>
+
+        <div class="card">
+            <h3>Bem-vindo à Plataforma de Marketing</h3>
 
