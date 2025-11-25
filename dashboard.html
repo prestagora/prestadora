@@ -207,7 +207,7 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="corpoTabelaDespesas"></tbody>
             </table>
         </div>
 
@@ -271,12 +271,11 @@ function adicionarDespesa() {
 
 // Atualizar tabela
 function atualizarTabela() {
-    const tbody = document.querySelector("#tabelaDespesas tbody");
+    const tbody = document.getElementById("corpoTabelaDespesas");
     tbody.innerHTML = "";
 
     despesas.forEach((d, i) => {
         const tr = document.createElement("tr");
-
         tr.innerHTML = `
             <td>${d.desc}</td>
             <td>${d.cat}</td>
