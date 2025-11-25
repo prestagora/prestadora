@@ -135,6 +135,20 @@
         background-color: rgb(200,0,0);
     }
 
+    .btn-editar {
+        background-color: #ffa500;
+        border: none;
+        padding: 5px 12px;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-editar:hover {
+        background-color: #cc8400;
+    }
+
     /* MODAL */
     .modal-bg {
         position: fixed;
@@ -273,6 +287,7 @@
                     <th>Início</th>
                     <th>Fim</th>
                     <th>Valor (R$)</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody id="listaClientes"></tbody>
@@ -310,6 +325,8 @@
 </div>
 
 <script>
+let editarIndex = null;
+
 function formatarDataBR(data) {
     if (!data) return '';
     const [ano, mes, dia] = data.split("-");
@@ -318,12 +335,7 @@ function formatarDataBR(data) {
 
 function atualizarValorTotal() {
     const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
-
-    let total = lista.reduce((soma, cliente) => {
-        const valor = parseFloat(cliente.valor || 0);
-        return soma + valor;
-    }, 0);
-
+    let total = lista.reduce((soma, cliente) => soma + parseFloat(cliente.valor || 0), 0);
     document.getElementById("valorTotal").innerText =
         total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -344,6 +356,7 @@ function carregarClientes() {
                 <td>${formatarDataBR(cliente.inicio)}</td>
                 <td>${formatarDataBR(cliente.fim)}</td>
                 <td>${cliente.valor}</td>
+                <td><button class="btn-editar" onclick="editarCliente(${index})">Editar</button></td>
             </tr>
         `;
     });
@@ -362,20 +375,37 @@ function filtrar() {
 function excluirSelecionados() {
     let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
     const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
-    if (!checkboxes.length) {
-        alert("Selecione ao menos um cliente.");
-        return;
-    }
+    if (!checkboxes.length) { alert("Selecione ao menos um cliente."); return; }
     const indices = Array.from(checkboxes).map(c => Number(c.dataset.index));
     clientes = clientes.filter((_, i) => !indices.includes(i));
     localStorage.setItem("clientes", JSON.stringify(clientes));
     carregarClientes();
-    atualizarValorTotal();
     alert("Cliente(s) excluído(s) com sucesso!");
 }
 
 function abrirModal() { document.getElementById("modalBg").style.display = "flex"; }
-function fecharModal() { document.getElementById("modalBg").style.display = "none"; }
+function fecharModal() { 
+    document.getElementById("modalBg").style.display = "none"; 
+    editarIndex = null;
+    document.querySelector(".modal h2").innerText = "Novo Cliente";
+}
+
+function editarCliente(index) {
+    const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+    const cliente = lista[index];
+
+    document.getElementById("inicio").value = cliente.inicio;
+    document.getElementById("fim").value = cliente.fim;
+    document.getElementById("nome").value = cliente.nome;
+    document.getElementById("telefone").value = cliente.telefone;
+    document.getElementById("email").value = cliente.email;
+    document.getElementById("documento").value = cliente.documento;
+    document.getElementById("valor").value = cliente.valor;
+
+    editarIndex = index;
+    document.querySelector(".modal h2").innerText = "Editar Cliente";
+    abrirModal();
+}
 
 function salvarCliente() {
     const cliente = {
@@ -389,13 +419,19 @@ function salvarCliente() {
     };
 
     const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
-    lista.push(cliente);
-    localStorage.setItem("clientes", JSON.stringify(lista));
 
+    if (editarIndex !== null) {
+        lista[editarIndex] = cliente;
+        editarIndex = null;
+        alert("Cliente atualizado com sucesso!");
+    } else {
+        lista.push(cliente);
+        alert("Cliente cadastrado!");
+    }
+
+    localStorage.setItem("clientes", JSON.stringify(lista));
     carregarClientes();
-    atualizarValorTotal();
     fecharModal();
-    alert("Cliente cadastrado!");
 }
 
 window.onload = carregarClientes;
