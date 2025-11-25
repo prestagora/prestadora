@@ -1,347 +1,357 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Clientes - Plataforma de Marketing</title>
-    <style>
-        /* RESET E ESTILO GERAL */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meus Clientes - Plataforma de Marketing</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f9;
+    }
 
-        /* MENU LATERAL */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: #0d6efd;
-            color: #fff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding-top: 30px;
-        }
+    /* MENU LATERAL */
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background-color: #0d6efd;
+        color: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 30px;
+    }
 
-        .sidebar h2 {
-            text-align: center;
-            font-size: 20px;
-            margin-bottom: 30px;
-        }
+    .sidebar h2 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
 
-        .sidebar a {
-            display: block;
-            padding: 15px 20px;
-            color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-            text-align: left; /* alinhamento à esquerda */
-        }
+    .sidebar a {
+        display: block;
+        padding: 15px 20px;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        text-align: left;
+    }
 
-        .sidebar a:hover {
-            background-color: #0b5ed7;
-        }
+    .sidebar a:hover {
+        background-color: #0b5ed7;
+    }
 
-        /* ÁREA PRINCIPAL */
-        .main {
-            margin-left: 250px;
-            padding: 30px;
-        }
+    /* ÁREA PRINCIPAL */
+    .main {
+        margin-left: 250px;
+        padding: 30px;
+    }
 
-        .topbar h1 {
-            margin: 0;
-            font-size: 24px;
-            color: #333;
-            text-align: left; /* título à esquerda */
-        }
+    .topbar h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+        text-align: left;
+    }
 
-        .card {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
+    .card {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }
 
-        /* PESQUISA + BOTÃO ADICIONAR */
-        .search-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+    /* PESQUISA + BOTÃO ADICIONAR */
+    .search-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
 
-        .search-box input {
-            width: 300px;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            text-align: left; /* texto digitado à esquerda */
-        }
+    .search-box input {
+        width: 300px;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        text-align: left;
+    }
 
-        .add-btn {
-            background-color: #0d6efd;
-            color: #fff;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            font-size: 26px;
-            cursor: pointer;
-        }
+    .add-btn {
+        background-color: #0d6efd;
+        color: #fff;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        font-size: 26px;
+        cursor: pointer;
+    }
 
-        .add-btn:hover {
-            background-color: #0b5ed7;
-        }
+    .add-btn:hover {
+        background-color: #0b5ed7;
+    }
 
-        /* TABELA */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    /* TABELA */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left; /* textos à esquerda */
-        }
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
 
-        th {
-            background-color: #eeeeee;
-        }
+    th {
+        background-color: #eeeeee;
+    }
 
-        .btn-excluir {
-            background-color: red;
-            border: none;
-            padding: 10px 15px;
-            color: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    .btn-excluir {
+        background-color: red;
+        border: none;
+        padding: 10px 15px;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
 
-        .btn-excluir:hover {
-            background-color: rgb(200,0,0);
-        }
+    .btn-excluir:hover {
+        background-color: rgb(200,0,0);
+    }
 
-        /* MODAL */
-        .modal-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0,0,0,0.4);
-        }
+    /* MODAL */
+    .modal-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.4);
+    }
 
-        .modal {
-            background-color: #fff;
-            width: 350px;
-            padding: 30px 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* centraliza inputs e botões */
-        }
+    .modal {
+        background-color: #fff;
+        width: 380px;
+        padding: 30px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        .modal h2 {
-            font-size: 20px;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-align: left; /* título à esquerda */
-            width: 100%;
-        }
+    .modal h2 {
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: left;
+        width: 100%;
+    }
 
-        .form-group {
-            width: 100%;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
-        }
+    .form-group {
+        width: 100%;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: center;
+    }
 
-        .form-group input {
-            width: 90%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            text-align: left; /* texto digitado à esquerda */
-        }
+    .form-group input {
+        width: 90%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
 
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
 
-        .btn, .btn-cancel {
-            width: 120px;
-            text-align: center;
-        }
+    .btn {
+        background-color: #0d47a1; /* azul escuro profissional */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
 
-        .btn-cancel {
-            background-color: #999;
-        }
-    </style>
+    .btn:hover {
+        background-color: #08306b;
+    }
+
+    .btn-cancel {
+        background-color: #555;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn-cancel:hover {
+        background-color: #333;
+    }
+</style>
 </head>
 <body>
 
-    <!-- MENU LATERAL -->
-    <div class="sidebar">
-        <h2>Marketing ADS</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="#contas">Contas Meta Ads <span id="seta">▼</span></a>
-        <div id="listaContas"></div>
-        <a href="meusclientes.html">Meus Clientes</a>
-        <a href="#">Relatórios</a>
-        <a href="#">Configurações</a>
-        <a href="#" onclick="sair()">Sair</a>
+<div class="sidebar">
+    <h2>Marketing ADS</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#contas">Contas Meta Ads <span id="seta">▼</span></a>
+    <div id="listaContas"></div>
+    <a href="meusclientes.html">Meus Clientes</a>
+    <a href="#">Relatórios</a>
+    <a href="#">Configurações</a>
+    <a href="#" onclick="sair()">Sair</a>
+</div>
+
+<div class="main">
+    <div class="topbar">
+        <h1>Meus Clientes</h1>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <div class="main">
-        <div class="topbar">
-            <h1>Meus Clientes</h1>
-        </div>
-
-        <div class="card">
-            <!-- PESQUISA + BOTÃO -->
-            <div class="search-row">
-                <div class="search-box">
-                    <input type="text" id="pesquisa" placeholder="Pesquisar cliente..." onkeyup="filtrar()">
-                </div>
-                <button class="add-btn" onclick="abrirModal()">+</button>
+    <div class="card">
+        <div class="search-row">
+            <div class="search-box">
+                <input type="text" id="pesquisa" placeholder="Pesquisar cliente..." onkeyup="filtrar()">
             </div>
+            <button class="add-btn" onclick="abrirModal()">+</button>
+        </div>
 
-            <table id="tabelaClientes">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Nome</th>
-                        <th>Telefone</th>
-                        <th>E-mail</th>
-                        <th>Documento</th>
-                        <th>Início</th>
-                        <th>Fim</th>
-                        <th>Valor (R$)</th>
-                    </tr>
-                </thead>
-                <tbody id="listaClientes"></tbody>
-            </table>
+        <table id="tabelaClientes">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>E-mail</th>
+                    <th>Documento</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Valor (R$)</th>
+                </tr>
+            </thead>
+            <tbody id="listaClientes"></tbody>
+        </table>
 
-            <button class="btn-excluir" onclick="excluirSelecionados()">Excluir Selecionados</button>
+        <button class="btn-excluir" onclick="excluirSelecionados()">Excluir Selecionados</button>
+    </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+    <div class="modal">
+        <h2>Novo Cliente</h2>
+        <div class="form-group"><input id="inicio" type="text" placeholder="dd/mm/aaaa"></div>
+        <div class="form-group"><input id="fim" type="text" placeholder="dd/mm/aaaa"></div>
+        <div class="form-group"><input id="nome" type="text" placeholder="Nome"></div>
+        <div class="form-group"><input id="telefone" type="text" placeholder="Telefone"></div>
+        <div class="form-group"><input id="email" type="text" placeholder="E-mail"></div>
+        <div class="form-group"><input id="documento" type="text" placeholder="CPF/CNPJ"></div>
+        <div class="form-group"><input id="valor" type="number" placeholder="Valor do contrato"></div>
+
+        <div class="modal-buttons">
+            <button class="btn" onclick="salvarCliente()">Salvar</button>
+            <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
         </div>
     </div>
+</div>
 
-    <!-- MODAL DE CADASTRO -->
-    <div class="modal-bg" id="modalBg">
-        <div class="modal">
-            <h2>Novo Cliente</h2>
-            <div class="form-group"><input id="inicio" type="date" placeholder="Início"></div>
-            <div class="form-group"><input id="fim" type="date" placeholder="Fim"></div>
-            <div class="form-group"><input id="nome" type="text" placeholder="Nome"></div>
-            <div class="form-group"><input id="telefone" type="text" placeholder="Telefone"></div>
-            <div class="form-group"><input id="email" type="text" placeholder="E-mail"></div>
-            <div class="form-group"><input id="documento" type="text" placeholder="CPF/CNPJ"></div>
-            <div class="form-group"><input id="valor" type="number" placeholder="Valor do contrato"></div>
+<script>
+// Função para validar e formatar datas no padrão dd/mm/yyyy
+function formatarDataBR(data) {
+    if (!data) return '';
+    // Verifica se já está no formato dd/mm/yyyy
+    if (data.includes("/")) return data;
+    const [ano, mes, dia] = data.split("-");
+    return `${dia}/${mes}/${ano}`;
+}
 
-            <div class="modal-buttons">
-                <button class="btn" onclick="salvarCliente()">Salvar</button>
-                <button class="btn btn-cancel" onclick="fecharModal()">Cancelar</button>
-            </div>
-        </div>
-    </div>
+function carregarClientes() {
+    const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+    const tabela = document.getElementById("listaClientes");
+    tabela.innerHTML = "";
 
-    <!-- SCRIPT -->
-    <script>
-        // Formata datas no padrão brasileiro dd/mm/aaaa
-        function formatarDataBR(dataISO) {
-            if (!dataISO) return '';
-            const [ano, mes, dia] = dataISO.split("-");
-            return `${dia}/${mes}/${ano}`;
-        }
+    lista.forEach((cliente, index) => {
+        tabela.innerHTML += `
+            <tr>
+                <td><input type="checkbox" data-index="${index}"></td>
+                <td>${cliente.nome}</td>
+                <td>${cliente.telefone}</td>
+                <td>${cliente.email}</td>
+                <td>${cliente.documento}</td>
+                <td>${formatarDataBR(cliente.inicio)}</td>
+                <td>${formatarDataBR(cliente.fim)}</td>
+                <td>${cliente.valor}</td>
+            </tr>
+        `;
+    });
+}
 
-        // Carrega clientes do localStorage e mostra na tabela
-        function carregarClientes() {
-            const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
-            const tabela = document.getElementById("listaClientes");
-            tabela.innerHTML = "";
+function filtrar() {
+    const termo = document.getElementById("pesquisa").value.toLowerCase();
+    document.querySelectorAll("#listaClientes tr").forEach(linha => {
+        const nome = linha.children[1].innerText.toLowerCase();
+        linha.style.display = nome.includes(termo) ? "" : "none";
+    });
+}
 
-            lista.forEach((cliente, index) => {
-                tabela.innerHTML += `
-                    <tr>
-                        <td><input type="checkbox" data-index="${index}"></td>
-                        <td>${cliente.nome}</td>
-                        <td>${cliente.telefone}</td>
-                        <td>${cliente.email}</td>
-                        <td>${cliente.documento}</td>
-                        <td>${formatarDataBR(cliente.inicio)}</td>
-                        <td>${formatarDataBR(cliente.fim)}</td>
-                        <td>${cliente.valor}</td>
-                    </tr>
-                `;
-            });
-        }
+function excluirSelecionados() {
+    let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
+    if (!checkboxes.length) {
+        alert("Selecione ao menos um cliente.");
+        return;
+    }
+    const indices = Array.from(checkboxes).map(c => Number(c.dataset.index));
+    clientes = clientes.filter((_, i) => !indices.includes(i));
+    localStorage.setItem("clientes", JSON.stringify(clientes));
+    carregarClientes();
+    alert("Cliente(s) excluído(s) com sucesso!");
+}
 
-        // Filtrar clientes na tabela
-        function filtrar() {
-            const termo = document.getElementById("pesquisa").value.toLowerCase();
-            document.querySelectorAll("#listaClientes tr").forEach(linha => {
-                const nome = linha.children[1].innerText.toLowerCase();
-                linha.style.display = nome.includes(termo) ? "" : "none";
-            });
-        }
+function abrirModal() { document.getElementById("modalBg").style.display = "flex"; }
+function fecharModal() { document.getElementById("modalBg").style.display = "none"; }
 
-        // Excluir clientes selecionados
-        function excluirSelecionados() {
-            let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-            const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
+function salvarCliente() {
+    const cliente = {
+        inicio: document.getElementById("inicio").value,
+        fim: document.getElementById("fim").value,
+        nome: document.getElementById("nome").value,
+        telefone: document.getElementById("telefone").value,
+        email: document.getElementById("email").value,
+        documento: document.getElementById("documento").value,
+        valor: document.getElementById("valor").value,
+    };
 
-            if (!checkboxes.length) {
-                alert("Selecione ao menos um cliente.");
-                return;
-            }
+    const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+    lista.push(cliente);
+    localStorage.setItem("clientes", JSON.stringify(lista));
 
-            const indices = Array.from(checkboxes).map(c => Number(c.dataset.index));
-            clientes = clientes.filter((_, i) => !indices.includes(i));
-            localStorage.setItem("clientes", JSON.stringify(clientes));
-            carregarClientes();
-            alert("Cliente(s) excluído(s) com sucesso!");
-        }
+    carregarClientes();
+    fecharModal();
+    alert("Cliente cadastrado!");
+}
 
-        // Abrir/fechar modal
-        function abrirModal() { document.getElementById("modalBg").style.display = "flex"; }
-        function fecharModal() { document.getElementById("modalBg").style.display = "none"; }
-
-        // Salvar cliente no localStorage
-        function salvarCliente() {
-            const cliente = {
-                inicio: document.getElementById("inicio").value,
-                fim: document.getElementById("fim").value,
-                nome: document.getElementById("nome").value,
-                telefone: document.getElementById("telefone").value,
-                email: document.getElementById("email").value,
-                documento: document.getElementById("documento").value,
-                valor: document.getElementById("valor").value,
-            };
-
-            const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
-            lista.push(cliente);
-            localStorage.setItem("clientes", JSON.stringify(lista));
-
-            carregarClientes();
-            fecharModal();
-            alert("Cliente cadastrado!");
-        }
-
-        window.onload = carregarClientes;
-    </script>
+window.onload = carregarClientes;
+</script>
 
 </body>
 </html>
