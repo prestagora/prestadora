@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - Plataforma de Marketing</title>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
 body { margin:0; background:#f4f6f9; font-family:Arial,sans-serif; }
 .sidebar { width:250px; height:100vh; background:#0d6efd; color:#fff; position:fixed; left:0; top:0; padding-top:30px; }
@@ -26,15 +24,13 @@ table { width:100%; border-collapse:collapse; margin-top:15px; }
 th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
 th { background-color:#f0f0f0; }
 input[type="text"], input[type="number"], select { width:100%; padding:8px; margin:3px 0; border-radius:5px; border:1px solid #ccc; }
-.timer { display:flex; gap:10px; align-items:center; }
-.timer span { font-size:16px; font-weight:bold; }
-.alert { margin-top:10px; padding:10px; border-radius:5px; display:none; }
-.alert-sucesso { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-.alert-info { background:#cce5ff; color:#004085; border:1px solid #b8daff; }
+.timer { display:flex; gap:10px; align-items:center; margin-bottom:15px; }
+.timer span { font-size:18px; font-weight:bold; }
 </style>
 </head>
 <body>
 
+<!-- MENU LATERAL -->
 <div class="sidebar">
     <h2>PrestAgora digital</h2>
     <a href="#">Dashboard</a>
@@ -47,6 +43,7 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
     <a href="#" onclick="sair()">Sair</a>
 </div>
 
+<!-- ÁREA PRINCIPAL -->
 <div class="main">
 
     <div class="topbar">
@@ -55,8 +52,8 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
             <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
             <div class="timer">
                 <span id="tempo">00:00:00</span>
-                <button class="btn" id="btnIniciar" onclick="iniciarTrabalho()">Iniciar Trabalho</button>
-                <button class="btn" id="btnParar" onclick="pararTrabalho()" style="display:none;">Parar</button>
+                <button class="btn" id="btnIniciar" onclick="iniciarTimer()">Iniciar Trabalho</button>
+                <button class="btn" id="btnParar" onclick="pararTimer()" style="display:none;">Parar</button>
             </div>
         </div>
     </div>
@@ -77,7 +74,6 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
             <label>Valor (R$)</label>
             <input type="number" id="valDespesa" placeholder="0.00">
             <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
-            <div class="alert alert-sucesso" id="alertDespesa">Despesa adicionada com sucesso!</div>
             <table>
                 <thead>
                     <tr><th>Descrição</th><th>Categoria</th><th>Valor (R$)</th><th>Ações</th></tr>
@@ -93,17 +89,34 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
         </div>
     </div>
 
-    <!-- Gráfico Produtividade -->
+    <!-- Produtividade -->
     <div class="card">
         <h3>Produtividade</h3>
-        <div class="alert alert-info" id="alertProdutividade">Temporizador registrado com sucesso!</div>
         <canvas id="graficoProdutividade"></canvas>
     </div>
 
 </div>
 
+<!-- FACEBOOK SDK -->
 <div id="fb-root"></div>
-<script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
+<script>
+window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1224065886236647',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v18.0'
+    });
+};
+(function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+
 <script>
 // ----------------------- DESPESAS -----------------------
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
@@ -118,7 +131,6 @@ function adicionarDespesa() {
     document.getElementById("descDespesa").value = "";
     document.getElementById("catDespesa").value = "";
     document.getElementById("valDespesa").value = "";
-    mostrarAlerta("alertDespesa");
 }
 function atualizarTabela() {
     const tbody = document.getElementById("tabelaDespesas");
@@ -136,7 +148,7 @@ function removerDespesa(index) {
     atualizarTabela(); atualizarGrafico();
 }
 
-// ----------------------- GRAFICO RECEITA VS DESPESAS -----------------------
+// ----------------------- RECEITA VS DESPESAS -----------------------
 function calcularReceita() {
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
     return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
@@ -155,8 +167,7 @@ function atualizarGrafico() {
 }
 
 // ----------------------- TEMPORIZADOR -----------------------
-let timerInterval;
-let segundos = 0;
+let timerInterval, segundos = 0;
 let produtividade = JSON.parse(localStorage.getItem("produtividade") || "[]");
 
 function formatarTempo(sec) {
@@ -166,9 +177,9 @@ function formatarTempo(sec) {
     return `${h}:${m}:${s}`;
 }
 
-function iniciarTrabalho() {
-    document.getElementById("btnIniciar").style.display = "none";
-    document.getElementById("btnParar").style.display = "inline-block";
+function iniciarTimer() {
+    document.getElementById("btnIniciar").style.display="none";
+    document.getElementById("btnParar").style.display="inline-block";
     clearInterval(timerInterval);
     timerInterval = setInterval(()=>{
         segundos++;
@@ -176,89 +187,82 @@ function iniciarTrabalho() {
     },1000);
 }
 
-function pararTrabalho() {
+function pararTimer() {
     clearInterval(timerInterval);
     const agora = new Date();
     produtividade.push({data: agora.toLocaleDateString(), horas: segundos/3600});
     localStorage.setItem("produtividade", JSON.stringify(produtividade));
     segundos = 0;
     document.getElementById("tempo").innerText = "00:00:00";
-    document.getElementById("btnParar").style.display = "none";
-    document.getElementById("btnIniciar").style.display = "inline-block";
+    document.getElementById("btnIniciar").style.display="inline-block";
+    document.getElementById("btnParar").style.display="none";
     atualizarGraficoProdutividade();
-    mostrarAlerta("alertProdutividade");
 }
 
-// ----------------------- GRAFICO PRODUTIVIDADE -----------------------
+// ----------------------- PRODUTIVIDADE -----------------------
 const ctxProd = document.getElementById("graficoProdutividade").getContext("2d");
 let graficoProd;
 function atualizarGraficoProdutividade() {
     const labels = produtividade.map(p => p.data);
     const data = produtividade.map(p => parseFloat(p.horas.toFixed(2)));
     if(graficoProd) graficoProd.destroy();
-    graficoProd = new Chart(ctxProd,{
-        type:'line',
-        data:{ labels, datasets:[{ label:"Horas Trabalhadas", data, borderColor:"#28a745", backgroundColor:"rgba(40,167,69,0.2)", fill:true }]},
-        options:{ responsive:true, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}}}
+    graficoProd = new Chart(ctxProd,{ 
+        type:'line', 
+        data:{labels, datasets:[{label:"Horas Trabalhadas", data, borderColor:"#28a745", backgroundColor:"rgba(40,167,69,0.2)", fill:true}]}, 
+        options:{ responsive:true, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}}} 
     });
 }
 
-// ----------------------- ALERTAS -----------------------
-function mostrarAlerta(id){
-    const alertEl = document.getElementById(id);
-    alertEl.style.display = "block";
-    setTimeout(()=>{ alertEl.style.display = "none"; }, 3000);
-}
-
 // ----------------------- META ADS -----------------------
-function loginFacebook(){
-    FB.getLoginStatus(function(response){
+function loginFacebook() {
+    FB.login(function(response){
         if(response.status==='connected'){
             document.getElementById("btnMeta").innerText="Conectado ✓";
             carregarContasMeta();
         } else {
-            FB.login(function(resp){
-                if(resp.status==='connected'){
-                    document.getElementById("btnMeta").innerText="Conectado ✓";
-                    carregarContasMeta();
-                } else { alert("Você precisa permitir o acesso para continuar."); }
-            }, {scope:'ads_read,ads_management,business_management'});
+            alert("Você precisa permitir o acesso para continuar.");
         }
-    });
+    }, {scope:'ads_read,ads_management,business_management'});
 }
+
 function carregarContasMeta() {
     FB.api('/me/adaccounts', function(response){
         if(response && !response.error){
             localStorage.setItem("contas_meta", JSON.stringify(response.data));
             mostrarContas();
-        } else { alert("Erro ao carregar contas Meta Ads."); }
+        } else alert("Erro ao carregar contas Meta Ads.");
     });
 }
+
 function mostrarContas() {
     const lista = document.getElementById("listaContas");
-    lista.innerHTML = "";
+    lista.innerHTML="";
     const contas = JSON.parse(localStorage.getItem("contas_meta")||"[]");
     contas.forEach(c=>{
         lista.innerHTML += `<div class="conta-item">• ${c.name} (${c.account_id})</div>`;
     });
 }
-function toggleContas(){
+
+function toggleContas() {
     const lista=document.getElementById("listaContas");
     const seta=document.getElementById("seta");
-    const aberto=lista.style.display==="block";
-    lista.style.display=aberto?"none":"block";
-    seta.style.transform=aberto?"rotate(0deg)":"rotate(180deg)";
+    const aberto = lista.style.display==="block";
+    lista.style.display = aberto?"none":"block";
+    seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
 }
-function sair(){ localStorage.clear(); alert("Você saiu da plataforma."); location.reload(); }
+
+function sair() {
+    localStorage.clear();
+    alert("Você saiu da plataforma.");
+    location.reload();
+}
 
 // ----------------------- ONLOAD -----------------------
 window.onload = function(){
-    atualizarTabela();
-    atualizarGrafico();
-    atualizarGraficoProdutividade();
-    if(localStorage.getItem("contas_meta")){
-        document.getElementById("btnMeta").innerText="Conectado ✓";
-        mostrarContas();
+    atualizarTabela(); atualizarGrafico(); atualizarGraficoProdutividade();
+    if(localStorage.getItem("contas_meta")){ 
+        document.getElementById("btnMeta").innerText="Conectado ✓"; 
+        mostrarContas(); 
     }
 };
 </script>
