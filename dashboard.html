@@ -28,8 +28,9 @@ body {
 .sidebar a:hover { background:#0b5ed7; cursor:pointer; }
 .main { margin-left: 250px; padding: 30px; }
 .card { background:#fff; padding:25px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.1); margin-bottom:25px; }
-.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; }
-.topbar h1 { margin:0; font-size:24px; color:#333; }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px; }
+.topbar h1 { margin:0; font-size:24px; color:#333; flex:1; }
+.topbar .acoes { display:flex; gap:10px; align-items:center; }
 .btn { background:#0d6efd; border:none; padding:10px 20px; color:#fff; border-radius:6px; cursor:pointer; font-size:15px; }
 .btn:hover { background:#0b5ed7; }
 .flex-container { display:flex; gap:30px; flex-wrap:wrap; }
@@ -38,8 +39,8 @@ table { width:100%; border-collapse:collapse; margin-top:15px; }
 th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
 th { background-color:#f0f0f0; }
 input[type="text"], input[type="number"], select { width:100%; padding:8px; margin:3px 0; border-radius:5px; border:1px solid #ccc; }
-.timer { display:flex; gap:10px; align-items:center; margin-bottom:15px; }
-.timer span { font-size:18px; font-weight:bold; }
+.timer { display:flex; gap:10px; align-items:center; }
+.timer span { font-size:16px; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -59,7 +60,14 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
 
     <div class="topbar">
         <h1>Dashboard</h1>
-        <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
+        <div class="acoes">
+            <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
+            <div class="timer">
+                <span id="tempo">00:00:00</span>
+                <button class="btn" id="btnIniciar" onclick="iniciarTimer()">Iniciar</button>
+                <button class="btn" id="btnParar" onclick="pararTimer()">Parar</button>
+            </div>
+        </div>
     </div>
 
     <div class="card">
@@ -93,14 +101,9 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
         </div>
     </div>
 
-    <!-- Temporizador -->
+    <!-- Gráfico Produtividade -->
     <div class="card">
-        <h3>Temporizador de Trabalho</h3>
-        <div class="timer">
-            <span id="tempo">00:00:00</span>
-            <button class="btn" id="btnIniciar" onclick="iniciarTimer()">Iniciar</button>
-            <button class="btn" id="btnParar" onclick="pararTimer()">Parar</button>
-        </div>
+        <h3>Produtividade</h3>
         <canvas id="graficoProdutividade"></canvas>
     </div>
 
@@ -110,7 +113,6 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
 <script>
 // ----------------------- DESPESAS -----------------------
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
-
 function adicionarDespesa() {
     const desc = document.getElementById("descDespesa").value.trim();
     const cat = document.getElementById("catDespesa").value.trim();
@@ -123,7 +125,6 @@ function adicionarDespesa() {
     document.getElementById("catDespesa").value = "";
     document.getElementById("valDespesa").value = "";
 }
-
 function atualizarTabela() {
     const tbody = document.getElementById("tabelaDespesas");
     tbody.innerHTML = "";
@@ -134,7 +135,6 @@ function atualizarTabela() {
         tbody.appendChild(tr);
     });
 }
-
 function removerDespesa(index) {
     despesas.splice(index,1);
     localStorage.setItem("despesas", JSON.stringify(despesas));
@@ -146,7 +146,6 @@ function calcularReceita() {
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
     return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
 }
-
 const ctx = document.getElementById("grafico").getContext("2d");
 let graficoChart;
 function atualizarGrafico() {
@@ -164,14 +163,12 @@ function atualizarGrafico() {
 let timerInterval;
 let segundos = 0;
 let produtividade = JSON.parse(localStorage.getItem("produtividade") || "[]");
-
 function formatarTempo(sec) {
     let h = Math.floor(sec/3600).toString().padStart(2,'0');
     let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
     let s = (sec%60).toString().padStart(2,'0');
     return `${h}:${m}:${s}`;
 }
-
 function iniciarTimer() {
     clearInterval(timerInterval);
     timerInterval = setInterval(()=>{
@@ -179,7 +176,6 @@ function iniciarTimer() {
         document.getElementById("tempo").innerText = formatarTempo(segundos);
     },1000);
 }
-
 function pararTimer() {
     clearInterval(timerInterval);
     const agora = new Date();
@@ -197,7 +193,11 @@ function atualizarGraficoProdutividade() {
     const labels = produtividade.map(p => p.data);
     const data = produtividade.map(p => parseFloat(p.horas.toFixed(2)));
     if(graficoProd) graficoProd.destroy();
-    graficoProd = new Chart(ctxProd,{ type:'bar', data:{labels:labels, datasets:[{label:"Horas Trabalhadas", data:data, backgroundColor:"#28a745"}]}, options:{ responsive:true, plugins:{legend:{display:false}} }});
+    graficoProd = new Chart(ctxProd,{
+        type:'line',
+        data:{ labels, datasets:[{ label:"Horas Trabalhadas", data, borderColor:"#28a745", backgroundColor:"rgba(40,167,69,0.2)", fill:true }]},
+        options:{ responsive:true, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}}}
+    });
 }
 
 // ----------------------- META ADS -----------------------
