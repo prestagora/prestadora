@@ -4,30 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Clientes - Plataforma de Marketing</title>
-
     <style>
+        /* RESET E ESTILO GERAL */
         body {
             margin: 0;
-            background: #f4f6f9;
             font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
         }
 
         /* MENU LATERAL */
         .sidebar {
             width: 250px;
             height: 100vh;
-            background: #0d6efd;
+            background-color: #0d6efd;
             color: #fff;
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
             padding-top: 30px;
         }
 
         .sidebar h2 {
             text-align: center;
-            margin-bottom: 30px;
             font-size: 20px;
+            margin-bottom: 30px;
         }
 
         .sidebar a {
@@ -39,8 +39,7 @@
         }
 
         .sidebar a:hover {
-            background: #0b5ed7;
-            cursor: pointer;
+            background-color: #0b5ed7;
         }
 
         /* ÁREA PRINCIPAL */
@@ -49,32 +48,26 @@
             padding: 30px;
         }
 
-        .card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
         .topbar h1 {
             margin: 0;
             font-size: 24px;
             color: #333;
         }
 
-        /* PESQUISA + BOTÃO NOVO */
+        .card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        /* PESQUISA + BOTÃO ADICIONAR */
         .search-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
         }
 
         .search-box input {
@@ -86,7 +79,7 @@
         }
 
         .add-btn {
-            background: #0d6efd;
+            background-color: #0d6efd;
             color: #fff;
             border: none;
             width: 45px;
@@ -97,14 +90,13 @@
         }
 
         .add-btn:hover {
-            background: #0b5ed7;
+            background-color: #0b5ed7;
         }
 
         /* TABELA */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
         }
 
         th, td {
@@ -113,92 +105,97 @@
         }
 
         th {
-            background: #eeeeee;
+            background-color: #eeeeee;
             text-align: left;
         }
 
         .btn-excluir {
-            background: red;
+            background-color: red;
             border: none;
             padding: 10px 15px;
             color: #fff;
             border-radius: 6px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         .btn-excluir:hover {
-            background: rgb(200,0,0);
+            background-color: rgb(200,0,0);
         }
 
         /* MODAL */
         .modal-bg {
             position: fixed;
-            left: 0; 
             top: 0;
-            width: 100%; 
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
             display: none;
             justify-content: center;
             align-items: center;
+            background-color: rgba(0,0,0,0.4);
         }
 
         .modal {
-            background: #fff;
+            background-color: #fff;
             width: 350px;
-            padding: 20px;
+            padding: 30px 20px;
             border-radius: 10px;
             box-shadow: 0 0 12px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .modal h2 {
             font-size: 20px;
             margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .form-group {
+            width: 100%;
             margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
         }
 
         .form-group input {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             border-radius: 6px;
             border: 1px solid #ccc;
+            text-align: center;
         }
 
-        .btn {
-            background: #0d6efd;
-            border: none;
-            padding: 10px 20px;
-            color: #fff;
-            border-radius: 6px;
-            cursor: pointer;
+        .btn, .btn-cancel {
+            width: 120px;
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .btn:hover {
-            background: #0b5ed7;
+        .btn-cancel {
+            background-color: #999;
+            margin-left: 10px;
         }
 
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
     </style>
-
 </head>
-
 <body>
 
     <!-- MENU LATERAL -->
     <div class="sidebar">
         <h2>Marketing ADS</h2>
-
         <a href="dashboard.html">Dashboard</a>
-
-        <a href="#contas">
-            Contas Meta Ads
-            <span class="seta" id="seta">▼</span>
-        </a>
-
-        <div class="contas-lista" id="listaContas"></div>
-
+        <a href="#contas">Contas Meta Ads <span id="seta">▼</span></a>
+        <div id="listaContas"></div>
         <a href="meusclientes.html">Meus Clientes</a>
         <a href="#">Relatórios</a>
         <a href="#">Configurações</a>
@@ -207,19 +204,16 @@
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="main">
-
         <div class="topbar">
             <h1>Meus Clientes</h1>
         </div>
 
         <div class="card">
-
             <!-- PESQUISA + BOTÃO -->
             <div class="search-row">
                 <div class="search-box">
                     <input type="text" id="pesquisa" placeholder="Pesquisar cliente..." onkeyup="filtrar()">
                 </div>
-
                 <button class="add-btn" onclick="abrirModal()">+</button>
             </div>
 
@@ -239,90 +233,82 @@
                 <tbody id="listaClientes"></tbody>
             </table>
 
-            <br>
             <button class="btn-excluir" onclick="excluirSelecionados()">Excluir Selecionados</button>
         </div>
-
     </div>
 
-    <!-- MODAL CADASTRO -->
+    <!-- MODAL DE CADASTRO -->
     <div class="modal-bg" id="modalBg">
         <div class="modal">
             <h2>Novo Cliente</h2>
-
-            <div class="form-group"><input id="inicio" type="date"></div>
-            <div class="form-group"><input id="fim" type="date"></div>
+            <div class="form-group"><input id="inicio" type="date" placeholder="Início"></div>
+            <div class="form-group"><input id="fim" type="date" placeholder="Fim"></div>
             <div class="form-group"><input id="nome" type="text" placeholder="Nome"></div>
             <div class="form-group"><input id="telefone" type="text" placeholder="Telefone"></div>
             <div class="form-group"><input id="email" type="text" placeholder="E-mail"></div>
             <div class="form-group"><input id="documento" type="text" placeholder="CPF/CNPJ"></div>
             <div class="form-group"><input id="valor" type="number" placeholder="Valor do contrato"></div>
 
-            <button class="btn" onclick="salvarCliente()">Salvar</button>
-            <button class="btn" style="background:#999;margin-left:10px;" onclick="fecharModal()">Cancelar</button>
+            <div class="modal-buttons">
+                <button class="btn" onclick="salvarCliente()">Salvar</button>
+                <button class="btn btn-cancel" onclick="fecharModal()">Cancelar</button>
+            </div>
         </div>
     </div>
 
     <!-- SCRIPT -->
     <script>
-
+        // Carregar clientes do localStorage
         function carregarClientes() {
             const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
             const tabela = document.getElementById("listaClientes");
-
             tabela.innerHTML = "";
 
-            lista.forEach((c, index) => {
+            lista.forEach((cliente, index) => {
                 tabela.innerHTML += `
                     <tr>
                         <td><input type="checkbox" data-index="${index}"></td>
-                        <td>${c.nome}</td>
-                        <td>${c.telefone}</td>
-                        <td>${c.email}</td>
-                        <td>${c.documento}</td>
-                        <td>${c.inicio}</td>
-                        <td>${c.fim}</td>
-                        <td>${c.valor}</td>
+                        <td>${cliente.nome}</td>
+                        <td>${cliente.telefone}</td>
+                        <td>${cliente.email}</td>
+                        <td>${cliente.documento}</td>
+                        <td>${cliente.inicio}</td>
+                        <td>${cliente.fim}</td>
+                        <td>${cliente.valor}</td>
                     </tr>
                 `;
             });
         }
 
+        // Filtrar clientes
         function filtrar() {
             const termo = document.getElementById("pesquisa").value.toLowerCase();
-            const linhas = document.querySelectorAll("#listaClientes tr");
-
-            linhas.forEach(linha => {
+            document.querySelectorAll("#listaClientes tr").forEach(linha => {
                 const nome = linha.children[1].innerText.toLowerCase();
                 linha.style.display = nome.includes(termo) ? "" : "none";
             });
         }
 
+        // Excluir clientes selecionados
         function excluirSelecionados() {
             let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
             const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
 
-            if (checkboxes.length === 0) {
+            if (!checkboxes.length) {
                 alert("Selecione ao menos um cliente.");
                 return;
             }
 
-            const indices = [...checkboxes].map(c => Number(c.dataset.index));
+            const indices = Array.from(checkboxes).map(c => Number(c.dataset.index));
             clientes = clientes.filter((_, i) => !indices.includes(i));
-
             localStorage.setItem("clientes", JSON.stringify(clientes));
             carregarClientes();
             alert("Cliente(s) excluído(s) com sucesso!");
         }
 
         // MODAL
-        function abrirModal() {
-            document.getElementById("modalBg").style.display = "flex";
-        }
-
-        function fecharModal() {
-            document.getElementById("modalBg").style.display = "none";
-        }
+        function abrirModal() { document.getElementById("modalBg").style.display = "flex"; }
+        function fecharModal() { document.getElementById("modalBg").style.display = "none"; }
 
         function salvarCliente() {
             const cliente = {
@@ -345,7 +331,6 @@
         }
 
         window.onload = carregarClientes;
-
     </script>
 
 </body>
