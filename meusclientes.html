@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Clientes - Prestagora</title>
+
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f5f6fa; }
+        .sidebar { width: 240px; height: 100vh; background: #111; color: #fff; position: fixed; padding-top: 20px; }
+        .sidebar h2 { text-align: center; margin-bottom: 20px; }
+        .sidebar a { display: block; padding: 15px 20px; color: #ddd; text-decoration: none; }
+        .sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
+        .content { margin-left: 240px; padding: 30px; }
+        .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .client-item { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .search-bar { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>PRESTAGORA</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a class="active" href="meusclientes.html">Meus Clientes</a>
+    </div>
+
+    <div class="content">
+        <h1>Meus Clientes</h1>
+
+        <div class="card">
+            <input class="search-bar" type="text" id="pesquisaCliente" placeholder="Pesquisar cliente..." onkeyup="filtrarClientes()" />
+            <div id="listaClientes" class="client-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let clientes = [];
+
+        // Carregar clientes do LocalStorage
+        function carregarClientes() {
+            let data = localStorage.getItem("clientes");
+            if (data) {
+                clientes = JSON.parse(data);
+            }
+            atualizarLista();
+        }
+
+        function atualizarLista() {
+            let lista = document.getElementById('listaClientes');
+            lista.innerHTML = '';
+
+            clientes.forEach((c, index) => {
+                let div = document.createElement('div');
+                div.className = 'client-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${c.nome}</strong><br>
+                        <small>${c.email}</small>
+                    </div>
+                    <div>
+                        <input type="checkbox" onclick="excluir(${index})"> Excluir
+                    </div>
+                `;
+                lista.appendChild(div);
+            });
+        }
+
+        function excluir(index) {
+            if (confirm('Deseja excluir este cliente?')) {
+                clientes.splice(index, 1);
+                localStorage.setItem("clientes", JSON.stringify(clientes));
+                atualizarLista();
+            }
+        }
+
+        function filtrarClientes() {
+            let termo = document.getElementById('pesquisaCliente').value.toLowerCase();
+            let lista = document.getElementById('listaClientes');
+            lista.innerHTML = '';
+
+            clientes
+                .filter(c => c.nome.toLowerCase().includes(termo))
+                .forEach((c, index) => {
+                    let div = document.createElement('div');
+                    div.className = 'client-item';
+                    div.innerHTML = `
+                        <div>
+                            <strong>${c.nome}</strong><br>
+                            <small>${c.email}</small>
+                        </div>
+                        <div>
+                            <input type="checkbox" onclick="excluir(${index})"> Excluir
+                        </div>
+                    `;
+                    lista.appendChild(div);
+                });
+        }
+
+        carregarClientes();
+    </script>
+
+</body>
+</html>
