@@ -15,6 +15,7 @@
         font-family: Arial, sans-serif;
     }
 
+    /* MENU LATERAL */
     .sidebar {
         width: 250px;
         height: 100vh;
@@ -45,6 +46,7 @@
         cursor: pointer;
     }
 
+    /* ÁREA PRINCIPAL */
     .main {
         margin-left: 250px;
         padding: 30px;
@@ -85,6 +87,34 @@
         background: #0b5ed7;
     }
 
+    /* CONTAS META ADS */
+    .seta {
+        float: right;
+        transition: 0.3s;
+    }
+
+    .contas-lista {
+        margin-top: 10px;
+        padding-left: 20px;
+        display: none;
+    }
+
+    .conta-item {
+        padding: 8px 0;
+    }
+
+    /* DESPESAS + GRÁFICO */
+    .flex-container {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .despesas-card, .grafico-card {
+        flex: 1;
+        min-width: 300px;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -98,54 +128,51 @@
     }
 
     th {
-        background: #eeeeee;
+        background-color: #f0f0f0;
     }
 
-    input[type="text"], input[type="number"] {
+    input[type="text"], input[type="number"], select {
         width: 100%;
-        padding: 5px;
-        border-radius: 4px;
+        padding: 8px;
+        margin: 3px 0;
+        border-radius: 5px;
         border: 1px solid #ccc;
-        box-sizing: border-box;
-    }
-
-    .flex-row {
-        display: flex;
-        gap: 25px;
-        align-items: flex-start;
-    }
-
-    .flex-column {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
     }
 </style>
 </head>
+
 <body>
 
+<!-- MENU LATERAL -->
 <div class="sidebar">
     <h2>Marketing ADS</h2>
+
     <a href="#">Dashboard</a>
+
     <a href="#contas" onclick="toggleContas()">
         Contas Meta Ads
         <span class="seta" id="seta">▼</span>
     </a>
+
     <div class="contas-lista" id="listaContas"></div>
+
     <a href="meusclientes.html">Meus Clientes</a>
     <a href="#">Relatórios</a>
     <a href="#">Configurações</a>
     <a href="#" onclick="sair()">Sair</a>
 </div>
 
+<!-- ÁREA PRINCIPAL -->
 <div class="main">
 
     <div class="topbar">
         <h1>Dashboard</h1>
         <div style="display:flex; align-items:center; gap:15px;">
-            <div><span id="tempo" style="font-weight:bold;">00:00:00</span></div>
+            <!-- Temporizador -->
+            <span id="tempo" style="font-weight:bold;">00:00:00</span>
             <button class="btn" id="btnIniciar" onclick="iniciarTrabalho()">Iniciar Trabalho</button>
             <button class="btn" id="btnParar" onclick="pararTrabalho()" style="display:none;">Parar</button>
+            <!-- Meta Ads -->
             <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
         </div>
     </div>
@@ -155,164 +182,193 @@
         <p>Gerencie suas contas, campanhas e relatórios de forma automatizada.</p>
     </div>
 
-    <div class="flex-row">
-        <div class="card" style="flex:1;">
-            <h3>Minhas Despesas</h3>
-            <div class="flex-column">
-                <input type="text" id="descricao" placeholder="Descrição da despesa">
-                <input type="number" id="valorDespesa" placeholder="Valor (R$)">
-                <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
-            </div>
+    <!-- DESPESAS + GRÁFICO -->
+    <div class="flex-container">
 
-            <table>
+        <!-- TABELA DE DESPESAS -->
+        <div class="despesas-card card">
+            <h3>Minhas Despesas</h3>
+
+            <label>Descrição</label>
+            <input type="text" id="descDespesa" placeholder="Ex: Internet, Software...">
+
+            <label>Categoria</label>
+            <input type="text" id="catDespesa" placeholder="Ex: Tecnologia, Escritório...">
+
+            <label>Valor (R$)</label>
+            <input type="number" id="valDespesa" placeholder="0.00">
+
+            <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
+
+            <table id="tabelaDespesas">
                 <thead>
                     <tr>
                         <th>Descrição</th>
+                        <th>Categoria</th>
                         <th>Valor (R$)</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tabelaDespesas"></tbody>
+                <tbody></tbody>
             </table>
         </div>
 
-        <div class="card" style="flex:1;">
-            <h3>Gráfico Receitas x Despesas</h3>
-            <canvas id="grafico" height="300"></canvas>
+        <!-- GRÁFICO -->
+        <div class="grafico-card card">
+            <h3>Receita vs Despesas</h3>
+            <canvas id="grafico"></canvas>
         </div>
+
     </div>
 
 </div>
 
+<!-- SDK FACEBOOK -->
 <script>
 window.fbAsyncInit = function () {
-    FB.init({appId:'1224065886236647', cookie:true, xfbml:true, version:'v19.0'});
+    FB.init({
+        appId: '1224065886236647',
+        cookie: true,
+        xfbml: true,
+        version: 'v19.0'
+    });
 };
 
-(function(d,s,id){let js,fjs=d.getElementsByTagName(s)[0]; if(d.getElementById(id))return;
-js=d.createElement(s); js.id=id; js.src="https://connect.facebook.net/pt_BR/sdk.js"; fjs.parentNode.insertBefore(js,fjs);
-}(document,'script','facebook-jssdk'));
+(function (d, s, id) {
+    let js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+})(document, 'script', 'facebook-jssdk');
+</script>
 
-function loginFacebook(){
-    FB.login(response=>{
-        if(response.status==='connected'){
-            document.getElementById("btnMeta").innerText="Conectado ✓";
-            carregarContasMeta();
-        } else { alert("Você precisa permitir o acesso para continuar."); }
-    }, {scope:'ads_read,ads_management,business_management'});
-}
-
-function carregarContasMeta(){
-    FB.api('/me/adaccounts', response=>{
-        if(response && !response.error){
-            localStorage.setItem("contas_meta", JSON.stringify(response.data));
-            mostrarContas();
-        } else { alert("Erro ao carregar contas Meta Ads."); }
-    });
-}
-
-function mostrarContas(){
-    const lista = document.getElementById("listaContas");
-    lista.innerHTML="";
-    const contas = JSON.parse(localStorage.getItem("contas_meta") || "[]");
-    contas.forEach(conta=>{
-        lista.innerHTML+=`<div class="conta-item">• ${conta.name} (${conta.account_id})</div>`;
-    });
-}
-
-function toggleContas(){
-    const lista = document.getElementById("listaContas");
-    const seta = document.getElementById("seta");
-    const aberto = lista.style.display==="block";
-    lista.style.display = aberto?"none":"block";
-    seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
-}
-
-window.onload=function(){
-    if(localStorage.getItem("contas_meta")){
-        document.getElementById("btnMeta").innerText="Conectado ✓";
-        mostrarContas();
-    }
-    atualizarTabela();
-    atualizarGrafico();
-}
-
-function sair(){
-    localStorage.clear();
-    alert("Você saiu da plataforma.");
-    location.reload();
-}
+<!-- FUNÇÕES -->
+<script>
+let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
 
 // Temporizador
-let cronometro; let segundos=0;
-function formatarTempo(seg){const h=String(Math.floor(seg/3600)).padStart(2,'0');
-const m=String(Math.floor((seg%3600)/60)).padStart(2,'0'); const s=String(seg%60).padStart(2,'0'); return `${h}:${m}:${s}`;}
-
+let cronometro, segundos = 0;
+function formatarTempo(seg){const h=String(Math.floor(seg/3600)).padStart(2,'0'); const m=String(Math.floor((seg%3600)/60)).padStart(2,'0'); const s=String(seg%60).padStart(2,'0'); return `${h}:${m}:${s}`;}
 function iniciarTrabalho(){
     document.getElementById("btnIniciar").style.display="none";
     document.getElementById("btnParar").style.display="inline-block";
     cronometro=setInterval(()=>{segundos++; document.getElementById("tempo").innerText=formatarTempo(segundos);},1000);
 }
-
 function pararTrabalho(){
     clearInterval(cronometro);
     document.getElementById("btnIniciar").style.display="inline-block";
     document.getElementById("btnParar").style.display="none";
 }
 
-// Despesas
-function adicionarDespesa(){
-    const descricao=document.getElementById("descricao").value;
-    const valor=parseFloat(document.getElementById("valorDespesa").value);
-    if(!descricao || isNaN(valor)){alert("Preencha os campos corretamente."); return;}
-    let despesas=JSON.parse(localStorage.getItem("despesas") || "[]");
-    despesas.push({descricao,valor});
-    localStorage.setItem("despesas", JSON.stringify(despesas));
-    document.getElementById("descricao").value="";
-    document.getElementById("valorDespesa").value="";
-    atualizarTabela();
-    atualizarGrafico();
-}
-
-function excluirDespesa(index){
-    let despesas=JSON.parse(localStorage.getItem("despesas") || "[]");
-    despesas.splice(index,1);
+// Adicionar despesa
+function adicionarDespesa() {
+    const desc = document.getElementById("descDespesa").value;
+    const cat = document.getElementById("catDespesa").value;
+    const val = parseFloat(document.getElementById("valDespesa").value);
+    if (!desc || !cat || isNaN(val)) { alert("Preencha todos os campos corretamente."); return; }
+    despesas.push({desc, cat, val});
     localStorage.setItem("despesas", JSON.stringify(despesas));
     atualizarTabela();
     atualizarGrafico();
+    document.getElementById("descDespesa").value = "";
+    document.getElementById("catDespesa").value = "";
+    document.getElementById("valDespesa").value = "";
 }
 
-function atualizarTabela(){
-    const tabela=document.getElementById("tabelaDespesas");
-    tabela.innerHTML="";
-    const despesas=JSON.parse(localStorage.getItem("despesas") || "[]");
-    despesas.forEach((d,i)=>{
-        tabela.innerHTML+=`
-        <tr>
-            <td>${d.descricao}</td>
-            <td>${d.valor.toFixed(2)}</td>
-            <td><button class="btn" style="background:red;padding:5px 10px;" onclick="excluirDespesa(${i})">Excluir</button></td>
-        </tr>
+// Atualizar tabela
+function atualizarTabela() {
+    const tbody = document.querySelector("#tabelaDespesas tbody");
+    tbody.innerHTML = "";
+    despesas.forEach((d, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${d.desc}</td>
+                <td>${d.cat}</td>
+                <td>${d.val.toFixed(2)}</td>
+                <td><button class="btn" style="background:red;padding:5px 10px;" onclick="removerDespesa(${i})">Excluir</button></td>
+            </tr>
         `;
     });
 }
 
-// Gráfico simples Receitas x Despesas
-let grafico;
-function atualizarGrafico(){
-    const despesas=JSON.parse(localStorage.getItem("despesas") || "[]");
-    const totalDespesas = despesas.reduce((acc,d)=>acc+d.valor,0);
-    const totalReceitas = 10000; // valor fixo de exemplo
-    const ctx = document.getElementById("grafico").getContext("2d");
-    if(grafico) grafico.destroy();
-    grafico=new Chart(ctx,{
-        type:'bar',
-        data:{
-            labels:['Receitas','Despesas'],
-            datasets:[{label:'R$', data:[totalReceitas,totalDespesas], backgroundColor:['#0d6efd','#ff6384']}]
-        },
-        options:{responsive:true, plugins:{legend:{display:false}}}
+// Remover despesa
+function removerDespesa(index) {
+    despesas.splice(index, 1);
+    localStorage.setItem("despesas", JSON.stringify(despesas));
+    atualizarTabela();
+    atualizarGrafico();
+}
+
+// Receitas mensais (somatório dos contratos)
+function calcularReceita() {
+    const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    return clientes.reduce((acc, c) => acc + parseFloat(c.valor || 0), 0);
+}
+
+// Gráfico
+let graficoCtx = document.getElementById("grafico").getContext("2d");
+let graficoChart;
+function atualizarGrafico() {
+    const receita = calcularReceita();
+    const totalDespesas = despesas.reduce((acc, d) => acc + d.val, 0);
+    const data = {
+        labels: ["Receita", "Despesas"],
+        datasets: [{ label: "R$", data: [receita, totalDespesas], backgroundColor: ["#0d6efd", "#dc3545"] }]
+    };
+    if (graficoChart) graficoChart.destroy();
+    graficoChart = new Chart(graficoCtx, { type: 'bar', data: data, options: { responsive: true, plugins: { legend: { display: false } } } });
+}
+
+// Contas Meta Ads
+function loginFacebook() {
+    FB.login(response => {
+        if (response.status === 'connected') {
+            document.getElementById("btnMeta").innerText = "Conectado ✓";
+            carregarContasMeta();
+        } else alert("Você precisa permitir o acesso para continuar.");
+    }, { scope: 'ads_read,ads_management,business_management' });
+}
+function carregarContasMeta() {
+    FB.api('/me/adaccounts', response => {
+        if (response && !response.error) {
+            localStorage.setItem("contas_meta", JSON.stringify(response.data));
+            mostrarContas();
+        } else alert("Erro ao carregar contas Meta Ads.");
     });
+}
+function mostrarContas() {
+    const lista = document.getElementById("listaContas");
+    lista.innerHTML = "";
+    const contas = JSON.parse(localStorage.getItem("contas_meta") || "[]");
+    contas.forEach(conta => {
+        lista.innerHTML += `<div class="conta-item">• ${conta.name} (${conta.account_id})</div>`;
+    });
+}
+function toggleContas() {
+    const lista = document.getElementById("listaContas");
+    const seta = document.getElementById("seta");
+    const aberto = lista.style.display === "block";
+    lista.style.display = aberto ? "none" : "block";
+    seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
+}
+
+// Inicialização
+window.onload = function () {
+    if (localStorage.getItem("contas_meta")) {
+        document.getElementById("btnMeta").innerText = "Conectado ✓";
+        mostrarContas();
+    }
+    atualizarTabela();
+    atualizarGrafico();
+};
+
+// Sair
+function sair() {
+    localStorage.clear();
+    alert("Você saiu da plataforma.");
+    location.reload();
 }
 </script>
 
