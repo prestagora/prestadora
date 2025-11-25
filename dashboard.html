@@ -74,7 +74,7 @@
             background: #0d6efd;
             border: none;
             padding: 10px 20px;
-            color: white;
+            color: #fff;
             border-radius: 6px;
             cursor: pointer;
             font-size: 15px;
@@ -120,7 +120,7 @@
             padding: 8px 0;
         }
 
-        /* Recolher card */
+        /* CARD RECOLHÍVEL */
         .collapse-header {
             cursor: pointer;
             display: flex;
@@ -148,13 +148,13 @@
         <a href="#">Dashboard</a>
 
         <a href="#contas" onclick="toggleContas()">
-            Contas Meta Ads 
+            Contas Meta Ads
             <span class="seta" id="seta">▼</span>
         </a>
 
         <div class="contas-lista" id="listaContas"></div>
 
-        <a href="#">Meus Clientes</a>
+        <a href="meusclientes.html">Meus Clientes</a>
         <a href="#">Relatórios</a>
         <a href="#">Configurações</a>
         <a href="#" onclick="sair()">Sair</a>
@@ -162,6 +162,7 @@
 
     <!-- ÁREA PRINCIPAL -->
     <div class="main">
+
         <div class="topbar">
             <h1>Dashboard</h1>
             <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
@@ -172,7 +173,6 @@
             <p>Gerencie suas contas, campanhas e relatórios de forma automatizada.</p>
         </div>
 
-
         <!-- CARD RECOLHÍVEL — ADICIONAR CLIENTE -->
         <div class="card">
             <div class="collapse-header" onclick="toggleClienteCard()">
@@ -181,6 +181,7 @@
             </div>
 
             <div class="collapse-body" id="clienteCard">
+
                 <div class="form-group">
                     <label>Data de Início</label>
                     <input type="date" id="inicio">
@@ -224,7 +225,7 @@
 
     <!-- SDK DO FACEBOOK -->
     <script>
-        window.fbAsyncInit = function() {
+        window.fbAsyncInit = function () {
             FB.init({
                 appId: '1224065886236647',
                 cookie: true,
@@ -233,33 +234,30 @@
             });
         };
 
-        (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0];
+        (function (d, s, id) {
+            let js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
-            js = d.createElement(s); js.id = id;
+            js = d.createElement(s);
+            js.id = id;
             js.src = "https://connect.facebook.net/pt_BR/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+        })(document, 'script', 'facebook-jssdk');
     </script>
 
-    <!-- FUNÇÕES DO SISTEMA -->
+    <!-- FUNÇÕES -->
     <script>
 
-        // RECOLHER / ABRIR FORMULÁRIO DE CLIENTE
+        // Recolher card de cliente
         function toggleClienteCard() {
             const body = document.getElementById("clienteCard");
             const seta = document.getElementById("setaCliente");
 
-            if (body.style.display === "block") {
-                body.style.display = "none";
-                seta.style.transform = "rotate(0deg)";
-            } else {
-                body.style.display = "block";
-                seta.style.transform = "rotate(180deg)";
-            }
+            const aberto = body.style.display === "block";
+            body.style.display = aberto ? "none" : "block";
+            seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
         }
 
-        // SALVAR CLIENTE
+        // Salvar cliente
         function salvarCliente() {
             const cliente = {
                 inicio: document.getElementById("inicio").value,
@@ -271,7 +269,7 @@
                 valor: document.getElementById("valor").value
             };
 
-            let lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+            const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
             lista.push(cliente);
 
             localStorage.setItem("clientes", JSON.stringify(lista));
@@ -279,22 +277,21 @@
             alert("Cliente salvo com sucesso!");
         }
 
-
-        // LOGIN META ADS
+        // Meta Ads — Login
         function loginFacebook() {
-            FB.login(function(response) {
+            FB.login(response => {
                 if (response.status === 'connected') {
                     document.getElementById("btnMeta").innerText = "Conectado ✓";
                     carregarContasMeta();
                 } else {
                     alert("Você precisa permitir o acesso para continuar.");
                 }
-            }, {scope: 'ads_read,ads_management,business_management'});
+            }, { scope: 'ads_read,ads_management,business_management' });
         }
 
-        // CARREGA AS CONTAS META ADS
+        // Carregar contas
         function carregarContasMeta() {
-            FB.api('/me/adaccounts', function(response) {
+            FB.api('/me/adaccounts', response => {
                 if (response && !response.error) {
                     localStorage.setItem("contas_meta", JSON.stringify(response.data));
                     mostrarContas();
@@ -304,7 +301,7 @@
             });
         }
 
-        // MOSTRAR CONTAS
+        // Mostrar contas no menu
         function mostrarContas() {
             const lista = document.getElementById("listaContas");
             lista.innerHTML = "";
@@ -312,42 +309,37 @@
             const contas = JSON.parse(localStorage.getItem("contas_meta") || "[]");
 
             contas.forEach(conta => {
-                lista.innerHTML += 
-                    <div class="conta-item">
-                        • ${conta.name} (${conta.account_id})
-                    </div>
-                ;
+                lista.innerHTML += `
+                    <div class="conta-item">• ${conta.name} (${conta.account_id})</div>
+                `;
             });
         }
 
-        // ABRIR/FECHAR LISTA
+        // Abrir/fechar lista Meta Ads
         function toggleContas() {
             const lista = document.getElementById("listaContas");
             const seta = document.getElementById("seta");
 
-            if (lista.style.display === "block") {
-                lista.style.display = "none";
-                seta.style.transform = "rotate(0deg)";
-            } else {
-                lista.style.display = "block";
-                seta.style.transform = "rotate(180deg)";
-            }
+            const aberto = lista.style.display === "block";
+            lista.style.display = aberto ? "none" : "block";
+            seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
         }
 
-        // CARREGAR
-        window.onload = function() {
+        // Auto carregar
+        window.onload = function () {
             if (localStorage.getItem("contas_meta")) {
                 document.getElementById("btnMeta").innerText = "Conectado ✓";
                 mostrarContas();
             }
-        }
+        };
 
-        // SAIR
+        // Sair
         function sair() {
             localStorage.clear();
             alert("Você saiu da plataforma.");
             location.reload();
         }
+
     </script>
 
 </body>
