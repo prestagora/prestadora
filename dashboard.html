@@ -9,135 +9,132 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    body {
-        margin: 0;
-        background: #f4f6f9;
-        font-family: Arial, sans-serif;
-    }
+body {
+    margin: 0;
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
 
-    /* MENU LATERAL */
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        background: #0d6efd;
-        color: #fff;
-        position: fixed;
-        left: 0;
-        top: 0;
-        padding-top: 30px;
-    }
+/* MENU LATERAL */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #0d6efd;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 30px;
+}
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 20px;
+}
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+}
+.sidebar a:hover {
+    background: #0b5ed7;
+    cursor: pointer;
+}
 
-    .sidebar h2 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 20px;
-    }
+/* ÁREA PRINCIPAL */
+.main {
+    margin-left: 250px;
+    padding: 30px;
+}
+.card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.topbar h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+.btn {
+    background: #0d6efd;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+}
+.btn:hover {
+    background: #0b5ed7;
+}
 
-    .sidebar a {
-        display: block;
-        padding: 15px 20px;
-        color: #fff;
-        text-decoration: none;
-        font-size: 16px;
-    }
+/* CONTAS META ADS */
+.seta {
+    float: right;
+    transition: 0.3s;
+}
+.contas-lista {
+    margin-top: 10px;
+    padding-left: 20px;
+    display: none;
+}
+.conta-item {
+    padding: 8px 0;
+}
 
-    .sidebar a:hover {
-        background: #0b5ed7;
-        cursor: pointer;
-    }
+/* DESPESAS + GRÁFICO */
+.flex-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+.despesas-card, .grafico-card {
+    flex: 1;
+    min-width: 300px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+th {
+    background-color: #f0f0f0;
+}
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    margin: 3px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
 
-    /* ÁREA PRINCIPAL */
-    .main {
-        margin-left: 250px;
-        padding: 30px;
-    }
-
-    .card {
-        background: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 0 12px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-    }
-
-    .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-    }
-
-    .topbar h1 {
-        margin: 0;
-        font-size: 24px;
-        color: #333;
-    }
-
-    .btn {
-        background: #0d6efd;
-        border: none;
-        padding: 10px 20px;
-        color: #fff;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 15px;
-    }
-
-    .btn:hover {
-        background: #0b5ed7;
-    }
-
-    /* CONTAS META ADS */
-    .seta {
-        float: right;
-        transition: 0.3s;
-    }
-
-    .contas-lista {
-        margin-top: 10px;
-        padding-left: 20px;
-        display: none;
-    }
-
-    .conta-item {
-        padding: 8px 0;
-    }
-
-    /* DESPESAS + GRÁFICO */
-    .flex-container {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-    .despesas-card, .grafico-card {
-        flex: 1;
-        min-width: 300px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f0f0f0;
-    }
-
-    input[type="text"], input[type="number"], select {
-        width: 100%;
-        padding: 8px;
-        margin: 3px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
+/* TEMPORIZADOR */
+.temporizador {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+.temporizador span {
+    font-weight: bold;
+    font-size: 16px;
+}
 </style>
 </head>
 
@@ -146,16 +143,12 @@
 <!-- MENU LATERAL -->
 <div class="sidebar">
     <h2>Marketing ADS</h2>
-
     <a href="#">Dashboard</a>
-
     <a href="#contas" onclick="toggleContas()">
         Contas Meta Ads
         <span class="seta" id="seta">▼</span>
     </a>
-
     <div class="contas-lista" id="listaContas"></div>
-
     <a href="meusclientes.html">Meus Clientes</a>
     <a href="#">Relatórios</a>
     <a href="#">Configurações</a>
@@ -166,7 +159,11 @@
 <div class="main">
 
     <div class="topbar">
-        <h1>Dashboard</h1>
+        <div class="temporizador">
+            <span id="tempo">00:00:00</span>
+            <button class="btn" id="btnIniciar" onclick="iniciarTemporizador()">Iniciar Trabalho</button>
+            <button class="btn" id="btnParar" onclick="pararTemporizador()" style="display:none;">Parar</button>
+        </div>
         <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
     </div>
 
@@ -181,16 +178,12 @@
         <!-- TABELA DE DESPESAS -->
         <div class="despesas-card card">
             <h3>Minhas Despesas</h3>
-
             <label>Descrição</label>
             <input type="text" id="descDespesa" placeholder="Ex: Internet, Software...">
-
             <label>Categoria</label>
             <input type="text" id="catDespesa" placeholder="Ex: Tecnologia, Escritório...">
-
             <label>Valor (R$)</label>
             <input type="number" id="valDespesa" placeholder="0.00">
-
             <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
 
             <table id="tabelaDespesas">
@@ -213,7 +206,6 @@
         </div>
 
     </div>
-
 </div>
 
 <!-- SDK FACEBOOK -->
@@ -239,18 +231,42 @@ window.fbAsyncInit = function () {
 
 <!-- FUNÇÕES -->
 <script>
+// --- TEMPORIZADOR ---
+let segundos = 0;
+let intervalo;
+
+function formatarTempo(segundos) {
+    const h = String(Math.floor(segundos / 3600)).padStart(2, "0");
+    const m = String(Math.floor((segundos % 3600) / 60)).padStart(2, "0");
+    const s = String(segundos % 60).padStart(2, "0");
+    return `${h}:${m}:${s}`;
+}
+
+function iniciarTemporizador() {
+    document.getElementById("btnIniciar").style.display = "none";
+    document.getElementById("btnParar").style.display = "inline-block";
+    intervalo = setInterval(() => {
+        segundos++;
+        document.getElementById("tempo").innerText = formatarTempo(segundos);
+    }, 1000);
+}
+
+function pararTemporizador() {
+    clearInterval(intervalo);
+    document.getElementById("btnIniciar").style.display = "inline-block";
+    document.getElementById("btnParar").style.display = "none";
+}
+
+// --- DESPESAS + GRÁFICO ---
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
+let graficoChart;
 
 // Adicionar despesa
 function adicionarDespesa() {
     const desc = document.getElementById("descDespesa").value;
     const cat = document.getElementById("catDespesa").value;
     const val = parseFloat(document.getElementById("valDespesa").value);
-
-    if (!desc || !cat || isNaN(val)) {
-        alert("Preencha todos os campos corretamente.");
-        return;
-    }
+    if (!desc || !cat || isNaN(val)) { alert("Preencha todos os campos corretamente."); return; }
 
     despesas.push({desc, cat, val});
     localStorage.setItem("despesas", JSON.stringify(despesas));
@@ -266,14 +282,12 @@ function atualizarTabela() {
     const tbody = document.querySelector("#tabelaDespesas tbody");
     tbody.innerHTML = "";
     despesas.forEach((d, i) => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${d.desc}</td>
-                <td>${d.cat}</td>
-                <td>${d.val.toFixed(2)}</td>
-                <td><button onclick="removerDespesa(${i})">Excluir</button></td>
-            </tr>
-        `;
+        tbody.innerHTML += `<tr>
+            <td>${d.desc}</td>
+            <td>${d.cat}</td>
+            <td>${d.val.toFixed(2)}</td>
+            <td><button onclick="removerDespesa(${i})">Excluir</button></td>
+        </tr>`;
     });
 }
 
@@ -285,50 +299,38 @@ function removerDespesa(index) {
     atualizarGrafico();
 }
 
-// Receitas mensais (somatório dos contratos)
+// Calcular receita dos clientes
 function calcularReceita() {
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
     return clientes.reduce((acc, c) => acc + parseFloat(c.valor || 0), 0);
 }
 
-// Gráfico
-let graficoCtx = document.getElementById("grafico").getContext("2d");
-let graficoChart;
-
+// Atualizar gráfico
 function atualizarGrafico() {
     const receita = calcularReceita();
     const totalDespesas = despesas.reduce((acc, d) => acc + d.val, 0);
-
+    const ctx = document.getElementById("grafico").getContext("2d");
     const data = {
         labels: ["Receita", "Despesas"],
-        datasets: [{
-            label: "R$",
-            data: [receita, totalDespesas],
-            backgroundColor: ["#0d6efd", "#dc3545"]
-        }]
+        datasets: [{ label:"R$", data:[receita, totalDespesas], backgroundColor:["#0d6efd","#dc3545"] }]
     };
-
-    if (graficoChart) graficoChart.destroy();
-    graficoChart = new Chart(graficoCtx, {
-        type: 'bar',
-        data: data,
-        options: { responsive: true, plugins: { legend: { display: false } } }
-    });
+    if(graficoChart) graficoChart.destroy();
+    graficoChart = new Chart(ctx,{ type:"bar", data:data, options:{ responsive:true, plugins:{legend:{display:false}} } });
 }
 
-// Contas Meta Ads
+// --- CONTAS META ADS ---
 function loginFacebook() {
     FB.login(response => {
-        if (response.status === 'connected') {
-            document.getElementById("btnMeta").innerText = "Conectado ✓";
-            carregarContasMeta();
+        if(response.status==='connected'){ 
+            document.getElementById("btnMeta").innerText="Conectado ✓"; 
+            carregarContasMeta(); 
         } else alert("Você precisa permitir o acesso para continuar.");
-    }, { scope: 'ads_read,ads_management,business_management' });
+    }, { scope:'ads_read,ads_management,business_management' });
 }
 
 function carregarContasMeta() {
     FB.api('/me/adaccounts', response => {
-        if (response && !response.error) {
+        if(response && !response.error){ 
             localStorage.setItem("contas_meta", JSON.stringify(response.data));
             mostrarContas();
         } else alert("Erro ao carregar contas Meta Ads.");
@@ -352,15 +354,17 @@ function toggleContas() {
     seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
 }
 
-window.onload = function () {
-    if (localStorage.getItem("contas_meta")) {
-        document.getElementById("btnMeta").innerText = "Conectado ✓";
+// --- INICIALIZAÇÃO ---
+window.onload = function() {
+    if(localStorage.getItem("contas_meta")){
+        document.getElementById("btnMeta").innerText="Conectado ✓";
         mostrarContas();
     }
     atualizarTabela();
     atualizarGrafico();
 };
 
+// --- SAIR ---
 function sair() {
     localStorage.clear();
     alert("Você saiu da plataforma.");
