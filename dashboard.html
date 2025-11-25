@@ -28,6 +28,9 @@ th { background-color:#f0f0f0; }
 input[type="text"], input[type="number"], select { width:100%; padding:8px; margin:3px 0; border-radius:5px; border:1px solid #ccc; }
 .timer { display:flex; gap:10px; align-items:center; }
 .timer span { font-size:16px; font-weight:bold; }
+.alert { margin-top:10px; padding:10px; border-radius:5px; display:none; }
+.alert-sucesso { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+.alert-info { background:#cce5ff; color:#004085; border:1px solid #b8daff; }
 </style>
 </head>
 <body>
@@ -52,8 +55,8 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
             <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
             <div class="timer">
                 <span id="tempo">00:00:00</span>
-                <button class="btn" id="btnIniciar" onclick="iniciarTimer()">Iniciar</button>
-                <button class="btn" id="btnParar" onclick="pararTimer()">Parar</button>
+                <button class="btn" id="btnIniciar" onclick="iniciarTrabalho()">Iniciar Trabalho</button>
+                <button class="btn" id="btnParar" onclick="pararTrabalho()" style="display:none;">Parar</button>
             </div>
         </div>
     </div>
@@ -74,6 +77,7 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
             <label>Valor (R$)</label>
             <input type="number" id="valDespesa" placeholder="0.00">
             <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
+            <div class="alert alert-sucesso" id="alertDespesa">Despesa adicionada com sucesso!</div>
             <table>
                 <thead>
                     <tr><th>Descrição</th><th>Categoria</th><th>Valor (R$)</th><th>Ações</th></tr>
@@ -92,6 +96,7 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
     <!-- Gráfico Produtividade -->
     <div class="card">
         <h3>Produtividade</h3>
+        <div class="alert alert-info" id="alertProdutividade">Temporizador registrado com sucesso!</div>
         <canvas id="graficoProdutividade"></canvas>
     </div>
 
@@ -113,6 +118,7 @@ function adicionarDespesa() {
     document.getElementById("descDespesa").value = "";
     document.getElementById("catDespesa").value = "";
     document.getElementById("valDespesa").value = "";
+    mostrarAlerta("alertDespesa");
 }
 function atualizarTabela() {
     const tbody = document.getElementById("tabelaDespesas");
@@ -152,27 +158,35 @@ function atualizarGrafico() {
 let timerInterval;
 let segundos = 0;
 let produtividade = JSON.parse(localStorage.getItem("produtividade") || "[]");
+
 function formatarTempo(sec) {
     let h = Math.floor(sec/3600).toString().padStart(2,'0');
     let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
     let s = (sec%60).toString().padStart(2,'0');
     return `${h}:${m}:${s}`;
 }
-function iniciarTimer() {
+
+function iniciarTrabalho() {
+    document.getElementById("btnIniciar").style.display = "none";
+    document.getElementById("btnParar").style.display = "inline-block";
     clearInterval(timerInterval);
     timerInterval = setInterval(()=>{
         segundos++;
         document.getElementById("tempo").innerText = formatarTempo(segundos);
     },1000);
 }
-function pararTimer() {
+
+function pararTrabalho() {
     clearInterval(timerInterval);
     const agora = new Date();
     produtividade.push({data: agora.toLocaleDateString(), horas: segundos/3600});
     localStorage.setItem("produtividade", JSON.stringify(produtividade));
     segundos = 0;
     document.getElementById("tempo").innerText = "00:00:00";
+    document.getElementById("btnParar").style.display = "none";
+    document.getElementById("btnIniciar").style.display = "inline-block";
     atualizarGraficoProdutividade();
+    mostrarAlerta("alertProdutividade");
 }
 
 // ----------------------- GRAFICO PRODUTIVIDADE -----------------------
@@ -189,6 +203,13 @@ function atualizarGraficoProdutividade() {
     });
 }
 
+// ----------------------- ALERTAS -----------------------
+function mostrarAlerta(id){
+    const alertEl = document.getElementById(id);
+    alertEl.style.display = "block";
+    setTimeout(()=>{ alertEl.style.display = "none"; }, 3000);
+}
+
 // ----------------------- META ADS -----------------------
 function loginFacebook(){
     FB.getLoginStatus(function(response){
@@ -200,9 +221,7 @@ function loginFacebook(){
                 if(resp.status==='connected'){
                     document.getElementById("btnMeta").innerText="Conectado ✓";
                     carregarContasMeta();
-                } else {
-                    alert("Você precisa permitir o acesso para continuar.");
-                }
+                } else { alert("Você precisa permitir o acesso para continuar."); }
             }, {scope:'ads_read,ads_management,business_management'});
         }
     });
@@ -234,7 +253,9 @@ function sair(){ localStorage.clear(); alert("Você saiu da plataforma."); locat
 
 // ----------------------- ONLOAD -----------------------
 window.onload = function(){
-    atualizarTabela(); atualizarGrafico(); atualizarGraficoProdutividade();
+    atualizarTabela();
+    atualizarGrafico();
+    atualizarGraficoProdutividade();
     if(localStorage.getItem("contas_meta")){
         document.getElementById("btnMeta").innerText="Conectado ✓";
         mostrarContas();
