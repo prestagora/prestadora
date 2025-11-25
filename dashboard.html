@@ -4,28 +4,73 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - Plataforma de Marketing</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-body { margin:0; background:#f4f6f9; font-family:Arial,sans-serif; }
-.sidebar { width:250px; height:100vh; background:#0d6efd; color:#fff; position:fixed; left:0; top:0; padding-top:30px; }
+body {
+    margin: 0;
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
+
+/* MENU LATERAL */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #0d6efd;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 30px;
+}
 .sidebar h2 { text-align:center; margin-bottom:30px; font-size:20px; }
 .sidebar a { display:block; padding:15px 20px; color:#fff; text-decoration:none; font-size:16px; }
 .sidebar a:hover { background:#0b5ed7; cursor:pointer; }
-.main { margin-left:250px; padding:30px; }
+
+/* ÁREA PRINCIPAL */
+.main { margin-left: 250px; padding: 30px; }
 .card { background:#fff; padding:25px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.1); margin-bottom:25px; }
 .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px; }
 .topbar h1 { margin:0; font-size:24px; color:#333; flex:1; }
 .topbar .acoes { display:flex; gap:10px; align-items:center; }
-.btn { background:#0d6efd; border:none; padding:10px 20px; color:#fff; border-radius:6px; cursor:pointer; font-size:15px; }
+
+.btn {
+    background:#0d6efd;
+    border:none;
+    padding:10px 20px;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:15px;
+}
 .btn:hover { background:#0b5ed7; }
+
 .flex-container { display:flex; gap:30px; flex-wrap:wrap; }
 .despesas-card, .grafico-card { flex:1; min-width:300px; }
 table { width:100%; border-collapse:collapse; margin-top:15px; }
 th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
 th { background-color:#f0f0f0; }
 input[type="text"], input[type="number"], select { width:100%; padding:8px; margin:3px 0; border-radius:5px; border:1px solid #ccc; }
-.timer { display:flex; gap:10px; align-items:center; margin-bottom:15px; }
-.timer span { font-size:18px; font-weight:bold; }
+
+/* TEMPORIZADOR */
+.timer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+.timer span {
+    font-size:18px;
+    font-weight:bold;
+    min-width:80px;
+    text-align:center;
+}
+.timer button {
+    padding: 8px 15px;
+    font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -89,7 +134,7 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
         </div>
     </div>
 
-    <!-- Produtividade -->
+    <!-- Gráfico Produtividade -->
     <div class="card">
         <h3>Produtividade</h3>
         <canvas id="graficoProdutividade"></canvas>
@@ -97,25 +142,9 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
 
 </div>
 
-<!-- FACEBOOK SDK -->
-<div id="fb-root"></div>
-<script>
-window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '1224065886236647',
-      cookie     : true,
-      xfbml      : true,
-      version    : 'v18.0'
-    });
-};
-(function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/pt_BR/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
+<!-- SDK DO FACEBOOK -->
+<script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 // ----------------------- DESPESAS -----------------------
@@ -148,7 +177,7 @@ function removerDespesa(index) {
     atualizarTabela(); atualizarGrafico();
 }
 
-// ----------------------- RECEITA VS DESPESAS -----------------------
+// ----------------------- GRAFICO RECEITA VS DESPESAS -----------------------
 function calcularReceita() {
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
     return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
@@ -158,35 +187,30 @@ let graficoChart;
 function atualizarGrafico() {
     const receita = calcularReceita();
     const totalDespesas = despesas.reduce((acc,d)=>acc+d.val,0);
-    const data = {
-        labels:["Receita","Despesas"],
-        datasets:[{ label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"] }]
-    };
+    const data = { labels:["Receita","Despesas"], datasets:[{ label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"] }] };
     if(graficoChart) graficoChart.destroy();
     graficoChart = new Chart(ctx,{ type:'bar', data:data, options:{ responsive:true, plugins:{legend:{display:false}} } });
 }
 
 // ----------------------- TEMPORIZADOR -----------------------
-let timerInterval, segundos = 0;
+let timerInterval;
+let segundos = 0;
 let produtividade = JSON.parse(localStorage.getItem("produtividade") || "[]");
-
 function formatarTempo(sec) {
     let h = Math.floor(sec/3600).toString().padStart(2,'0');
     let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
     let s = (sec%60).toString().padStart(2,'0');
     return `${h}:${m}:${s}`;
 }
-
 function iniciarTimer() {
+    clearInterval(timerInterval);
     document.getElementById("btnIniciar").style.display="none";
     document.getElementById("btnParar").style.display="inline-block";
-    clearInterval(timerInterval);
     timerInterval = setInterval(()=>{
         segundos++;
         document.getElementById("tempo").innerText = formatarTempo(segundos);
     },1000);
 }
-
 function pararTimer() {
     clearInterval(timerInterval);
     const agora = new Date();
@@ -194,64 +218,79 @@ function pararTimer() {
     localStorage.setItem("produtividade", JSON.stringify(produtividade));
     segundos = 0;
     document.getElementById("tempo").innerText = "00:00:00";
-    document.getElementById("btnIniciar").style.display="inline-block";
     document.getElementById("btnParar").style.display="none";
+    document.getElementById("btnIniciar").style.display="inline-block";
     atualizarGraficoProdutividade();
 }
 
-// ----------------------- PRODUTIVIDADE -----------------------
+// ----------------------- GRAFICO PRODUTIVIDADE -----------------------
 const ctxProd = document.getElementById("graficoProdutividade").getContext("2d");
 let graficoProd;
 function atualizarGraficoProdutividade() {
     const labels = produtividade.map(p => p.data);
     const data = produtividade.map(p => parseFloat(p.horas.toFixed(2)));
     if(graficoProd) graficoProd.destroy();
-    graficoProd = new Chart(ctxProd,{ 
-        type:'line', 
-        data:{labels, datasets:[{label:"Horas Trabalhadas", data, borderColor:"#28a745", backgroundColor:"rgba(40,167,69,0.2)", fill:true}]}, 
-        options:{ responsive:true, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}}} 
+    graficoProd = new Chart(ctxProd,{
+        type:'line',
+        data:{labels, datasets:[{label:"Horas Trabalhadas", data, borderColor:"#28a745", backgroundColor:"rgba(40,167,69,0.2)", fill:true}]},
+        options:{ responsive:true, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}}}
     });
 }
 
 // ----------------------- META ADS -----------------------
-function loginFacebook() {
+window.fbAsyncInit = function() {
+    FB.init({
+        appId: '1224065886236647',
+        cookie: true,
+        xfbml: true,
+        version: 'v19.0'
+    });
+};
+
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if(d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+    fjs.parentNode.insertBefore(js,fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+function loginFacebook(){
     FB.login(function(response){
         if(response.status==='connected'){
             document.getElementById("btnMeta").innerText="Conectado ✓";
             carregarContasMeta();
-        } else {
+        }else{
             alert("Você precisa permitir o acesso para continuar.");
         }
     }, {scope:'ads_read,ads_management,business_management'});
 }
-
-function carregarContasMeta() {
-    FB.api('/me/adaccounts', function(response){
-        if(response && !response.error){
-            localStorage.setItem("contas_meta", JSON.stringify(response.data));
+function carregarContasMeta(){
+    FB.api('/me/adaccounts', function(resp){
+        if(resp && !resp.error){
+            localStorage.setItem("contas_meta", JSON.stringify(resp.data));
             mostrarContas();
-        } else alert("Erro ao carregar contas Meta Ads.");
+        }else{
+            alert("Erro ao carregar contas Meta Ads.");
+        }
     });
 }
-
-function mostrarContas() {
+function mostrarContas(){
     const lista = document.getElementById("listaContas");
     lista.innerHTML="";
     const contas = JSON.parse(localStorage.getItem("contas_meta")||"[]");
     contas.forEach(c=>{
-        lista.innerHTML += `<div class="conta-item">• ${c.name} (${c.account_id})</div>`;
+        lista.innerHTML+=`<div class="conta-item">• ${c.name} (${c.account_id})</div>`;
     });
 }
-
-function toggleContas() {
-    const lista=document.getElementById("listaContas");
-    const seta=document.getElementById("seta");
+function toggleContas(){
+    const lista = document.getElementById("listaContas");
+    const seta = document.getElementById("seta");
     const aberto = lista.style.display==="block";
     lista.style.display = aberto?"none":"block";
     seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
 }
-
-function sair() {
+function sair(){
     localStorage.clear();
     alert("Você saiu da plataforma.");
     location.reload();
@@ -266,5 +305,6 @@ window.onload = function(){
     }
 };
 </script>
+
 </body>
 </html>
