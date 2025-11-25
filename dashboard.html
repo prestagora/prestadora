@@ -9,135 +9,78 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    body {
-        margin: 0;
-        background: #f4f6f9;
-        font-family: Arial, sans-serif;
-    }
+body {
+    margin: 0;
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
 
-    /* MENU LATERAL */
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        background: #0d6efd;
-        color: #fff;
-        position: fixed;
-        left: 0;
-        top: 0;
-        padding-top: 30px;
-    }
+/* MENU LATERAL */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #0d6efd;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 30px;
+}
+.sidebar h2 { text-align:center; margin-bottom:30px; font-size:20px; }
+.sidebar a {
+    display:block;
+    padding:15px 20px;
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+}
+.sidebar a:hover { background:#0b5ed7; cursor:pointer; }
 
-    .sidebar h2 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 20px;
-    }
+/* ÁREA PRINCIPAL */
+.main { margin-left:250px; padding:30px; }
+.card {
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 12px rgba(0,0,0,0.1);
+    margin-bottom:25px;
+}
+.topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+.topbar h1 { margin:0; font-size:24px; color:#333; }
+.btn {
+    background:#0d6efd;
+    border:none;
+    padding:10px 20px;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:15px;
+}
+.btn:hover { background:#0b5ed7; }
 
-    .sidebar a {
-        display: block;
-        padding: 15px 20px;
-        color: #fff;
-        text-decoration: none;
-        font-size: 16px;
-    }
+/* CONTAS META ADS */
+.seta { float:right; transition:0.3s; }
+.contas-lista { margin-top:10px; padding-left:20px; display:none; }
+.conta-item { padding:8px 0; }
 
-    .sidebar a:hover {
-        background: #0b5ed7;
-        cursor: pointer;
-    }
-
-    /* ÁREA PRINCIPAL */
-    .main {
-        margin-left: 250px;
-        padding: 30px;
-    }
-
-    .card {
-        background: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 0 12px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-    }
-
-    .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-    }
-
-    .topbar h1 {
-        margin: 0;
-        font-size: 24px;
-        color: #333;
-    }
-
-    .btn {
-        background: #0d6efd;
-        border: none;
-        padding: 10px 20px;
-        color: #fff;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 15px;
-    }
-
-    .btn:hover {
-        background: #0b5ed7;
-    }
-
-    /* CONTAS META ADS */
-    .seta {
-        float: right;
-        transition: 0.3s;
-    }
-
-    .contas-lista {
-        margin-top: 10px;
-        padding-left: 20px;
-        display: none;
-    }
-
-    .conta-item {
-        padding: 8px 0;
-    }
-
-    /* DESPESAS + GRÁFICO */
-    .flex-container {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-    .despesas-card, .grafico-card {
-        flex: 1;
-        min-width: 300px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f0f0f0;
-    }
-
-    input[type="text"], input[type="number"], select {
-        width: 100%;
-        padding: 8px;
-        margin: 3px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
+/* DESPESAS + GRÁFICO */
+.flex-container { display:flex; gap:30px; flex-wrap:wrap; }
+.despesas-card, .grafico-card { flex:1; min-width:300px; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
+th { background-color:#f0f0f0; }
+input[type="text"], input[type="number"], select {
+    width:100%;
+    padding:8px;
+    margin:3px 0;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
 </style>
 </head>
 
@@ -146,16 +89,9 @@
 <!-- MENU LATERAL -->
 <div class="sidebar">
     <h2>Marketing ADS</h2>
-
     <a href="#">Dashboard</a>
-
-    <a href="#contas" onclick="toggleContas()">
-        Contas Meta Ads
-        <span class="seta" id="seta">▼</span>
-    </a>
-
+    <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span class="seta" id="seta">▼</span></a>
     <div class="contas-lista" id="listaContas"></div>
-
     <a href="meusclientes.html">Meus Clientes</a>
     <a href="#">Relatórios</a>
     <a href="#">Configurações</a>
@@ -167,14 +103,7 @@
 
     <div class="topbar">
         <h1>Dashboard</h1>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <!-- Temporizador -->
-            <span id="tempo" style="font-weight:bold;">00:00:00</span>
-            <button class="btn" id="btnIniciar" onclick="iniciarTrabalho()">Iniciar Trabalho</button>
-            <button class="btn" id="btnParar" onclick="pararTrabalho()" style="display:none;">Parar</button>
-            <!-- Meta Ads -->
-            <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
-        </div>
+        <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
     </div>
 
     <div class="card">
@@ -188,16 +117,12 @@
         <!-- TABELA DE DESPESAS -->
         <div class="despesas-card card">
             <h3>Minhas Despesas</h3>
-
             <label>Descrição</label>
             <input type="text" id="descDespesa" placeholder="Ex: Internet, Software...">
-
             <label>Categoria</label>
             <input type="text" id="catDespesa" placeholder="Ex: Tecnologia, Escritório...">
-
             <label>Valor (R$)</label>
             <input type="number" id="valDespesa" placeholder="0.00">
-
             <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
 
             <table id="tabelaDespesas">
@@ -223,31 +148,32 @@
 
 </div>
 
-<script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
+<!-- SDK FACEBOOK -->
 <script>
+window.fbAsyncInit = function() {
+    FB.init({
+        appId: '1224065886236647',
+        cookie: true,
+        xfbml: true,
+        version: 'v19.0'
+    });
+};
+(function(d, s, id){
+    let js, fjs = d.getElementsByTagName(s)[0];
+    if(d.getElementById(id)) return;
+    js=d.createElement(s); js.id=id;
+    js.src="https://connect.facebook.net/pt_BR/sdk.js";
+    fjs.parentNode.insertBefore(js,fjs);
+}(document,'script','facebook-jssdk'));
+</script>
+
+<script>
+// Variáveis
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
+let graficoChart;
 
-// Temporizador
-let cronometro, segundos = 0;
-function formatarTempo(seg){
-    const h=String(Math.floor(seg/3600)).padStart(2,'0'); 
-    const m=String(Math.floor((seg%3600)/60)).padStart(2,'0'); 
-    const s=String(seg%60).padStart(2,'0'); 
-    return `${h}:${m}:${s}`;
-}
-function iniciarTrabalho(){
-    document.getElementById("btnIniciar").style.display="none";
-    document.getElementById("btnParar").style.display="inline-block";
-    cronometro=setInterval(()=>{segundos++; document.getElementById("tempo").innerText=formatarTempo(segundos);},1000);
-}
-function pararTrabalho(){
-    clearInterval(cronometro);
-    document.getElementById("btnIniciar").style.display="inline-block";
-    document.getElementById("btnParar").style.display="none";
-}
-
-// Despesas
-function adicionarDespesa() {
+// Funções Despesas
+function adicionarDespesa(){
     const desc = document.getElementById("descDespesa").value;
     const cat = document.getElementById("catDespesa").value;
     const val = parseFloat(document.getElementById("valDespesa").value);
@@ -262,17 +188,15 @@ function adicionarDespesa() {
 }
 
 function atualizarTabela(){
-    const tbody=document.querySelector("#tabelaDespesas tbody");
+    const tbody = document.querySelector("#tabelaDespesas tbody");
     tbody.innerHTML="";
     despesas.forEach((d,i)=>{
-        tbody.innerHTML+=`
-            <tr>
-                <td>${d.desc}</td>
-                <td>${d.cat}</td>
-                <td>${d.val.toFixed(2)}</td>
-                <td><button class="btn" style="background:red;padding:5px 10px;" onclick="removerDespesa(${i})">Excluir</button></td>
-            </tr>
-        `;
+        tbody.innerHTML+=`<tr>
+            <td>${d.desc}</td>
+            <td>${d.cat}</td>
+            <td>${d.val.toFixed(2)}</td>
+            <td><button class="btn" style="background:red;padding:5px 10px;" onclick="removerDespesa(${i})">Excluir</button></td>
+        </tr>`;
     });
 }
 
@@ -283,24 +207,20 @@ function removerDespesa(index){
     atualizarGrafico();
 }
 
-// Receita (somatório dos clientes)
+// Função Receita
 function calcularReceita(){
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-    return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
+    return clientes.reduce((acc,c)=>acc + parseFloat(c.valor||0),0);
 }
 
 // Gráfico
-let graficoCtx=document.getElementById("grafico").getContext("2d");
-let graficoChart;
 function atualizarGrafico(){
     const receita = calcularReceita();
-    const totalDespesas = despesas.reduce((acc,d)=>acc+d.val,0);
-    const data={
-        labels:["Receita","Despesas"],
-        datasets:[{label:"R$",data:[receita,totalDespesas],backgroundColor:["#0d6efd","#dc3545"]}]
-    };
+    const totalDespesas = despesas.reduce((acc,d)=>acc + d.val,0);
+    const ctx = document.getElementById("grafico").getContext("2d");
+    const data = { labels:["Receita","Despesas"], datasets:[{label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"]}]};
     if(graficoChart) graficoChart.destroy();
-    graficoChart = new Chart(graficoCtx,{type:'bar',data:data,options:{responsive:true,plugins:{legend:{display:false}}}});
+    graficoChart = new Chart(ctx,{type:'bar',data:data,options:{responsive:true,plugins:{legend:{display:false}}}});
 }
 
 // Contas Meta Ads
@@ -313,7 +233,7 @@ function loginFacebook(){
     },{scope:'ads_read,ads_management,business_management'});
 }
 function carregarContasMeta(){
-    FB.api('/me/adaccounts',response=>{
+    FB.api('/me/adaccounts', response=>{
         if(response && !response.error){
             localStorage.setItem("contas_meta",JSON.stringify(response.data));
             mostrarContas();
@@ -324,16 +244,14 @@ function mostrarContas(){
     const lista=document.getElementById("listaContas");
     lista.innerHTML="";
     const contas=JSON.parse(localStorage.getItem("contas_meta")||"[]");
-    contas.forEach(conta=>{
-        lista.innerHTML+=`<div class="conta-item">• ${conta.name} (${conta.account_id})</div>`;
-    });
+    contas.forEach(c=>{ lista.innerHTML+=`<div class="conta-item">• ${c.name} (${c.account_id})</div>`; });
 }
 function toggleContas(){
     const lista=document.getElementById("listaContas");
     const seta=document.getElementById("seta");
-    const aberto = lista.style.display==="block";
-    lista.style.display = aberto?"none":"block";
-    seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
+    const aberto=lista.style.display==="block";
+    lista.style.display=aberto?"none":"block";
+    seta.style.transform=aberto?"rotate(0deg)":"rotate(180deg)";
 }
 
 // Inicialização
@@ -342,12 +260,11 @@ window.onload=function(){
         document.getElementById("btnMeta").innerText="Conectado ✓";
         mostrarContas();
     }
-    despesas = JSON.parse(localStorage.getItem("despesas")||"[]");
     atualizarTabela();
     atualizarGrafico();
 }
 
-// Sair
+// Logout
 function sair(){
     localStorage.clear();
     alert("Você saiu da plataforma.");
