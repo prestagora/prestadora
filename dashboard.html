@@ -23,31 +23,23 @@ body {
     top: 0;
     padding-top: 30px;
 }
-.sidebar h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 20px;
-}
-.sidebar a {
-    display: block;
-    padding: 15px 20px;
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-}
-.sidebar a:hover { background: #0b5ed7; cursor: pointer; }
+.sidebar h2 { text-align:center; margin-bottom:30px; font-size:20px; }
+.sidebar a { display:block; padding:15px 20px; color:#fff; text-decoration:none; font-size:16px; }
+.sidebar a:hover { background:#0b5ed7; cursor:pointer; }
 .main { margin-left: 250px; padding: 30px; }
-.card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 0 12px rgba(0,0,0,0.1); margin-bottom: 25px; }
-.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.topbar h1 { margin: 0; font-size: 24px; color: #333; }
-.btn { background: #0d6efd; border: none; padding: 10px 20px; color: #fff; border-radius: 6px; cursor: pointer; font-size: 15px; }
-.btn:hover { background: #0b5ed7; }
-.flex-container { display: flex; gap: 30px; flex-wrap: wrap; }
-.despesas-card, .grafico-card { flex: 1; min-width: 300px; }
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
-th { background-color: #f0f0f0; }
-input[type="text"], input[type="number"], select { width: 100%; padding: 8px; margin: 3px 0; border-radius: 5px; border: 1px solid #ccc; }
+.card { background:#fff; padding:25px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.1); margin-bottom:25px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; }
+.topbar h1 { margin:0; font-size:24px; color:#333; }
+.btn { background:#0d6efd; border:none; padding:10px 20px; color:#fff; border-radius:6px; cursor:pointer; font-size:15px; }
+.btn:hover { background:#0b5ed7; }
+.flex-container { display:flex; gap:30px; flex-wrap:wrap; }
+.despesas-card, .grafico-card { flex:1; min-width:300px; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
+th { background-color:#f0f0f0; }
+input[type="text"], input[type="number"], select { width:100%; padding:8px; margin:3px 0; border-radius:5px; border:1px solid #ccc; }
+.timer { display:flex; gap:10px; align-items:center; margin-bottom:15px; }
+.timer span { font-size:18px; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -76,7 +68,6 @@ input[type="text"], input[type="number"], select { width: 100%; padding: 8px; ma
     </div>
 
     <div class="flex-container">
-
         <!-- Despesas -->
         <div class="despesas-card card">
             <h3>Minhas Despesas</h3>
@@ -95,42 +86,48 @@ input[type="text"], input[type="number"], select { width: 100%; padding: 8px; ma
             </table>
         </div>
 
-        <!-- Gráfico -->
+        <!-- Receita vs Despesas -->
         <div class="grafico-card card">
             <h3>Receita vs Despesas</h3>
             <canvas id="grafico"></canvas>
         </div>
-
     </div>
+
+    <!-- Temporizador -->
+    <div class="card">
+        <h3>Temporizador de Trabalho</h3>
+        <div class="timer">
+            <span id="tempo">00:00:00</span>
+            <button class="btn" id="btnIniciar" onclick="iniciarTimer()">Iniciar</button>
+            <button class="btn" id="btnParar" onclick="pararTimer()">Parar</button>
+        </div>
+        <canvas id="graficoProdutividade"></canvas>
+    </div>
+
 </div>
 
+<script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
 <script>
-// Inicializa despesas do localStorage
+// ----------------------- DESPESAS -----------------------
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
 
-// Adiciona despesa
 function adicionarDespesa() {
     const desc = document.getElementById("descDespesa").value.trim();
     const cat = document.getElementById("catDespesa").value.trim();
     const val = parseFloat(document.getElementById("valDespesa").value);
-
     if(!desc || !cat || isNaN(val)) { alert("Preencha todos os campos."); return; }
-
     despesas.push({desc, cat, val});
     localStorage.setItem("despesas", JSON.stringify(despesas));
-    atualizarTabela();
-    atualizarGrafico();
-
+    atualizarTabela(); atualizarGrafico();
     document.getElementById("descDespesa").value = "";
     document.getElementById("catDespesa").value = "";
     document.getElementById("valDespesa").value = "";
 }
 
-// Atualiza tabela
 function atualizarTabela() {
     const tbody = document.getElementById("tabelaDespesas");
     tbody.innerHTML = "";
-    despesas.forEach((d,i) => {
+    despesas.forEach((d,i)=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `<td>${d.desc}</td><td>${d.cat}</td><td>${d.val.toFixed(2)}</td>
                         <td><button onclick="removerDespesa(${i})">Excluir</button></td>`;
@@ -138,97 +135,83 @@ function atualizarTabela() {
     });
 }
 
-// Remove despesa
 function removerDespesa(index) {
     despesas.splice(index,1);
     localStorage.setItem("despesas", JSON.stringify(despesas));
-    atualizarTabela();
-    atualizarGrafico();
+    atualizarTabela(); atualizarGrafico();
 }
 
-// Calcula receita
+// ----------------------- GRAFICO RECEITA VS DESPESAS -----------------------
 function calcularReceita() {
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-    return clientes.reduce((acc,c) => acc + parseFloat(c.valor || 0), 0);
+    return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
 }
 
-// Gráfico
 const ctx = document.getElementById("grafico").getContext("2d");
 let graficoChart;
-
 function atualizarGrafico() {
     const receita = calcularReceita();
-    const totalDespesas = despesas.reduce((acc,d) => acc+d.val,0);
-
+    const totalDespesas = despesas.reduce((acc,d)=>acc+d.val,0);
     const data = {
-        labels: ["Receita","Despesas"],
-        datasets:[{
-            label:"R$",
-            data:[receita,totalDespesas],
-            backgroundColor:["#0d6efd","#dc3545"]
-        }]
+        labels:["Receita","Despesas"],
+        datasets:[{ label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"] }]
     };
-
     if(graficoChart) graficoChart.destroy();
     graficoChart = new Chart(ctx,{ type:'bar', data:data, options:{ responsive:true, plugins:{legend:{display:false}} } });
 }
 
-// Meta Ads (mantidas)
-function loginFacebook() {
-    FB.login(resp=>{
-        if(resp.status==='connected'){ document.getElementById("btnMeta").innerText="Conectado ✓"; carregarContasMeta(); }
-        else alert("Permita o acesso para continuar.");
-    },{scope:'ads_read,ads_management,business_management'});
+// ----------------------- TEMPORIZADOR -----------------------
+let timerInterval;
+let segundos = 0;
+let produtividade = JSON.parse(localStorage.getItem("produtividade") || "[]");
+
+function formatarTempo(sec) {
+    let h = Math.floor(sec/3600).toString().padStart(2,'0');
+    let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
+    let s = (sec%60).toString().padStart(2,'0');
+    return `${h}:${m}:${s}`;
 }
 
-function carregarContasMeta() {
-    FB.api('/me/adaccounts', resp=>{
-        if(resp && !resp.error){ localStorage.setItem("contas_meta", JSON.stringify(resp.data)); mostrarContas(); }
-        else alert("Erro ao carregar contas Meta Ads.");
-    });
+function iniciarTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(()=>{
+        segundos++;
+        document.getElementById("tempo").innerText = formatarTempo(segundos);
+    },1000);
 }
 
-function mostrarContas() {
-    const lista = document.getElementById("listaContas");
-    lista.innerHTML="";
-    const contas = JSON.parse(localStorage.getItem("contas_meta") || "[]");
-    contas.forEach(c=>{ lista.innerHTML += `<div class="conta-item">• ${c.name} (${c.account_id})</div>` });
+function pararTimer() {
+    clearInterval(timerInterval);
+    const agora = new Date();
+    produtividade.push({data: agora.toLocaleDateString(), horas: segundos/3600});
+    localStorage.setItem("produtividade", JSON.stringify(produtividade));
+    segundos = 0;
+    document.getElementById("tempo").innerText = "00:00:00";
+    atualizarGraficoProdutividade();
 }
 
-function toggleContas() {
-    const lista = document.getElementById("listaContas");
-    const seta = document.getElementById("seta");
-    const aberto = lista.style.display==="block";
-    lista.style.display = aberto?"none":"block";
-    seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
+// ----------------------- GRAFICO PRODUTIVIDADE -----------------------
+const ctxProd = document.getElementById("graficoProdutividade").getContext("2d");
+let graficoProd;
+function atualizarGraficoProdutividade() {
+    const labels = produtividade.map(p => p.data);
+    const data = produtividade.map(p => parseFloat(p.horas.toFixed(2)));
+    if(graficoProd) graficoProd.destroy();
+    graficoProd = new Chart(ctxProd,{ type:'bar', data:{labels:labels, datasets:[{label:"Horas Trabalhadas", data:data, backgroundColor:"#28a745"}]}, options:{ responsive:true, plugins:{legend:{display:false}} }});
 }
 
-function sair() { localStorage.clear(); alert("Você saiu da plataforma."); location.reload(); }
+// ----------------------- META ADS -----------------------
+function loginFacebook(){FB.login(resp=>{if(resp.status==='connected'){document.getElementById("btnMeta").innerText="Conectado ✓"; carregarContasMeta();}else alert("Permita o acesso.");},{scope:'ads_read,ads_management,business_management'});}
+function carregarContasMeta(){FB.api('/me/adaccounts',resp=>{if(resp&&!resp.error){localStorage.setItem("contas_meta",JSON.stringify(resp.data)); mostrarContas();}else alert("Erro ao carregar contas Meta Ads.");});}
+function mostrarContas(){const lista=document.getElementById("listaContas"); lista.innerHTML=""; const contas=JSON.parse(localStorage.getItem("contas_meta")||"[]"); contas.forEach(c=>{lista.innerHTML+=`<div class="conta-item">• ${c.name} (${c.account_id})</div>`});}
+function toggleContas(){const lista=document.getElementById("listaContas"); const seta=document.getElementById("seta"); const aberto=lista.style.display==="block"; lista.style.display=aberto?"none":"block"; seta.style.transform=aberto?"rotate(0deg)":"rotate(180deg)";}
+function sair(){localStorage.clear(); alert("Você saiu da plataforma."); location.reload();}
 
-window.onload = function() {
-    atualizarTabela();
-    atualizarGrafico();
+// ----------------------- ONLOAD -----------------------
+window.onload = function(){
+    atualizarTabela(); atualizarGrafico(); atualizarGraficoProdutividade();
     if(localStorage.getItem("contas_meta")){ document.getElementById("btnMeta").innerText="Conectado ✓"; mostrarContas(); }
 };
 </script>
-
-<script>
-window.fbAsyncInit = function() {
-    FB.init({
-        appId: '1224065886236647',
-        cookie:true,
-        xfbml:true,
-        version:'v19.0'
-    });
-};
-(function(d,s,id){
-    let js,fjs=d.getElementsByTagName(s)[0];
-    if(d.getElementById(id)) return;
-    js=d.createElement(s); js.id=id;
-    js.src="https://connect.facebook.net/pt_BR/sdk.js";
-    fjs.parentNode.insertBefore(js,fjs);
-})(document,'script','facebook-jssdk');
-</script>
-
 </body>
 </html>
