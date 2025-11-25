@@ -223,10 +223,16 @@ function removerDespesa(index){
     atualizarGrafico();
 }
 
-// --- Receita ---
+// --- Receita (clientes cadastrados) ---
 function calcularReceita(){
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-    return clientes.reduce((acc,c)=>acc + parseFloat(c.valor||0),0);
+    let total = 0;
+    clientes.forEach(c => {
+        // Assume que cada cliente tem o campo "valor" que é o ganho do contrato
+        const val = parseFloat(c.valor);
+        if(!isNaN(val)) total += val;
+    });
+    return total;
 }
 
 // --- Gráfico ---
@@ -234,7 +240,10 @@ function atualizarGrafico(){
     const receita = calcularReceita();
     const totalDespesas = despesas.reduce((acc,d)=>acc + d.val,0);
     const ctx = document.getElementById("grafico").getContext("2d");
-    const data = { labels:["Receita","Despesas"], datasets:[{label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"]}]};
+    const data = {
+        labels:["Receita","Despesas"],
+        datasets:[{label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"]}]
+    };
     if(graficoChart) graficoChart.destroy();
     graficoChart = new Chart(ctx,{type:'bar',data:data,options:{responsive:true,plugins:{legend:{display:false}}}});
 }
