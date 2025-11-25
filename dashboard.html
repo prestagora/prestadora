@@ -3,157 +3,110 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Painel - Meus Clientes</title>
+    <title>Meus Clientes</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f6fa;
+            background: #f5f5f5;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: #111827;
-            color: #fff;
-            position: fixed;
-            left: 0;
-            top: 0;
-            padding: 20px 0;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 22px;
-        }
-
-        .menu-item {
-            padding: 15px 25px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 16px;
-        }
-
-        .menu-item:hover, .active {
-            background: #374151;
-        }
-
-        /* Main Content */
-        .content {
-            margin-left: 250px;
-            padding: 30px;
+        .container {
+            padding: 20px;
         }
 
         h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
+            font-size: 22px;
+            margin-bottom: 15px;
+            text-align: left;
         }
 
-        /* Search Bar */
         .search-box {
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            width: 300px;
+            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
 
-        /* Client List */
-        .client-card {
-            background: #fff;
-            padding: 15px 20px;
-            margin-bottom: 12px;
+        .clientes-lista {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .cliente-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .client-name {
-            font-size: 18px;
-            font-weight: bold;
+        .cliente-item:last-child {
+            border-bottom: none;
         }
 
         .delete-btn {
-            background: #dc2626;
-            color: #fff;
+            background: #ff4d4d;
+            color: white;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
         .delete-btn:hover {
-            background: #b91c1c;
+            background: #e60000;
         }
     </style>
 </head>
 <body>
-
-    <div class="sidebar">
-        <h2>PRESTAGORA</h2>
-        <div class="menu-item">Dashboard</div>
-        <div class="menu-item active">Meus Clientes</div>
-        <div class="menu-item">Configurações</div>
-    </div>
-
-    <div class="content">
+    <div class="container">
         <h1>Meus Clientes</h1>
 
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Pesquisar cliente..." onkeyup="filtrarClientes()">
-        </div>
+        <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar cliente..." />
 
-        <div id="clientList"></div>
+        <div id="clientesLista" class="clientes-lista">
+            <!-- Clientes adicionados aparecerão aqui -->
+        </div>
     </div>
 
     <script>
-        // Carregar clientes do localStorage
         function carregarClientes() {
+            const lista = document.getElementById("clientesLista");
             const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-            const lista = document.getElementById("clientList");
+            const filtro = document.getElementById("searchInput").value.toLowerCase();
+
             lista.innerHTML = "";
 
-            clientes.forEach((cliente, index) => {
-                const card = document.createElement("div");
-                card.className = "client-card";
+            clientes
+                .filter(c => c.nome.toLowerCase().includes(filtro))
+                .forEach((c, index) => {
+                    const div = document.createElement("div");
+                    div.className = "cliente-item";
 
-                card.innerHTML = `
-                    <span class="client-name">${cliente}</span>
-                    <button class="delete-btn" onclick="excluirCliente(${index})">Excluir</button>
-                `;
+                    div.innerHTML = `
+                        <span>${c.nome}</span>
+                        <button class="delete-btn" onclick="deletarCliente(${index})">Excluir</button>
+                    `;
 
-                lista.appendChild(card);
-            });
+                    lista.appendChild(div);
+                });
         }
 
-        function excluirCliente(index) {
-            let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-            clientes.splice(index, 1);
+        function deletarCliente(i) {
+            const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+            clientes.splice(i, 1);
             localStorage.setItem("clientes", JSON.stringify(clientes));
             carregarClientes();
         }
 
-        function filtrarClientes() {
-            const termo = document.getElementById("searchInput").value.toLowerCase();
-            const cards = document.querySelectorAll(".client-card");
-
-            cards.forEach(card => {
-                const nome = card.querySelector(".client-name").innerText.toLowerCase();
-                card.style.display = nome.includes(termo) ? "flex" : "none";
-            });
-        }
+        document.getElementById("searchInput").addEventListener("input", carregarClientes);
 
         carregarClientes();
     </script>
-
 </body>
 </html>
