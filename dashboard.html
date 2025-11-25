@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - Plataforma de Marketing</title>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
     body {
         margin: 0;
@@ -99,6 +102,42 @@
     .conta-item {
         padding: 8px 0;
     }
+
+    /* DESPESAS + GRÁFICO */
+    .flex-container {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .despesas-card, .grafico-card {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f0f0f0;
+    }
+
+    input[type="text"], input[type="number"], select {
+        width: 100%;
+        padding: 8px;
+        margin: 3px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
 </style>
 </head>
 
@@ -136,9 +175,48 @@
         <p>Gerencie suas contas, campanhas e relatórios de forma automatizada.</p>
     </div>
 
+    <!-- DESPESAS + GRÁFICO -->
+    <div class="flex-container">
+
+        <!-- TABELA DE DESPESAS -->
+        <div class="despesas-card card">
+            <h3>Minhas Despesas</h3>
+
+            <label>Descrição</label>
+            <input type="text" id="descDespesa" placeholder="Ex: Internet, Software...">
+
+            <label>Categoria</label>
+            <input type="text" id="catDespesa" placeholder="Ex: Tecnologia, Escritório...">
+
+            <label>Valor (R$)</label>
+            <input type="number" id="valDespesa" placeholder="0.00">
+
+            <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
+
+            <table id="tabelaDespesas">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Valor (R$)</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- GRÁFICO -->
+        <div class="grafico-card card">
+            <h3>Receita vs Despesas</h3>
+            <canvas id="grafico"></canvas>
+        </div>
+
+    </div>
+
 </div>
 
-<!-- SDK DO FACEBOOK -->
+<!-- SDK FACEBOOK -->
 <script>
 window.fbAsyncInit = function () {
     FB.init({
@@ -161,14 +239,90 @@ window.fbAsyncInit = function () {
 
 <!-- FUNÇÕES -->
 <script>
+let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
+
+// Adicionar despesa
+function adicionarDespesa() {
+    const desc = document.getElementById("descDespesa").value;
+    const cat = document.getElementById("catDespesa").value;
+    const val = parseFloat(document.getElementById("valDespesa").value);
+
+    if (!desc || !cat || isNaN(val)) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+    }
+
+    despesas.push({desc, cat, val});
+    localStorage.setItem("despesas", JSON.stringify(despesas));
+    atualizarTabela();
+    atualizarGrafico();
+    document.getElementById("descDespesa").value = "";
+    document.getElementById("catDespesa").value = "";
+    document.getElementById("valDespesa").value = "";
+}
+
+// Atualizar tabela
+function atualizarTabela() {
+    const tbody = document.querySelector("#tabelaDespesas tbody");
+    tbody.innerHTML = "";
+    despesas.forEach((d, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${d.desc}</td>
+                <td>${d.cat}</td>
+                <td>${d.val.toFixed(2)}</td>
+                <td><button onclick="removerDespesa(${i})">Excluir</button></td>
+            </tr>
+        `;
+    });
+}
+
+// Remover despesa
+function removerDespesa(index) {
+    despesas.splice(index, 1);
+    localStorage.setItem("despesas", JSON.stringify(despesas));
+    atualizarTabela();
+    atualizarGrafico();
+}
+
+// Receitas mensais (somatório dos contratos)
+function calcularReceita() {
+    const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    return clientes.reduce((acc, c) => acc + parseFloat(c.valor || 0), 0);
+}
+
+// Gráfico
+let graficoCtx = document.getElementById("grafico").getContext("2d");
+let graficoChart;
+
+function atualizarGrafico() {
+    const receita = calcularReceita();
+    const totalDespesas = despesas.reduce((acc, d) => acc + d.val, 0);
+
+    const data = {
+        labels: ["Receita", "Despesas"],
+        datasets: [{
+            label: "R$",
+            data: [receita, totalDespesas],
+            backgroundColor: ["#0d6efd", "#dc3545"]
+        }]
+    };
+
+    if (graficoChart) graficoChart.destroy();
+    graficoChart = new Chart(graficoCtx, {
+        type: 'bar',
+        data: data,
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+}
+
+// Contas Meta Ads
 function loginFacebook() {
     FB.login(response => {
         if (response.status === 'connected') {
             document.getElementById("btnMeta").innerText = "Conectado ✓";
             carregarContasMeta();
-        } else {
-            alert("Você precisa permitir o acesso para continuar.");
-        }
+        } else alert("Você precisa permitir o acesso para continuar.");
     }, { scope: 'ads_read,ads_management,business_management' });
 }
 
@@ -177,9 +331,7 @@ function carregarContasMeta() {
         if (response && !response.error) {
             localStorage.setItem("contas_meta", JSON.stringify(response.data));
             mostrarContas();
-        } else {
-            alert("Erro ao carregar contas Meta Ads.");
-        }
+        } else alert("Erro ao carregar contas Meta Ads.");
     });
 }
 
@@ -195,7 +347,6 @@ function mostrarContas() {
 function toggleContas() {
     const lista = document.getElementById("listaContas");
     const seta = document.getElementById("seta");
-
     const aberto = lista.style.display === "block";
     lista.style.display = aberto ? "none" : "block";
     seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
@@ -206,6 +357,8 @@ window.onload = function () {
         document.getElementById("btnMeta").innerText = "Conectado ✓";
         mostrarContas();
     }
+    atualizarTabela();
+    atualizarGrafico();
 };
 
 function sair() {
