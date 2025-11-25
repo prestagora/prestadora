@@ -1,143 +1,178 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca de Anúncios - Minerador</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca de Anúncios - PrestAgora</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-        }
+<style>
+body {
+    margin: 0;
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #0d6efd;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 30px;
+}
+.sidebar h2 { text-align:center; margin-bottom:30px; font-size:20px; }
+.sidebar a { display:block; padding:15px 20px; color:#fff; text-decoration:none; font-size:16px; }
+.sidebar a:hover { background:#0b5ed7; cursor:pointer; }
 
-        header {
-            background: white;
-            padding: 15px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+.main { margin-left: 250px; padding: 20px; }
 
-        #minerButton {
-            padding: 10px 18px;
-            background: #007bff;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 15px;
-        }
+.topbar { 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+    margin-bottom:25px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
 
-        #minerButton:hover {
-            background: #0063d1;
-        }
+.topbar h1 { margin:0; font-size:24px; color:#333; }
 
-        #results {
-            background: #ffffff;
-            margin: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+.btn { 
+    background:#0d6efd; 
+    border:none; 
+    padding:10px 20px; 
+    color:#fff; 
+    border-radius:6px; 
+    cursor:pointer; 
+    font-size:15px;
+}
+.btn:hover { background:#0b5ed7; }
 
-        iframe {
-            width: 100%;
-            height: calc(100vh - 120px);
-            border: none;
-        }
-    </style>
+/* Minerador */
+#results {
+    background: #ffffff;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+
+iframe {
+    width: 100%;
+    height: 70vh;
+    border: none;
+    border-radius: 8px;
+}
+</style>
 </head>
 <body>
 
-<header>
-    <h2>Biblioteca de Anúncios</h2>
-    <button id="minerButton">Ativar Minerador</button>
-</header>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>PrestAgora Digital</h2>
+    <a href="dashboard.html">Dashboard</a>
 
-<!-- Biblioteca de anúncios -->
-<iframe 
-    src="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=1224065886236647">
-</iframe>
+    <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span class="seta" id="seta">▼</span></a>
+    <div class="contas-lista" id="listaContas"></div>
 
-<!-- Resultados do minerador -->
-<div id="results">
-    <h3>Resultados do Minerador</h3>
-    <p id="status">Aguardando ativação...</p>
-    <ul id="duplicatesList"></ul>
+    <a href="meusclientes.html">Meus Clientes</a>
+    <a href="bibliotecaanuncios.html" style="background:#0b5ed7;">Biblioteca de Anúncios</a>
+    <a href="#">Analise de sites</a>
+    <a href="#">Analise de redes sociais</a>
+    <a href="#" onclick="sair()">Sair</a>
+</div>
+
+<!-- ÁREA PRINCIPAL -->
+<div class="main">
+
+    <div class="topbar">
+        <h1>Biblioteca de Anúncios</h1>
+
+        <button id="minerButton" class="btn">Ativar Minerador</button>
+    </div>
+
+    <!-- IFRAME DA BIBLIOTECA DO FACEBOOK -->
+    <iframe 
+        id="bibliotecaFrame"
+        src="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=1224065886236647">
+    </iframe>
+
+    <!-- RESULTADOS -->
+    <div id="results">
+        <h3>Resultados do Minerador</h3>
+        <p id="status">Aguardando ativação...</p>
+        <ul id="duplicatesList"></ul>
+    </div>
+
 </div>
 
 <script>
-    let minerando = false;
-    let scrollInterval;
+/* ---------------- MINERADOR ---------------- */
 
-    document.getElementById("minerButton").addEventListener("click", () => {
-        if (!minerando) {
-            minerando = true;
-            document.getElementById("status").innerText = "Minerando anúncios... Rolagem automática ativada!";
-            iniciarRolagem();
-            iniciarAnalise();
-            document.getElementById("minerButton").innerText = "Minerando...";
-            document.getElementById("minerButton").style.background = "#28a745";
-        }
+let minerando = false;
+let scrollInterval;
+
+document.getElementById("minerButton").addEventListener("click", () => {
+    if (!minerando) {
+        minerando = true;
+        document.getElementById("status").innerText = "Minerando anúncios... Rolagem automática ativada!";
+        iniciarRolagem();
+        iniciarAnalise();
+        document.getElementById("minerButton").innerText = "Minerando...";
+        document.getElementById("minerButton").style.background = "#28a745";
+    }
+});
+
+function iniciarRolagem() {
+    const iframe = document.getElementById("bibliotecaFrame").contentWindow;
+
+    scrollInterval = setInterval(() => {
+        iframe.scrollBy(0, 600);
+    }, 1500);
+}
+
+function iniciarAnalise() {
+    setInterval(() => {
+        tentarCapturarAnuncios();
+    }, 3000);
+}
+
+function tentarCapturarAnuncios() {
+    let iframeDoc;
+
+    try {
+        iframeDoc = document.getElementById("bibliotecaFrame").contentDocument;
+    } catch (e) {
+        return;
+    }
+
+    if (!iframeDoc) return;
+
+    const anuncios = iframeDoc.querySelectorAll("[data-testid='ad']");
+    let mapa = {};
+
+    anuncios.forEach(ad => {
+        const texto = ad.innerText.slice(0, 50);
+
+        if (!mapa[texto]) mapa[texto] = 0;
+        mapa[texto]++;
     });
 
-    // 1. Rolagem automática da biblioteca (igual Adsparo)
-    function iniciarRolagem() {
-        const iframe = document.querySelector("iframe").contentWindow;
+    const lista = document.getElementById("duplicatesList");
+    lista.innerHTML = "";
 
-        scrollInterval = setInterval(() => {
-            iframe.scrollBy(0, 600);
-        }, 1500);
-    }
-
-    // 2. Captura e contagem de anúncios repetidos
-    function iniciarAnalise() {
-        setInterval(() => {
-            tentarCapturarAnuncios();
-        }, 3000);
-    }
-
-    function tentarCapturarAnuncios() {
-        let iframeDoc;
-
-        try {
-            iframeDoc = document.querySelector("iframe").contentDocument;
-        } catch (e) {
-            console.log("Aguardando carregamento...");
-            return;
-        }
-
-        if (!iframeDoc) return;
-
-        const anuncios = iframeDoc.querySelectorAll("[data-testid='ad']");
-
-        let mapa = {};
-        anuncios.forEach(ad => {
-            const texto = ad.innerText.slice(0, 50); // início do texto para identificar repetição
-
-            if (!mapa[texto]) mapa[texto] = 0;
-            mapa[texto]++;
-        });
-
-        const lista = document.getElementById("duplicatesList");
-        lista.innerHTML = "";
-
-        for (let key in mapa) {
-            if (mapa[key] > 1) {
-                const li = document.createElement("li");
-                li.innerText = `Anúncios semelhantes: ${mapa[key]} ocorrências`;
-                lista.appendChild(li);
-            }
+    for (let key in mapa) {
+        if (mapa[key] > 1) {
+            const li = document.createElement("li");
+            li.innerText = `Anúncios semelhantes: ${mapa[key]} ocorrências`;
+            lista.appendChild(li);
         }
     }
+}
 </script>
 
 </body>
 </html>
-
