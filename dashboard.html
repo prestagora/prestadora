@@ -250,7 +250,12 @@ let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
 
 // Temporizador
 let cronometro, segundos = 0;
-function formatarTempo(seg){const h=String(Math.floor(seg/3600)).padStart(2,'0'); const m=String(Math.floor((seg%3600)/60)).padStart(2,'0'); const s=String(seg%60).padStart(2,'0'); return `${h}:${m}:${s}`;}
+function formatarTempo(seg){
+    const h=String(Math.floor(seg/3600)).padStart(2,'0'); 
+    const m=String(Math.floor((seg%3600)/60)).padStart(2,'0'); 
+    const s=String(seg%60).padStart(2,'0'); 
+    return `${h}:${m}:${s}`;
+}
 function iniciarTrabalho(){
     document.getElementById("btnIniciar").style.display="none";
     document.getElementById("btnParar").style.display="inline-block";
@@ -360,6 +365,7 @@ window.onload = function () {
         document.getElementById("btnMeta").innerText = "Conectado ✓";
         mostrarContas();
     }
+    despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
     atualizarTabela();
     atualizarGrafico();
 };
