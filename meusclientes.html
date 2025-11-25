@@ -63,12 +63,22 @@
         margin-bottom: 25px;
     }
 
-    /* PESQUISA + BOTÃO ADICIONAR */
+    /* PESQUISA + TOTAL + BOTÃO ADICIONAR */
     .search-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 15px;
+    }
+
+    .total-box {
+        background-color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
     }
 
     .search-box input {
@@ -190,7 +200,7 @@
     }
 
     .btn {
-        background-color: #0d47a1; /* azul escuro profissional */
+        background-color: #0d47a1;
         color: #fff;
         border: none;
         padding: 10px 20px;
@@ -240,9 +250,15 @@
 
     <div class="card">
         <div class="search-row">
+
+            <div class="total-box">
+                Total recebido: <span id="valorTotal">R$ 0,00</span>
+            </div>
+
             <div class="search-box">
                 <input type="text" id="pesquisa" placeholder="Pesquisar cliente..." onkeyup="filtrar()">
             </div>
+
             <button class="add-btn" onclick="abrirModal()">+</button>
         </div>
 
@@ -300,6 +316,18 @@ function formatarDataBR(data) {
     return `${dia}/${mes}/${ano}`;
 }
 
+function atualizarValorTotal() {
+    const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+
+    let total = lista.reduce((soma, cliente) => {
+        const valor = parseFloat(cliente.valor || 0);
+        return soma + valor;
+    }, 0);
+
+    document.getElementById("valorTotal").innerText =
+        total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
 function carregarClientes() {
     const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
     const tabela = document.getElementById("listaClientes");
@@ -319,6 +347,8 @@ function carregarClientes() {
             </tr>
         `;
     });
+
+    atualizarValorTotal();
 }
 
 function filtrar() {
@@ -340,6 +370,7 @@ function excluirSelecionados() {
     clientes = clientes.filter((_, i) => !indices.includes(i));
     localStorage.setItem("clientes", JSON.stringify(clientes));
     carregarClientes();
+    atualizarValorTotal();
     alert("Cliente(s) excluído(s) com sucesso!");
 }
 
@@ -362,6 +393,7 @@ function salvarCliente() {
     localStorage.setItem("clientes", JSON.stringify(lista));
 
     carregarClientes();
+    atualizarValorTotal();
     fecharModal();
     alert("Cliente cadastrado!");
 }
