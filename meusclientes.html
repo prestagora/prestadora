@@ -36,6 +36,7 @@
             color: #fff;
             text-decoration: none;
             font-size: 16px;
+            text-align: left; /* alinhamento à esquerda */
         }
 
         .sidebar a:hover {
@@ -52,6 +53,7 @@
             margin: 0;
             font-size: 24px;
             color: #333;
+            text-align: left; /* título à esquerda */
         }
 
         .card {
@@ -76,6 +78,7 @@
             border-radius: 6px;
             border: 1px solid #ccc;
             font-size: 14px;
+            text-align: left; /* texto digitado à esquerda */
         }
 
         .add-btn {
@@ -102,11 +105,11 @@
         th, td {
             padding: 12px;
             border-bottom: 1px solid #ddd;
+            text-align: left; /* textos à esquerda */
         }
 
         th {
             background-color: #eeeeee;
-            text-align: left;
         }
 
         .btn-excluir {
@@ -144,14 +147,15 @@
             box-shadow: 0 0 12px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* centraliza inputs e botões */
         }
 
         .modal h2 {
             font-size: 20px;
             margin-top: 0;
             margin-bottom: 20px;
-            text-align: center;
+            text-align: left; /* título à esquerda */
+            width: 100%;
         }
 
         .form-group {
@@ -166,18 +170,7 @@
             padding: 10px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            text-align: center;
-        }
-
-        .btn, .btn-cancel {
-            width: 120px;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .btn-cancel {
-            background-color: #999;
-            margin-left: 10px;
+            text-align: left; /* texto digitado à esquerda */
         }
 
         .modal-buttons {
@@ -185,6 +178,15 @@
             justify-content: center;
             gap: 10px;
             margin-top: 15px;
+        }
+
+        .btn, .btn-cancel {
+            width: 120px;
+            text-align: center;
+        }
+
+        .btn-cancel {
+            background-color: #999;
         }
     </style>
 </head>
@@ -258,7 +260,14 @@
 
     <!-- SCRIPT -->
     <script>
-        // Carregar clientes do localStorage
+        // Formata datas no padrão brasileiro dd/mm/aaaa
+        function formatarDataBR(dataISO) {
+            if (!dataISO) return '';
+            const [ano, mes, dia] = dataISO.split("-");
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // Carrega clientes do localStorage e mostra na tabela
         function carregarClientes() {
             const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
             const tabela = document.getElementById("listaClientes");
@@ -272,15 +281,15 @@
                         <td>${cliente.telefone}</td>
                         <td>${cliente.email}</td>
                         <td>${cliente.documento}</td>
-                        <td>${cliente.inicio}</td>
-                        <td>${cliente.fim}</td>
+                        <td>${formatarDataBR(cliente.inicio)}</td>
+                        <td>${formatarDataBR(cliente.fim)}</td>
                         <td>${cliente.valor}</td>
                     </tr>
                 `;
             });
         }
 
-        // Filtrar clientes
+        // Filtrar clientes na tabela
         function filtrar() {
             const termo = document.getElementById("pesquisa").value.toLowerCase();
             document.querySelectorAll("#listaClientes tr").forEach(linha => {
@@ -306,10 +315,11 @@
             alert("Cliente(s) excluído(s) com sucesso!");
         }
 
-        // MODAL
+        // Abrir/fechar modal
         function abrirModal() { document.getElementById("modalBg").style.display = "flex"; }
         function fecharModal() { document.getElementById("modalBg").style.display = "none"; }
 
+        // Salvar cliente no localStorage
         function salvarCliente() {
             const cliente = {
                 inicio: document.getElementById("inicio").value,
