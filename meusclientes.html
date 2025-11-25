@@ -120,4 +120,233 @@
         .btn-excluir {
             background: red;
             border: none;
-            padding: 10px 1
+            padding: 10px 15px;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-excluir:hover {
+            background: rgb(200,0,0);
+        }
+
+        /* MODAL */
+        .modal-bg {
+            position: fixed;
+            left: 0; 
+            top: 0;
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background: #fff;
+            width: 350px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        }
+
+        .modal h2 {
+            font-size: 20px;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .btn {
+            background: #0d6efd;
+            border: none;
+            padding: 10px 20px;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #0b5ed7;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar">
+        <h2>Marketing ADS</h2>
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="#contas">
+            Contas Meta Ads
+            <span class="seta" id="seta">▼</span>
+        </a>
+
+        <div class="contas-lista" id="listaContas"></div>
+
+        <a href="meusclientes.html">Meus Clientes</a>
+        <a href="#">Relatórios</a>
+        <a href="#">Configurações</a>
+        <a href="#" onclick="sair()">Sair</a>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main">
+
+        <div class="topbar">
+            <h1>Meus Clientes</h1>
+        </div>
+
+        <div class="card">
+
+            <!-- PESQUISA + BOTÃO -->
+            <div class="search-row">
+                <div class="search-box">
+                    <input type="text" id="pesquisa" placeholder="Pesquisar cliente..." onkeyup="filtrar()">
+                </div>
+
+                <button class="add-btn" onclick="abrirModal()">+</button>
+            </div>
+
+            <table id="tabelaClientes">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
+                        <th>Documento</th>
+                        <th>Início</th>
+                        <th>Fim</th>
+                        <th>Valor (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="listaClientes"></tbody>
+            </table>
+
+            <br>
+            <button class="btn-excluir" onclick="excluirSelecionados()">Excluir Selecionados</button>
+        </div>
+
+    </div>
+
+    <!-- MODAL CADASTRO -->
+    <div class="modal-bg" id="modalBg">
+        <div class="modal">
+            <h2>Novo Cliente</h2>
+
+            <div class="form-group"><input id="inicio" type="date"></div>
+            <div class="form-group"><input id="fim" type="date"></div>
+            <div class="form-group"><input id="nome" type="text" placeholder="Nome"></div>
+            <div class="form-group"><input id="telefone" type="text" placeholder="Telefone"></div>
+            <div class="form-group"><input id="email" type="text" placeholder="E-mail"></div>
+            <div class="form-group"><input id="documento" type="text" placeholder="CPF/CNPJ"></div>
+            <div class="form-group"><input id="valor" type="number" placeholder="Valor do contrato"></div>
+
+            <button class="btn" onclick="salvarCliente()">Salvar</button>
+            <button class="btn" style="background:#999;margin-left:10px;" onclick="fecharModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+
+        function carregarClientes() {
+            const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+            const tabela = document.getElementById("listaClientes");
+
+            tabela.innerHTML = "";
+
+            lista.forEach((c, index) => {
+                tabela.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" data-index="${index}"></td>
+                        <td>${c.nome}</td>
+                        <td>${c.telefone}</td>
+                        <td>${c.email}</td>
+                        <td>${c.documento}</td>
+                        <td>${c.inicio}</td>
+                        <td>${c.fim}</td>
+                        <td>${c.valor}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filtrar() {
+            const termo = document.getElementById("pesquisa").value.toLowerCase();
+            const linhas = document.querySelectorAll("#listaClientes tr");
+
+            linhas.forEach(linha => {
+                const nome = linha.children[1].innerText.toLowerCase();
+                linha.style.display = nome.includes(termo) ? "" : "none";
+            });
+        }
+
+        function excluirSelecionados() {
+            let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+            const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
+
+            if (checkboxes.length === 0) {
+                alert("Selecione ao menos um cliente.");
+                return;
+            }
+
+            const indices = [...checkboxes].map(c => Number(c.dataset.index));
+            clientes = clientes.filter((_, i) => !indices.includes(i));
+
+            localStorage.setItem("clientes", JSON.stringify(clientes));
+            carregarClientes();
+            alert("Cliente(s) excluído(s) com sucesso!");
+        }
+
+        // MODAL
+        function abrirModal() {
+            document.getElementById("modalBg").style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById("modalBg").style.display = "none";
+        }
+
+        function salvarCliente() {
+            const cliente = {
+                inicio: document.getElementById("inicio").value,
+                fim: document.getElementById("fim").value,
+                nome: document.getElementById("nome").value,
+                telefone: document.getElementById("telefone").value,
+                email: document.getElementById("email").value,
+                documento: document.getElementById("documento").value,
+                valor: document.getElementById("valor").value,
+            };
+
+            const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+            lista.push(cliente);
+            localStorage.setItem("clientes", JSON.stringify(lista));
+
+            carregarClientes();
+            fecharModal();
+            alert("Cliente cadastrado!");
+        }
+
+        window.onload = carregarClientes;
+
+    </script>
+
+</body>
+</html>
