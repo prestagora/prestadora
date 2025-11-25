@@ -26,45 +26,141 @@
         top: 0;
         padding-top: 30px;
     }
-    .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 20px; }
-    .sidebar a { display: block; padding: 15px 20px; color: #fff; text-decoration: none; font-size: 16px; }
-    .sidebar a:hover { background: #0b5ed7; cursor: pointer; }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 20px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 15px 20px;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    .sidebar a:hover {
+        background: #0b5ed7;
+        cursor: pointer;
+    }
 
     /* ÁREA PRINCIPAL */
-    .main { margin-left: 250px; padding: 30px; }
-    .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 0 12px rgba(0,0,0,0.1); margin-bottom: 25px; }
+    .main {
+        margin-left: 250px;
+        padding: 30px;
+    }
 
-    /* TOPBAR */
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .topbar h1 { margin: 0; font-size: 24px; color: #333; }
-    .btn { background: #0d6efd; border: none; padding: 10px 20px; color: #fff; border-radius: 6px; cursor: pointer; font-size: 15px; }
-    .btn:hover { background: #0b5ed7; }
+    .card {
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .topbar h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .btn {
+        background: #0d6efd;
+        border: none;
+        padding: 10px 20px;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .btn:hover {
+        background: #0b5ed7;
+    }
 
     /* CONTAS META ADS */
-    .seta { float: right; transition: 0.3s; }
-    .contas-lista { margin-top: 10px; padding-left: 20px; display: none; }
-    .conta-item { padding: 8px 0; }
+    .seta {
+        float: right;
+        transition: 0.3s;
+    }
+
+    .contas-lista {
+        margin-top: 10px;
+        padding-left: 20px;
+        display: none;
+    }
+
+    .conta-item {
+        padding: 8px 0;
+    }
 
     /* DESPESAS + GRÁFICO */
-    .flex-container { display: flex; gap: 30px; flex-wrap: wrap; }
-    .despesas-card, .grafico-card { flex: 1; min-width: 300px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
-    th { background-color: #f0f0f0; }
-    input[type="text"], input[type="number"] { width: 100%; padding: 8px; margin: 3px 0; border-radius: 5px; border: 1px solid #ccc; }
+    .flex-container {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .despesas-card, .grafico-card {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f0f0f0;
+    }
+
+    input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        margin: 3px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .despesas-card h3, .grafico-card h3 {
+        margin-top: 0;
+    }
+
 </style>
 </head>
+
 <body>
 
 <!-- MENU LATERAL -->
 <div class="sidebar">
     <h2>Marketing ADS</h2>
+
     <a href="#">Dashboard</a>
+
     <a href="#contas" onclick="toggleContas()">
         Contas Meta Ads
         <span class="seta" id="seta">▼</span>
     </a>
+
     <div class="contas-lista" id="listaContas"></div>
+
     <a href="meusclientes.html">Meus Clientes</a>
     <a href="#">Relatórios</a>
     <a href="#">Configurações</a>
@@ -73,6 +169,7 @@
 
 <!-- ÁREA PRINCIPAL -->
 <div class="main">
+
     <div class="topbar">
         <h1>Dashboard</h1>
         <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
@@ -80,20 +177,25 @@
 
     <div class="card">
         <h3>Bem-vindo à Plataforma de Marketing</h3>
-        <p>Gerencie suas contas, campanhas, despesas e receitas de forma automatizada.</p>
+        <p>Gerencie suas contas, campanhas e relatórios de forma automatizada.</p>
     </div>
 
     <!-- DESPESAS + GRÁFICO -->
     <div class="flex-container">
+
         <!-- TABELA DE DESPESAS -->
         <div class="despesas-card card">
             <h3>Minhas Despesas</h3>
+
             <label>Descrição</label>
             <input type="text" id="descDespesa" placeholder="Ex: Internet, Software...">
+
             <label>Categoria</label>
             <input type="text" id="catDespesa" placeholder="Ex: Tecnologia, Escritório...">
+
             <label>Valor (R$)</label>
             <input type="number" id="valDespesa" placeholder="0.00">
+
             <button class="btn" onclick="adicionarDespesa()">Adicionar Despesa</button>
 
             <table id="tabelaDespesas">
@@ -114,7 +216,9 @@
             <h3>Receita vs Despesas</h3>
             <canvas id="grafico"></canvas>
         </div>
+
     </div>
+
 </div>
 
 <!-- SDK FACEBOOK -->
@@ -127,29 +231,36 @@ window.fbAsyncInit = function () {
         version: 'v19.0'
     });
 };
-(function(d, s, id){
+
+(function (d, s, id) {
     let js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
+    js = d.createElement(s);
+    js.id = id;
     js.src = "https://connect.facebook.net/pt_BR/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+})(document, 'script', 'facebook-jssdk');
 </script>
 
+<!-- FUNÇÕES -->
 <script>
 // ===== CONTROLE DE DESPESAS =====
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
 
 // Adicionar despesa
 function adicionarDespesa() {
-    const desc = document.getElementById("descDespesa").value;
-    const cat = document.getElementById("catDespesa").value;
+    const desc = document.getElementById("descDespesa").value.trim();
+    const cat = document.getElementById("catDespesa").value.trim();
     const val = parseFloat(document.getElementById("valDespesa").value);
 
-    if(!desc || !cat || isNaN(val)) { alert("Preencha todos os campos corretamente."); return; }
+    if (!desc || !cat || isNaN(val)) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+    }
 
-    despesas.push({desc, cat, val});
+    despesas.push({ desc, cat, val });
     localStorage.setItem("despesas", JSON.stringify(despesas));
+
     atualizarTabela();
     atualizarGrafico();
 
@@ -162,14 +273,17 @@ function adicionarDespesa() {
 function atualizarTabela() {
     const tbody = document.querySelector("#tabelaDespesas tbody");
     tbody.innerHTML = "";
+
     despesas.forEach((d, i) => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${d.desc}</td>
-                <td>${d.cat}</td>
-                <td>${d.val.toFixed(2)}</td>
-                <td><button onclick="removerDespesa(${i})">Excluir</button></td>
-            </tr>`;
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${d.desc}</td>
+            <td>${d.cat}</td>
+            <td>${d.val.toFixed(2)}</td>
+            <td><button class="btn" style="background:#dc3545;margin:0" onclick="removerDespesa(${i})">Excluir</button></td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 
@@ -181,7 +295,7 @@ function removerDespesa(index) {
     atualizarGrafico();
 }
 
-// Calcular receita (somatório de contratos de "meusclientes")
+// Calcular receita
 function calcularReceita() {
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
     return clientes.reduce((acc, c) => acc + parseFloat(c.valor || 0), 0);
@@ -204,30 +318,39 @@ function atualizarGrafico() {
         }]
     };
 
-    if(graficoChart) graficoChart.destroy();
+    if (graficoChart) graficoChart.destroy();
+
     graficoChart = new Chart(graficoCtx, {
         type: 'bar',
         data: data,
-        options: { responsive: true, plugins: { legend: { display: false } } }
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
     });
 }
 
-// ===== META ADS =====
+// ===== CONTAS META ADS =====
 function loginFacebook() {
     FB.login(response => {
-        if(response.status === 'connected') {
+        if (response.status === 'connected') {
             document.getElementById("btnMeta").innerText = "Conectado ✓";
             carregarContasMeta();
-        } else { alert("Você precisa permitir o acesso para continuar."); }
+        } else {
+            alert("Você precisa permitir o acesso para continuar.");
+        }
     }, { scope: 'ads_read,ads_management,business_management' });
 }
 
 function carregarContasMeta() {
     FB.api('/me/adaccounts', response => {
-        if(response && !response.error) {
+        if (response && !response.error) {
             localStorage.setItem("contas_meta", JSON.stringify(response.data));
             mostrarContas();
-        } else { alert("Erro ao carregar contas Meta Ads."); }
+        } else {
+            alert("Erro ao carregar contas Meta Ads.");
+        }
     });
 }
 
@@ -248,14 +371,15 @@ function toggleContas() {
     seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
 }
 
+// ===== INICIALIZAÇÃO =====
 window.onload = function() {
-    if(localStorage.getItem("contas_meta")) {
+    if (localStorage.getItem("contas_meta")) {
         document.getElementById("btnMeta").innerText = "Conectado ✓";
         mostrarContas();
     }
     atualizarTabela();
     atualizarGrafico();
-}
+};
 
 function sair() {
     localStorage.clear();
@@ -263,5 +387,6 @@ function sair() {
     location.reload();
 }
 </script>
+
 </body>
 </html>
