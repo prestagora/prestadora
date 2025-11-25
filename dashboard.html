@@ -8,25 +8,12 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body {
-    margin: 0;
-    background: #f4f6f9;
-    font-family: Arial, sans-serif;
-}
-.sidebar {
-    width: 250px;
-    height: 100vh;
-    background: #0d6efd;
-    color: #fff;
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding-top: 30px;
-}
+body { margin:0; background:#f4f6f9; font-family:Arial,sans-serif; }
+.sidebar { width:250px; height:100vh; background:#0d6efd; color:#fff; position:fixed; left:0; top:0; padding-top:30px; }
 .sidebar h2 { text-align:center; margin-bottom:30px; font-size:20px; }
 .sidebar a { display:block; padding:15px 20px; color:#fff; text-decoration:none; font-size:16px; }
 .sidebar a:hover { background:#0b5ed7; cursor:pointer; }
-.main { margin-left: 250px; padding: 30px; }
+.main { margin-left:250px; padding:30px; }
 .card { background:#fff; padding:25px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.1); margin-bottom:25px; }
 .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px; }
 .topbar h1 { margin:0; font-size:24px; color:#333; flex:1; }
@@ -110,6 +97,7 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
 
 </div>
 
+<div id="fb-root"></div>
 <script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
 <script>
 // ----------------------- DESPESAS -----------------------
@@ -202,16 +190,55 @@ function atualizarGraficoProdutividade() {
 }
 
 // ----------------------- META ADS -----------------------
-function loginFacebook(){FB.login(resp=>{if(resp.status==='connected'){document.getElementById("btnMeta").innerText="Conectado ✓"; carregarContasMeta();}else alert("Permita o acesso.");},{scope:'ads_read,ads_management,business_management'});}
-function carregarContasMeta(){FB.api('/me/adaccounts',resp=>{if(resp&&!resp.error){localStorage.setItem("contas_meta",JSON.stringify(resp.data)); mostrarContas();}else alert("Erro ao carregar contas Meta Ads.");});}
-function mostrarContas(){const lista=document.getElementById("listaContas"); lista.innerHTML=""; const contas=JSON.parse(localStorage.getItem("contas_meta")||"[]"); contas.forEach(c=>{lista.innerHTML+=`<div class="conta-item">• ${c.name} (${c.account_id})</div>`});}
-function toggleContas(){const lista=document.getElementById("listaContas"); const seta=document.getElementById("seta"); const aberto=lista.style.display==="block"; lista.style.display=aberto?"none":"block"; seta.style.transform=aberto?"rotate(0deg)":"rotate(180deg)";}
-function sair(){localStorage.clear(); alert("Você saiu da plataforma."); location.reload();}
+function loginFacebook(){
+    FB.getLoginStatus(function(response){
+        if(response.status==='connected'){
+            document.getElementById("btnMeta").innerText="Conectado ✓";
+            carregarContasMeta();
+        } else {
+            FB.login(function(resp){
+                if(resp.status==='connected'){
+                    document.getElementById("btnMeta").innerText="Conectado ✓";
+                    carregarContasMeta();
+                } else {
+                    alert("Você precisa permitir o acesso para continuar.");
+                }
+            }, {scope:'ads_read,ads_management,business_management'});
+        }
+    });
+}
+function carregarContasMeta() {
+    FB.api('/me/adaccounts', function(response){
+        if(response && !response.error){
+            localStorage.setItem("contas_meta", JSON.stringify(response.data));
+            mostrarContas();
+        } else { alert("Erro ao carregar contas Meta Ads."); }
+    });
+}
+function mostrarContas() {
+    const lista = document.getElementById("listaContas");
+    lista.innerHTML = "";
+    const contas = JSON.parse(localStorage.getItem("contas_meta")||"[]");
+    contas.forEach(c=>{
+        lista.innerHTML += `<div class="conta-item">• ${c.name} (${c.account_id})</div>`;
+    });
+}
+function toggleContas(){
+    const lista=document.getElementById("listaContas");
+    const seta=document.getElementById("seta");
+    const aberto=lista.style.display==="block";
+    lista.style.display=aberto?"none":"block";
+    seta.style.transform=aberto?"rotate(0deg)":"rotate(180deg)";
+}
+function sair(){ localStorage.clear(); alert("Você saiu da plataforma."); location.reload(); }
 
 // ----------------------- ONLOAD -----------------------
 window.onload = function(){
     atualizarTabela(); atualizarGrafico(); atualizarGraficoProdutividade();
-    if(localStorage.getItem("contas_meta")){ document.getElementById("btnMeta").innerText="Conectado ✓"; mostrarContas(); }
+    if(localStorage.getItem("contas_meta")){
+        document.getElementById("btnMeta").innerText="Conectado ✓";
+        mostrarContas();
+    }
 };
 </script>
 </body>
