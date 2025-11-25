@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Anúncios - Minerador</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+        }
+
+        header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        #minerButton {
+            padding: 10px 18px;
+            background: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        #minerButton:hover {
+            background: #0063d1;
+        }
+
+        #results {
+            background: #ffffff;
+            margin: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 120px);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>Biblioteca de Anúncios</h2>
+    <button id="minerButton">Ativar Minerador</button>
+</header>
+
+<!-- Biblioteca de anúncios -->
+<iframe 
+    src="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=1224065886236647">
+</iframe>
+
+<!-- Resultados do minerador -->
+<div id="results">
+    <h3>Resultados do Minerador</h3>
+    <p id="status">Aguardando ativação...</p>
+    <ul id="duplicatesList"></ul>
+</div>
+
+<script>
+    let minerando = false;
+    let scrollInterval;
+
+    document.getElementById("minerButton").addEventListener("click", () => {
+        if (!minerando) {
+            minerando = true;
+            document.getElementById("status").innerText = "Minerando anúncios... Rolagem automática ativada!";
+            iniciarRolagem();
+            iniciarAnalise();
+            document.getElementById("minerButton").innerText = "Minerando...";
+            document.getElementById("minerButton").style.background = "#28a745";
+        }
+    });
+
+    // 1. Rolagem automática da biblioteca (igual Adsparo)
+    function iniciarRolagem() {
+        const iframe = document.querySelector("iframe").contentWindow;
+
+        scrollInterval = setInterval(() => {
+            iframe.scrollBy(0, 600);
+        }, 1500);
+    }
+
+    // 2. Captura e contagem de anúncios repetidos
+    function iniciarAnalise() {
+        setInterval(() => {
+            tentarCapturarAnuncios();
+        }, 3000);
+    }
+
+    function tentarCapturarAnuncios() {
+        let iframeDoc;
+
+        try {
+            iframeDoc = document.querySelector("iframe").contentDocument;
+        } catch (e) {
+            console.log("Aguardando carregamento...");
+            return;
+        }
+
+        if (!iframeDoc) return;
+
+        const anuncios = iframeDoc.querySelectorAll("[data-testid='ad']");
+
+        let mapa = {};
+        anuncios.forEach(ad => {
+            const texto = ad.innerText.slice(0, 50); // início do texto para identificar repetição
+
+            if (!mapa[texto]) mapa[texto] = 0;
+            mapa[texto]++;
+        });
+
+        const lista = document.getElementById("duplicatesList");
+        lista.innerHTML = "";
+
+        for (let key in mapa) {
+            if (mapa[key] > 1) {
+                const li = document.createElement("li");
+                li.innerText = `Anúncios semelhantes: ${mapa[key]} ocorrências`;
+                lista.appendChild(li);
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
 
