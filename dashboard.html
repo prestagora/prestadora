@@ -1,121 +1,318 @@
-<!-- ÁREA PRINCIPAL -->
-<div class="main">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Plataforma de Marketing</title>
 
-    <div class="topbar">
-        <h1>Dashboard</h1>
-        <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
+    <style>
+        body {
+            margin: 0;
+            background: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        /* MENU LATERAL */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #0d6efd;
+            color: #fff;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 30px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background: #0b5ed7;
+            cursor: pointer;
+        }
+
+        /* ÁREA PRINCIPAL */
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .btn {
+            background: #0d6efd;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #0b5ed7;
+        }
+
+        /* FORMULÁRIO DE CLIENTES */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        /* CONTAS META ADS */
+        .seta {
+            float: right;
+            transition: 0.3s;
+        }
+
+        .contas-lista {
+            margin-top: 10px;
+            padding-left: 20px;
+            display: none;
+        }
+
+        .conta-item {
+            padding: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar">
+        <h2>Marketing ADS</h2>
+
+        <a href="#">Dashboard</a>
+
+        <a href="#contas" onclick="toggleContas()">
+            Contas Meta Ads 
+            <span class="seta" id="seta">▼</span>
+        </a>
+
+        <div class="contas-lista" id="listaContas"></div>
+
+        <a href="#">Campanhas</a>
+        <a href="#">Relatórios</a>
+        <a href="#">Configurações</a>
+        <a href="#" onclick="sair()">Sair</a>
     </div>
 
-    <div class="card">
-        <h3>Bem-vindo à Plataforma de Marketing</h3>
-        <p>Gerencie suas contas, campanhas e relatórios de forma automatizada.</p>
-    </div>
+    <!-- ÁREA PRINCIPAL -->
+    <div class="main">
+        <div class="topbar">
+            <h1>Dashboard</h1>
+            <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
+        </div>
 
-    <!-- ============================
-          SEÇÃO DE CLIENTES
-    ============================= -->
-    <div class="card">
-        <h3>Clientes</h3>
+        <div class="card">
+            <h3>Bem-vindo à Plataforma de Marketing</h3>
+            <p>Gerencie suas contas, campanhas e relatórios de forma automatizada.</p>
+        </div>
 
-        <button class="btn" onclick="toggleFormCliente()">Adicionar Cliente</button>
 
-        <!-- FORMULÁRIO OCULTO -->
-        <div id="formCliente" style="display:none; margin-top:20px;">
+        <!-- NOVO CARD — ADICIONAR CLIENTE -->
+        <div class="card">
+            <h3>Adicionar Novo Cliente</h3>
 
-            <label>Data início</label>
-            <input id="cliente_inicio" type="date" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>Data de Início</label>
+                <input type="date" id="inicio">
+            </div>
 
-            <label>Data fim contrato</label>
-            <input id="cliente_fim" type="date" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>Data de Fim</label>
+                <input type="date" id="fim">
+            </div>
 
-            <label>Nome do cliente</label>
-            <input id="cliente_nome" type="text" placeholder="Nome completo" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>Nome do Cliente</label>
+                <input type="text" id="nome" placeholder="Nome completo">
+            </div>
 
-            <label>Telefone</label>
-            <input id="cliente_tel" type="text" placeholder="(00) 00000-0000" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" id="telefone" placeholder="(00) 00000-0000">
+            </div>
 
-            <label>E-mail</label>
-            <input id="cliente_email" type="email" placeholder="email@exemplo.com" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="email" placeholder="email@exemplo.com">
+            </div>
 
-            <label>CPF/CNPJ</label>
-            <input id="cliente_doc" type="text" placeholder="000.000.000-00" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>CPF ou CNPJ</label>
+                <input type="text" id="documento" placeholder="Digite o CPF ou CNPJ">
+            </div>
 
-            <label>Valor do contrato (R$)</label>
-            <input id="cliente_valor" type="number" placeholder="1000,00" style="width:100%; padding:8px; margin-bottom:10px;">
+            <div class="form-group">
+                <label>Valor do Contrato (R$)</label>
+                <input type="number" id="valor" placeholder="0,00">
+            </div>
 
             <button class="btn" onclick="salvarCliente()">Salvar Cliente</button>
         </div>
 
-        <hr style="margin:25px 0; opacity:0.3;">
-
-        <h4>Lista de Clientes</h4>
-        <div id="listaClientes"></div>
-
     </div>
-</div>
 
-<script>
-
-    // Abrir/fechar formulário
-    function toggleFormCliente() {
-        const form = document.getElementById("formCliente");
-        form.style.display = (form.style.display === "none") ? "block" : "none";
-    }
-
-    // SALVAR CLIENTE
-    function salvarCliente() {
-
-        const cliente = {
-            inicio: document.getElementById("cliente_inicio").value,
-            fim: document.getElementById("cliente_fim").value,
-            nome: document.getElementById("cliente_nome").value,
-            tel: document.getElementById("cliente_tel").value,
-            email: document.getElementById("cliente_email").value,
-            doc: document.getElementById("cliente_doc").value,
-            valor: document.getElementById("cliente_valor").value
+    <!-- SDK DO FACEBOOK -->
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '1224065886236647',
+                cookie: true,
+                xfbml: true,
+                version: 'v19.0'
+            });
         };
 
-        if (!cliente.nome || !cliente.valor) {
-            alert("Preencha ao menos nome e valor do contrato!");
-            return;
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <!-- FUNÇÕES DO SISTEMA -->
+    <script>
+
+        // SALVAR CLIENTE
+        function salvarCliente() {
+            const cliente = {
+                inicio: document.getElementById("inicio").value,
+                fim: document.getElementById("fim").value,
+                nome: document.getElementById("nome").value,
+                telefone: document.getElementById("telefone").value,
+                email: document.getElementById("email").value,
+                documento: document.getElementById("documento").value,
+                valor: document.getElementById("valor").value
+            };
+
+            let lista = JSON.parse(localStorage.getItem("clientes") || "[]");
+            lista.push(cliente);
+
+            localStorage.setItem("clientes", JSON.stringify(lista));
+
+            alert("Cliente salvo com sucesso!");
         }
 
-        let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-        clientes.push(cliente);
-        localStorage.setItem("clientes", JSON.stringify(clientes));
 
-        mostrarClientes();
-        alert("Cliente cadastrado com sucesso!");
-    }
-
-    // EXIBIR CLIENTES NA TELA
-    function mostrarClientes() {
-        const lista = document.getElementById("listaClientes");
-        lista.innerHTML = "";
-
-        const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-
-        clientes.forEach((c, i) => {
-            lista.innerHTML += `
-                <div style="padding:10px 0; border-bottom:1px solid #eee;">
-                    <b>${c.nome}</b> — R$ ${c.valor}<br>
-                    Início: ${c.inicio} • Fim: ${c.fim}<br>
-                    Tel: ${c.tel}<br>
-                    Email: ${c.email}<br>
-                    CPF/CNPJ: ${c.doc}
-                </div>
-            `;
-        });
-    }
-
-    // Carrega automaticamente
-    window.onload = function() {
-        if (localStorage.getItem("contas_meta")) {
-            document.getElementById("btnMeta").innerText = "Conectado ✓";
-            mostrarContas();
+        // LOGIN META ADS
+        function loginFacebook() {
+            FB.login(function(response) {
+                if (response.status === 'connected') {
+                    document.getElementById("btnMeta").innerText = "Conectado ✓";
+                    carregarContasMeta();
+                } else {
+                    alert("Você precisa permitir o acesso para continuar.");
+                }
+            }, {scope: 'ads_read,ads_management,business_management'});
         }
 
-        mostrarClientes();
-    }
+        // CARREGA AS CONTAS META ADS
+        function carregarContasMeta() {
+            FB.api('/me/adaccounts', function(response) {
+                if (response && !response.error) {
+                    localStorage.setItem("contas_meta", JSON.stringify(response.data));
+                    mostrarContas();
+                } else {
+                    alert("Erro ao carregar contas Meta Ads.");
+                }
+            });
+        }
 
-</script>
+        // MOSTRAR CONTAS
+        function mostrarContas() {
+            const lista = document.getElementById("listaContas");
+            lista.innerHTML = "";
+
+            const contas = JSON.parse(localStorage.getItem("contas_meta") || "[]");
+
+            contas.forEach(conta => {
+                lista.innerHTML += `
+                    <div class="conta-item">
+                        • ${conta.name} (${conta.account_id})
+                    </div>
+                `;
+            });
+        }
+
+        // ABRIR/FECHAR LISTA
+        function toggleContas() {
+            const lista = document.getElementById("listaContas");
+            const seta = document.getElementById("seta");
+
+            if (lista.style.display === "block") {
+                lista.style.display = "none";
+                seta.style.transform = "rotate(0deg)";
+            } else {
+                lista.style.display = "block";
+                seta.style.transform = "rotate(180deg)";
+            }
+        }
+
+        // CARREGAR
+        window.onload = function() {
+            if (localStorage.getItem("contas_meta")) {
+                document.getElementById("btnMeta").innerText = "Conectado ✓";
+                mostrarContas();
+            }
+        }
+
+        // SAIR
+        function sair() {
+            localStorage.clear();
+            alert("Você saiu da plataforma.");
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
