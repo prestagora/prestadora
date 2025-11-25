@@ -12,7 +12,7 @@
             font-family: Arial, sans-serif;
         }
 
-        /* MENU LATERAL (igual ao dashboard) */
+        /* MENU LATERAL */
         .sidebar {
             width: 250px;
             height: 100vh;
@@ -70,6 +70,13 @@
             color: #333;
         }
 
+        /* PESQUISA + BOTÃO NOVO */
+        .search-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .search-box input {
             width: 300px;
             padding: 10px;
@@ -78,6 +85,22 @@
             font-size: 14px;
         }
 
+        .add-btn {
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #0b5ed7;
+        }
+
+        /* TABELA */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -97,132 +120,4 @@
         .btn-excluir {
             background: red;
             border: none;
-            padding: 10px 15px;
-            color: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .btn-excluir:hover {
-            background: rgb(200,0,0);
-        }
-    </style>
-
-</head>
-
-<body>
-
-    <!-- MENU LATERAL (copiado do dashboard) -->
-    <div class="sidebar">
-        <h2>Marketing ADS</h2>
-
-        <a href="dashboard.html">Dashboard</a>
-
-        <a href="#contas" onclick="toggleContas()">
-            Contas Meta Ads
-            <span class="seta" id="seta">▼</span>
-        </a>
-
-        <div class="contas-lista" id="listaContas"></div>
-
-        <a href="meusclientes.html">Meus Clientes</a>
-        <a href="#">Relatórios</a>
-        <a href="#">Configurações</a>
-        <a href="#" onclick="sair()">Sair</a>
-    </div>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <div class="main">
-
-        <div class="topbar">
-            <h1>Meus Clientes</h1>
-        </div>
-
-        <div class="card">
-            <div class="search-box">
-                <input type="text" id="pesquisa" placeholder="Pesquisar cliente..." onkeyup="filtrar()">
-            </div>
-
-            <table id="tabelaClientes">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Nome</th>
-                        <th>Telefone</th>
-                        <th>E-mail</th>
-                        <th>Documento</th>
-                        <th>Início</th>
-                        <th>Fim</th>
-                        <th>Valor (R$)</th>
-                    </tr>
-                </thead>
-                <tbody id="listaClientes"></tbody>
-            </table>
-
-            <br>
-            <button class="btn-excluir" onclick="excluirSelecionados()">Excluir Selecionados</button>
-        </div>
-
-    </div>
-
-    <!-- FUNÇÕES -->
-    <script>
-
-        // Carregar clientes
-        function carregarClientes() {
-            const lista = JSON.parse(localStorage.getItem("clientes") || "[]");
-            const tabela = document.getElementById("listaClientes");
-
-            tabela.innerHTML = "";
-
-            lista.forEach((c, index) => {
-                tabela.innerHTML += `
-                    <tr>
-                        <td><input type="checkbox" data-index="${index}"></td>
-                        <td>${c.nome}</td>
-                        <td>${c.telefone}</td>
-                        <td>${c.email}</td>
-                        <td>${c.documento}</td>
-                        <td>${c.inicio}</td>
-                        <td>${c.fim}</td>
-                        <td>${c.valor}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        // Pesquisa
-        function filtrar() {
-            const termo = document.getElementById("pesquisa").value.toLowerCase();
-            const linhas = document.querySelectorAll("#listaClientes tr");
-
-            linhas.forEach(linha => {
-                const nome = linha.children[1].innerText.toLowerCase();
-                linha.style.display = nome.includes(termo) ? "" : "none";
-            });
-        }
-
-        // Excluir selecionados
-        function excluirSelecionados() {
-            let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-            const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
-
-            if (checkboxes.length === 0) {
-                alert("Selecione ao menos um cliente.");
-                return;
-            }
-
-            const indices = [...checkboxes].map(c => Number(c.dataset.index));
-            clientes = clientes.filter((_, i) => !indices.includes(i));
-
-            localStorage.setItem("clientes", JSON.stringify(clientes));
-            carregarClientes();
-            alert("Cliente(s) excluído(s) com sucesso!");
-        }
-
-        window.onload = carregarClientes;
-
-    </script>
-
-</body>
-</html>
+            padding: 10px 1
