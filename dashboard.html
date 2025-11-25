@@ -13,8 +13,6 @@ body {
     background: #f4f6f9;
     font-family: Arial, sans-serif;
 }
-
-/* MENU LATERAL */
 .sidebar {
     width: 250px;
     height: 100vh;
@@ -28,24 +26,48 @@ body {
 .sidebar h2 { text-align:center; margin-bottom:30px; font-size:20px; }
 .sidebar a { display:block; padding:15px 20px; color:#fff; text-decoration:none; font-size:16px; }
 .sidebar a:hover { background:#0b5ed7; cursor:pointer; }
-
-/* ÁREA PRINCIPAL */
 .main { margin-left: 250px; padding: 30px; }
 .card { background:#fff; padding:25px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.1); margin-bottom:25px; }
-.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px; }
-.topbar h1 { margin:0; font-size:24px; color:#333; flex:1; }
-.topbar .acoes { display:flex; gap:10px; align-items:center; }
+.topbar { 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+    margin-bottom:25px;
+}
+.topbar h1 { margin:0; font-size:24px; color:#333; }
 
-.btn {
-    background:#0d6efd;
-    border:none;
-    padding:10px 20px;
-    color:#fff;
-    border-radius:6px;
-    cursor:pointer;
+.btn { 
+    background:#0d6efd; 
+    border:none; 
+    padding:10px 20px; 
+    color:#fff; 
+    border-radius:6px; 
+    cursor:pointer; 
     font-size:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 .btn:hover { background:#0b5ed7; }
+
+/* NOVO — GARANTE ALINHAMENTO TOTAL */
+.topbar .acoes {
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.timer {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0;
+}
+
+.timer span {
+    font-size:18px;
+    font-weight:bold;
+}
 
 .flex-container { display:flex; gap:30px; flex-wrap:wrap; }
 .despesas-card, .grafico-card { flex:1; min-width:300px; }
@@ -53,53 +75,37 @@ table { width:100%; border-collapse:collapse; margin-top:15px; }
 th, td { padding:10px; border-bottom:1px solid #ddd; text-align:left; }
 th { background-color:#f0f0f0; }
 input[type="text"], input[type="number"], select { width:100%; padding:8px; margin:3px 0; border-radius:5px; border:1px solid #ccc; }
-
-/* TEMPORIZADOR */
-.timer {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 15px;
-}
-.timer span {
-    font-size:18px;
-    font-weight:bold;
-    min-width:80px;
-    text-align:center;
-}
-.timer button {
-    padding: 8px 15px;
-    font-size: 14px;
-}
 </style>
 </head>
 <body>
 
-<!-- MENU LATERAL -->
 <div class="sidebar">
-    <h2>PrestAgora digital</h2>
+    <h2>Marketing ADS</h2>
     <a href="#">Dashboard</a>
     <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span class="seta" id="seta">▼</span></a>
     <div class="contas-lista" id="listaContas"></div>
     <a href="meusclientes.html">Meus Clientes</a>
-    <a href="#">Biblioteca de anúncios</a>
-    <a href="#">Analise de sites</a>
-    <a href="#">Analise de redes sociais</a>
+    <a href="#">Relatórios</a>
+    <a href="#">Configurações</a>
     <a href="#" onclick="sair()">Sair</a>
 </div>
 
-<!-- ÁREA PRINCIPAL -->
 <div class="main">
 
+    <!-- TOPO COM BOTÕES ALINHADOS -->
     <div class="topbar">
         <h1>Dashboard</h1>
+
         <div class="acoes">
+
             <button class="btn" id="btnMeta" onclick="loginFacebook()">Conectar Meta Ads</button>
+
             <div class="timer">
                 <span id="tempo">00:00:00</span>
                 <button class="btn" id="btnIniciar" onclick="iniciarTimer()">Iniciar Trabalho</button>
                 <button class="btn" id="btnParar" onclick="pararTimer()" style="display:none;">Parar</button>
             </div>
+
         </div>
     </div>
 
@@ -134,175 +140,179 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
         </div>
     </div>
 
-    <!-- Gráfico Produtividade -->
+    <!-- TEMPORIZADOR E GRÁFICO DE PRODUTIVIDADE -->
     <div class="card">
-        <h3>Produtividade</h3>
+        <h3>Produtividade (Horas Trabalhadas)</h3>
         <canvas id="graficoProdutividade"></canvas>
     </div>
 
 </div>
 
-<!-- SDK DO FACEBOOK -->
 <script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 // ----------------------- DESPESAS -----------------------
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
+
 function adicionarDespesa() {
-    const desc = document.getElementById("descDespesa").value.trim();
-    const cat = document.getElementById("catDespesa").value.trim();
-    const val = parseFloat(document.getElementById("valDespesa").value);
-    if(!desc || !cat || isNaN(val)) { alert("Preencha todos os campos."); return; }
-    despesas.push({desc, cat, val});
+    const desc = descDespesa.value.trim();
+    const cat = catDespesa.value.trim();
+    const val = parseFloat(valDespesa.value);
+
+    if (!desc || !cat || isNaN(val)) { alert("Preencha todos os campos."); return; }
+
+    despesas.push({ desc, cat, val });
     localStorage.setItem("despesas", JSON.stringify(despesas));
-    atualizarTabela(); atualizarGrafico();
-    document.getElementById("descDespesa").value = "";
-    document.getElementById("catDespesa").value = "";
-    document.getElementById("valDespesa").value = "";
-}
-function atualizarTabela() {
-    const tbody = document.getElementById("tabelaDespesas");
-    tbody.innerHTML = "";
-    despesas.forEach((d,i)=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${d.desc}</td><td>${d.cat}</td><td>${d.val.toFixed(2)}</td>
-                        <td><button onclick="removerDespesa(${i})">Excluir</button></td>`;
-        tbody.appendChild(tr);
-    });
-}
-function removerDespesa(index) {
-    despesas.splice(index,1);
-    localStorage.setItem("despesas", JSON.stringify(despesas));
-    atualizarTabela(); atualizarGrafico();
+
+    atualizarTabela();
+    atualizarGrafico();
+
+    descDespesa.value = "";
+    catDespesa.value = "";
+    valDespesa.value = "";
 }
 
-// ----------------------- GRAFICO RECEITA VS DESPESAS -----------------------
-function calcularReceita() {
-    const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-    return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
+function atualizarTabela() {
+    tabelaDespesas.innerHTML = "";
+    despesas.forEach((d,i)=>{
+        tabelaDespesas.innerHTML += `
+            <tr>
+                <td>${d.desc}</td>
+                <td>${d.cat}</td>
+                <td>${d.val.toFixed(2)}</td>
+                <td><button onclick="removerDespesa(${i})">Excluir</button></td>
+            </tr>`;
+    });
 }
-const ctx = document.getElementById("grafico").getContext("2d");
+
+function removerDespesa(i){
+    despesas.splice(i,1);
+    localStorage.setItem("despesas", JSON.stringify(despesas));
+    atualizarTabela();
+    atualizarGrafico();
+}
+
+// ----------------------- GRAFICO DESPESAS X RECEITA -----------------------
+function calcularReceita(){
+    const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+    return clientes.reduce((t,c)=> t + parseFloat(c.valor||0), 0);
+}
+
 let graficoChart;
-function atualizarGrafico() {
+function atualizarGrafico(){
     const receita = calcularReceita();
-    const totalDespesas = despesas.reduce((acc,d)=>acc+d.val,0);
-    const data = { labels:["Receita","Despesas"], datasets:[{ label:"R$", data:[receita,totalDespesas], backgroundColor:["#0d6efd","#dc3545"] }] };
-    if(graficoChart) graficoChart.destroy();
-    graficoChart = new Chart(ctx,{ type:'bar', data:data, options:{ responsive:true, plugins:{legend:{display:false}} } });
+    const totalDespesas = despesas.reduce((t,d)=> t + d.val, 0);
+
+    const ctx = document.getElementById("grafico").getContext("2d");
+    if (graficoChart) graficoChart.destroy();
+
+    graficoChart = new Chart(ctx,{
+        type:'bar',
+        data:{
+            labels:["Receita","Despesas"],
+            datasets:[{
+                label:"R$",
+                data:[receita, totalDespesas],
+                backgroundColor:["#0d6efd","#dc3545"]
+            }]
+        },
+        options:{ responsive:true, plugins:{legend:{display:false}} }
+    });
 }
 
 // ----------------------- TEMPORIZADOR -----------------------
-let timerInterval;
 let segundos = 0;
+let timerInterval;
 let produtividade = JSON.parse(localStorage.getItem("produtividade") || "[]");
-function formatarTempo(sec) {
-    let h = Math.floor(sec/3600).toString().padStart(2,'0');
-    let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
-    let s = (sec%60).toString().padStart(2,'0');
+
+function formatar(seg){
+    let h = String(Math.floor(seg/3600)).padStart(2,"0");
+    let m = String(Math.floor((seg%3600)/60)).padStart(2,"0");
+    let s = String(seg%60).padStart(2,"0");
     return `${h}:${m}:${s}`;
 }
-function iniciarTimer() {
+
+function iniciarTimer(){
+    btnIniciar.style.display = "none";
+    btnParar.style.display = "inline-block";
+
     clearInterval(timerInterval);
-    document.getElementById("btnIniciar").style.display="none";
-    document.getElementById("btnParar").style.display="inline-block";
     timerInterval = setInterval(()=>{
         segundos++;
-        document.getElementById("tempo").innerText = formatarTempo(segundos);
+        tempo.innerText = formatar(segundos);
     },1000);
 }
-function pararTimer() {
+
+function pararTimer(){
     clearInterval(timerInterval);
-    const agora = new Date();
-    produtividade.push({data: agora.toLocaleDateString(), horas: segundos/3600});
+
+    btnIniciar.style.display = "inline-block";
+    btnParar.style.display = "none";
+
+    const horas = segundos / 3600;
+    const data = new Date().toLocaleDateString();
+
+    produtividade.push({ data, horas });
     localStorage.setItem("produtividade", JSON.stringify(produtividade));
+
     segundos = 0;
-    document.getElementById("tempo").innerText = "00:00:00";
-    document.getElementById("btnParar").style.display="none";
-    document.getElementById("btnIniciar").style.display="inline-block";
+    tempo.innerText = "00:00:00";
+
     atualizarGraficoProdutividade();
 }
 
 // ----------------------- GRAFICO PRODUTIVIDADE -----------------------
-const ctxProd = document.getElementById("graficoProdutividade").getContext("2d");
 let graficoProd;
-function atualizarGraficoProdutividade() {
-    const labels = produtividade.map(p => p.data);
-    const data = produtividade.map(p => parseFloat(p.horas.toFixed(2)));
-    if(graficoProd) graficoProd.destroy();
-    graficoProd = new Chart(ctxProd,{
-        type:'line',
-        data:{labels, datasets:[{label:"Horas Trabalhadas", data, borderColor:"#28a745", backgroundColor:"rgba(40,167,69,0.2)", fill:true}]},
-        options:{ responsive:true, plugins:{legend:{display:true}}, scales:{y:{beginAtZero:true}}}
+function atualizarGraficoProdutividade(){
+    const ctx = document.getElementById("graficoProdutividade").getContext("2d");
+
+    const labels = produtividade.map(p=>p.data);
+    const valores = produtividade.map(p=>p.horas.toFixed(2));
+
+    if (graficoProd) graficoProd.destroy();
+
+    graficoProd = new Chart(ctx,{
+        type:"line",
+        data:{
+            labels:labels,
+            datasets:[{
+                label:"Horas Trabalhadas",
+                data:valores,
+                borderColor:"#0d6efd",
+                backgroundColor:"rgba(13,110,253,0.3)",
+                tension:0.3,
+                fill:true
+            }]
+        },
+        options:{responsive:true}
     });
 }
 
-// ----------------------- META ADS -----------------------
+// ----------------------- META ADS LOGIN -----------------------
 window.fbAsyncInit = function() {
     FB.init({
-        appId: '1224065886236647',
+        appId: "1224065886236647",
         cookie: true,
         xfbml: true,
-        version: 'v19.0'
+        version: "v19.0"
     });
 };
 
-(function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if(d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "https://connect.facebook.net/pt_BR/sdk.js";
-    fjs.parentNode.insertBefore(js,fjs);
-}(document, 'script', 'facebook-jssdk'));
-
 function loginFacebook(){
-    FB.login(function(response){
-        if(response.status==='connected'){
-            document.getElementById("btnMeta").innerText="Conectado ✓";
-            carregarContasMeta();
-        }else{
-            alert("Você precisa permitir o acesso para continuar.");
+    FB.login(resp=>{
+        if(resp.status === "connected"){
+            btnMeta.innerText = "Conectado ✓";
+        } else {
+            alert("Permita o acesso para continuar.");
         }
-    }, {scope:'ads_read,ads_management,business_management'});
-}
-function carregarContasMeta(){
-    FB.api('/me/adaccounts', function(resp){
-        if(resp && !resp.error){
-            localStorage.setItem("contas_meta", JSON.stringify(resp.data));
-            mostrarContas();
-        }else{
-            alert("Erro ao carregar contas Meta Ads.");
-        }
-    });
-}
-function mostrarContas(){
-    const lista = document.getElementById("listaContas");
-    lista.innerHTML="";
-    const contas = JSON.parse(localStorage.getItem("contas_meta")||"[]");
-    contas.forEach(c=>{
-        lista.innerHTML+=`<div class="conta-item">• ${c.name} (${c.account_id})</div>`;
-    });
-}
-function toggleContas(){
-    const lista = document.getElementById("listaContas");
-    const seta = document.getElementById("seta");
-    const aberto = lista.style.display==="block";
-    lista.style.display = aberto?"none":"block";
-    seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
-}
-function sair(){
-    localStorage.clear();
-    alert("Você saiu da plataforma.");
-    location.reload();
+    }, {scope:"ads_read,ads_management,business_management"});
 }
 
 // ----------------------- ONLOAD -----------------------
 window.onload = function(){
-    atualizarTabela(); atualizarGrafico(); atualizarGraficoProdutividade();
-    if(localStorage.getItem("contas_meta")){ 
-        document.getElementById("btnMeta").innerText="Conectado ✓"; 
-        mostrarContas(); 
-    }
+    atualizarTabela();
+    atualizarGrafico();
+    atualizarGraficoProdutividade();
 };
 </script>
 
