@@ -223,28 +223,7 @@
 
 </div>
 
-<!-- SDK FACEBOOK -->
-<script>
-window.fbAsyncInit = function () {
-    FB.init({
-        appId: '1224065886236647',
-        cookie: true,
-        xfbml: true,
-        version: 'v19.0'
-    });
-};
-
-(function (d, s, id) {
-    let js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "https://connect.facebook.net/pt_BR/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-})(document, 'script', 'facebook-jssdk');
-</script>
-
-<!-- FUNÇÕES -->
+<script src="https://connect.facebook.net/pt_BR/sdk.js"></script>
 <script>
 let despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
 
@@ -267,27 +246,26 @@ function pararTrabalho(){
     document.getElementById("btnParar").style.display="none";
 }
 
-// Adicionar despesa
+// Despesas
 function adicionarDespesa() {
     const desc = document.getElementById("descDespesa").value;
     const cat = document.getElementById("catDespesa").value;
     const val = parseFloat(document.getElementById("valDespesa").value);
-    if (!desc || !cat || isNaN(val)) { alert("Preencha todos os campos corretamente."); return; }
+    if(!desc || !cat || isNaN(val)){ alert("Preencha todos os campos corretamente."); return; }
     despesas.push({desc, cat, val});
     localStorage.setItem("despesas", JSON.stringify(despesas));
     atualizarTabela();
     atualizarGrafico();
-    document.getElementById("descDespesa").value = "";
-    document.getElementById("catDespesa").value = "";
-    document.getElementById("valDespesa").value = "";
+    document.getElementById("descDespesa").value="";
+    document.getElementById("catDespesa").value="";
+    document.getElementById("valDespesa").value="";
 }
 
-// Atualizar tabela
-function atualizarTabela() {
-    const tbody = document.querySelector("#tabelaDespesas tbody");
-    tbody.innerHTML = "";
-    despesas.forEach((d, i) => {
-        tbody.innerHTML += `
+function atualizarTabela(){
+    const tbody=document.querySelector("#tabelaDespesas tbody");
+    tbody.innerHTML="";
+    despesas.forEach((d,i)=>{
+        tbody.innerHTML+=`
             <tr>
                 <td>${d.desc}</td>
                 <td>${d.cat}</td>
@@ -298,80 +276,79 @@ function atualizarTabela() {
     });
 }
 
-// Remover despesa
-function removerDespesa(index) {
-    despesas.splice(index, 1);
+function removerDespesa(index){
+    despesas.splice(index,1);
     localStorage.setItem("despesas", JSON.stringify(despesas));
     atualizarTabela();
     atualizarGrafico();
 }
 
-// Receitas mensais (somatório dos contratos)
-function calcularReceita() {
+// Receita (somatório dos clientes)
+function calcularReceita(){
     const clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
-    return clientes.reduce((acc, c) => acc + parseFloat(c.valor || 0), 0);
+    return clientes.reduce((acc,c)=>acc+parseFloat(c.valor||0),0);
 }
 
 // Gráfico
-let graficoCtx = document.getElementById("grafico").getContext("2d");
+let graficoCtx=document.getElementById("grafico").getContext("2d");
 let graficoChart;
-function atualizarGrafico() {
+function atualizarGrafico(){
     const receita = calcularReceita();
-    const totalDespesas = despesas.reduce((acc, d) => acc + d.val, 0);
-    const data = {
-        labels: ["Receita", "Despesas"],
-        datasets: [{ label: "R$", data: [receita, totalDespesas], backgroundColor: ["#0d6efd", "#dc3545"] }]
+    const totalDespesas = despesas.reduce((acc,d)=>acc+d.val,0);
+    const data={
+        labels:["Receita","Despesas"],
+        datasets:[{label:"R$",data:[receita,totalDespesas],backgroundColor:["#0d6efd","#dc3545"]}]
     };
-    if (graficoChart) graficoChart.destroy();
-    graficoChart = new Chart(graficoCtx, { type: 'bar', data: data, options: { responsive: true, plugins: { legend: { display: false } } } });
+    if(graficoChart) graficoChart.destroy();
+    graficoChart = new Chart(graficoCtx,{type:'bar',data:data,options:{responsive:true,plugins:{legend:{display:false}}}});
 }
 
 // Contas Meta Ads
-function loginFacebook() {
-    FB.login(response => {
-        if (response.status === 'connected') {
-            document.getElementById("btnMeta").innerText = "Conectado ✓";
+function loginFacebook(){
+    FB.login(response=>{
+        if(response.status==='connected'){
+            document.getElementById("btnMeta").innerText="Conectado ✓";
             carregarContasMeta();
         } else alert("Você precisa permitir o acesso para continuar.");
-    }, { scope: 'ads_read,ads_management,business_management' });
+    },{scope:'ads_read,ads_management,business_management'});
 }
-function carregarContasMeta() {
-    FB.api('/me/adaccounts', response => {
-        if (response && !response.error) {
-            localStorage.setItem("contas_meta", JSON.stringify(response.data));
+function carregarContasMeta(){
+    FB.api('/me/adaccounts',response=>{
+        if(response && !response.error){
+            localStorage.setItem("contas_meta",JSON.stringify(response.data));
             mostrarContas();
         } else alert("Erro ao carregar contas Meta Ads.");
     });
 }
-function mostrarContas() {
-    const lista = document.getElementById("listaContas");
-    lista.innerHTML = "";
-    const contas = JSON.parse(localStorage.getItem("contas_meta") || "[]");
-    contas.forEach(conta => {
-        lista.innerHTML += `<div class="conta-item">• ${conta.name} (${conta.account_id})</div>`;
+function mostrarContas(){
+    const lista=document.getElementById("listaContas");
+    lista.innerHTML="";
+    const contas=JSON.parse(localStorage.getItem("contas_meta")||"[]");
+    contas.forEach(conta=>{
+        lista.innerHTML+=`<div class="conta-item">• ${conta.name} (${conta.account_id})</div>`;
     });
 }
-function toggleContas() {
-    const lista = document.getElementById("listaContas");
-    const seta = document.getElementById("seta");
-    const aberto = lista.style.display === "block";
-    lista.style.display = aberto ? "none" : "block";
-    seta.style.transform = aberto ? "rotate(0deg)" : "rotate(180deg)";
+function toggleContas(){
+    const lista=document.getElementById("listaContas");
+    const seta=document.getElementById("seta");
+    const aberto = lista.style.display==="block";
+    lista.style.display = aberto?"none":"block";
+    seta.style.transform = aberto?"rotate(0deg)":"rotate(180deg)";
 }
 
 // Inicialização
-window.onload = function () {
-    if (localStorage.getItem("contas_meta")) {
-        document.getElementById("btnMeta").innerText = "Conectado ✓";
+window.onload=function(){
+    if(localStorage.getItem("contas_meta")){
+        document.getElementById("btnMeta").innerText="Conectado ✓";
         mostrarContas();
     }
-    despesas = JSON.parse(localStorage.getItem("despesas") || "[]");
+    despesas = JSON.parse(localStorage.getItem("despesas")||"[]");
     atualizarTabela();
     atualizarGrafico();
-};
+}
 
 // Sair
-function sair() {
+function sair(){
     localStorage.clear();
     alert("Você saiu da plataforma.");
     location.reload();
