@@ -1,321 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biblioteca de Anúncios - PrestAgora</title>
-
 <style>
-  :root{
-    --primary:#0d6efd;
-    --primary-dark:#0b5ed7;
-    --bg:#f4f6f9;
-    --card:#fff;
-  }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    font-family: Arial, sans-serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: 250px;
-    height: 100vh;
-    background: var(--primary);
-    color: #fff;
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding-top: 30px;
-  }
-
-  .sidebar h2 { text-align:center; margin-bottom:20px; font-size:20px; padding:0 10px; }
-  .sidebar a {
-    display:block;
-    padding:13px 20px;
-    color:#fff;
-    text-decoration:none;
-    font-size:15.5px;
-  }
-  .sidebar a:hover { background: var(--primary-dark); cursor:pointer; }
-
-  .contas-lista { padding-left:16px; color:#f3f6ff; }
-
-  /* MAIN */
-  .main { margin-left:250px; padding:20px; }
-
-  .topbar {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:16px;
-    background: var(--card);
-    padding:14px 18px;
-    border-radius:8px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.06);
-  }
-  .topbar h1 { margin:0; font-size:22px; color:#222; }
-
-  .btn {
-    background:var(--primary);
-    color:white;
-    border: none;
-    padding:9px 16px;
-    border-radius:8px;
-    font-size:14px;
-    cursor:pointer;
-  }
-  .btn:hover{ background: var(--primary-dark); }
-
-  /* iframe area + controls */
-  .frame-wrap {
-    margin-top:18px;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
-
-  .controls {
-    display:flex;
-    gap:12px;
-    align-items:center;
-    flex-wrap:wrap;
-  }
-
-  .note {
-    background:#fff;
-    color:#333;
-    padding:12px 14px;
-    border-radius:8px;
-    box-shadow:0 1px 4px rgba(0,0,0,0.04);
-    font-size:14px;
-  }
-
-  /* iframe */
-  #bibliotecaFrame {
-    width:100%;
-    height:65vh;
-    border:1px solid rgba(0,0,0,0.06);
-    border-radius:8px;
-    background:#fff;
-  }
-
-  /* results */
-  #results {
-    background: #fff;
-    margin-top: 8px;
-    padding: 14px;
-    border-radius: 8px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.06);
-  }
-  #results h3 { margin:0 0 8px 0; font-size:16px; }
-  #duplicatesList { margin:8px 0 0 0; padding-left:18px; color:#333; }
-  #status { margin:0; color:#555; font-size:14px; }
-
-  /* small helpers */
-  .muted { color:#666; font-size:13px; }
-  .linklike { color:var(--primary); text-decoration:underline; cursor:pointer; background:none;border:0;padding:0;font-size:14px; }
-  .flex-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
-  @media(max-width:900px){
-    .sidebar{ position:relative; width:100%; height:auto; padding:12px; }
-    .main { margin-left:0; padding:12px; }
-    #bibliotecaFrame { height:55vh; }
-  }
+  body{ margin:0; font-family:Arial, sans-serif; background:#f4f6f9; }
+  .sidebar{ width:250px; height:100vh; background:#0d6efd; color:#fff; position:fixed; left:0; top:0; padding-top:30px; }
+  .sidebar a{ display:block; padding:12px 20px; color:#fff; text-decoration:none; }
+  .main{ margin-left:250px; padding:20px; }
+  .topbar{ background:#fff; padding:12px 16px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,0.06); display:flex; justify-content:space-between; align-items:center;}
+  .btn{ background:#0d6efd; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
+  .card{ margin-top:14px; background:#fff; padding:14px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
+  .ad-card{ background:#f8f9fa; padding:10px; margin-bottom:10px; border-left:4px solid #0d6efd; border-radius:6px; }
+  input[type=file]{ display:none; }
+  .muted{ color:#666; font-size:13px; margin-top:6px; }
 </style>
 </head>
 <body>
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <h2>PrestAgora Digital</h2>
-  <a href="dashboard.html">Dashboard</a>
-  <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span id="seta">▼</span></a>
-  <div class="contas-lista" id="listaContas"></div>
-  <a href="meusclientes.html">Meus Clientes</a>
-  <!-- active -->
-  <a href="bibliotecaanuncios.html" style="background:var(--primary-dark)">Biblioteca de Anúncios</a>
-  <a href="#">Analise de sites</a>
-  <a href="#">Analise de redes sociais</a>
-  <a href="#" onclick="sair()">Sair</a>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="topbar">
-    <h1>Biblioteca de Anúncios</h1>
-
-    <div class="flex-right">
-      <!-- Button that triggers extension flow: sets a flag and opens library in new tab -->
-      <button id="minerButton" class="btn" title="Abrir biblioteca com minerador">Ativar Minerador</button>
-
-      <!-- Fallback open in new tab -->
-      <button id="openBtn" class="btn" style="background:#28a745">Abrir Biblioteca (nova aba)</button>
-    </div>
+  <div class="sidebar">
+    <h2 style="text-align:center;margin:0 0 12px 0">PrestAgora Digital</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="meusclientes.html">Meus Clientes</a>
+    <a href="bibliotecaanuncios.html" style="background:#0b5ed7">Biblioteca de Anúncios</a>
+    <a href="#">Análise de Sites</a>
+    <a href="#">Análise de Redes Sociais</a>
   </div>
 
-  <div class="frame-wrap">
-    <div class="controls">
-      <div class="note">
-        <strong>Atenção:</strong>
-        o Facebook bloqueia carregamento por iframe em muitos navegadores. Se o iframe não carregar, clique em
-        <button class="linklike" id="openLinkBtn">Abrir Biblioteca em nova aba</button>
-        — sua extensão (se instalada) deve detectar a aba e ativar o minerador.
-      </div>
-
-      <div class="muted" style="margin-left:auto">
-        <strong>Status do minerador:</strong>
-        <span id="statusBadge" style="color:#666">Inativo</span>
+  <div class="main">
+    <div class="topbar">
+      <h2 style="margin:0">Mineração de Anúncios</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="ativarExtensao()">Ativar Extensão</button>
+        <button class="btn" onclick="abrirBiblioteca()">Ativar Minerador</button>
       </div>
     </div>
 
-    <!-- iframe (tenta carregar, mas pode ser bloqueado) -->
-    <iframe
-      id="bibliotecaFrame"
-      src="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=1224065886236647"
-      title="Biblioteca de Anúncios — Facebook">
-    </iframe>
+    <div class="card">
+      <h3>Anúncios Salvos</h3>
+      <p class="muted">Importe o arquivo JSON exportado pela extensão ou cole o JSON no campo.</p>
 
-    <!-- RESULTADOS DO MINERADOR -->
-    <div id="results">
-      <h3>Resultados do Minerador</h3>
-      <p id="status">Aguardando ativação do minerador...</p>
-      <ul id="duplicatesList"></ul>
+      <div style="display:flex;gap:8px; margin-top:8px;">
+        <label class="btn" for="fileInput" style="cursor:pointer;">Importar JSON</label>
+        <button class="btn" onclick="pasteImport()">Colar JSON</button>
+        <button class="btn" onclick="clearDisplayed()">Limpar</button>
+      </div>
+
+      <input type="file" id="fileInput" accept="application/json" />
+
+      <div id="savedContainer" style="margin-top:12px;"></div>
     </div>
   </div>
-</div>
 
 <script>
-/*
-  Comportamento desejado:
-  - botão "Ativar Minerador" abre a Biblioteca em nova aba e seta um flag em localStorage do navegador
-    para que a extensão detecte e ative a injeção/rolagem.
-  - também atualiza o status da UI local (apenas informativo).
-  - a injeção real / captura deve ser feita pela extensão (content script), conforme combinamos.
-*/
+const LIB_URL = 'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR';
 
-/* URL alvo da biblioteca */
-const LIB_URL = 'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&view_all_page_id=1224065886236647';
+function abrirBiblioteca(){
+  window.open(LIB_URL, '_blank');
+}
+function ativarExtensao(){
+  alert('Abrindo página de extensões. Ative a extensão PrestAgora Minerador manualmente.');
+  window.open('chrome://extensions', '_blank');
+}
 
-/* UI refs */
-const minerButton = document.getElementById('minerButton');
-const openBtn = document.getElementById('openBtn');
-const openLinkBtn = document.getElementById('openLinkBtn');
-const statusEl = document.getElementById('status');
-const statusBadge = document.getElementById('statusBadge');
-const duplicatesList = document.getElementById('duplicatesList');
-
-/* Ação principal: sinalizar e abrir nova aba */
-minerButton.addEventListener('click', () => {
+// file import
+document.getElementById('fileInput').addEventListener('change', async (ev) => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const txt = await f.text();
   try {
-    // sinal para a extensão/local detection: gravamos no localStorage (escopo do navegador)
-    // A extensão pode ler chrome.storage.local ou checar localStorage na aba.
-    // Aqui gravamos em localStorage global (funciona para a aba que abrirmos via window.open).
-    localStorage.setItem('prestMinerRequested', Date.now().toString());
-
-    // open in new tab (user's browser will handle)
-    const newTab = window.open(LIB_URL, '_blank');
-    if (!newTab) {
-      alert('O navegador bloqueou a abertura de nova aba. Permita popups e tente novamente.');
-      return;
-    }
-
-    statusEl.innerText = 'Minerador iniciado — abra a nova aba da Biblioteca (extensão deve ativar).';
-    statusBadge.innerText = 'Ativado (aguardando extensão)';
-    statusBadge.style.color = '#0d6efd';
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao iniciar o minerador.');
+    const arr = JSON.parse(txt);
+    displayAds(arr);
+  } catch (e) {
+    alert('Arquivo inválido');
   }
 });
 
-/* fallback buttons */
-openBtn.addEventListener('click', () => {
-  const w = window.open(LIB_URL, '_blank');
-  if (!w) alert('Bloqueado — permita popups no navegador.');
-});
-openLinkBtn.addEventListener('click', () => {
-  const w = window.open(LIB_URL, '_blank');
-  if (!w) alert('Bloqueado — permita popups no navegador.');
-});
-
-/* Toggle contas helper (keeps parity with other pages) */
-function toggleContas(){
-  const lista = document.getElementById('listaContas');
-  const seta = document.getElementById('seta');
-  const aberto = lista.style.display === 'block';
-  lista.style.display = aberto ? 'none' : 'block';
-  seta.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
-}
-
-/* Sair (same behavior as other pages) */
-function sair(){
-  if (confirm('Deseja realmente sair da plataforma?')) {
-    localStorage.clear();
-    alert('Você saiu da plataforma.');
-    location.reload();
+function pasteImport(){
+  const txt = prompt('Cole aqui o JSON exportado pela extensão (CTRL+V) e pressione OK:');
+  if (!txt) return;
+  try {
+    const arr = JSON.parse(txt);
+    displayAds(arr);
+  } catch(e) {
+    alert('JSON inválido');
   }
 }
 
-/* A função abaixo só serve para exibir resultados vindos da extensão (se houver integração).
-   A extensão, quando capturar anúncios e identificar duplicados, pode enviar os dados para sua API
-   OU abrir a mesma página e atualizar window.postMessage para comunicar resultados a esta aba.
-   Aqui adicionamos um listener postMessage para facilitar integração local (opcional).
-*/
-window.addEventListener('message', (ev) => {
-  // Segurança: aceitar apenas mensagens do mesmo origin (ou remova para aceitar cross-origin se necessário)
-  // Como extensão usa content script, a origem será "null" ou "https://www.facebook.com" — não vamos restringir rigidamente aqui.
-  try {
-    const msg = ev.data;
-    if (!msg || typeof msg !== 'object') return;
-    if (msg.type === 'prestMiner:updateStatus') {
-      statusEl.innerText = msg.text || statusEl.innerText;
-      statusBadge.innerText = msg.badge || statusBadge.innerText;
-    }
-    if (msg.type === 'prestMiner:duplicates') {
-      // espera payload: { map: {key:count, ...} }
-      duplicatesList.innerHTML = '';
-      const map = msg.map || {};
-      let found = 0;
-      Object.keys(map).forEach(k => {
-        const count = map[k];
-        if (count > 1) {
-          found++;
-          const li = document.createElement('li');
-          li.innerText = `Anúncios semelhantes: ${count} ocorrências — "${k.slice(0,60).replace(/\n/g,' ')}"`;
-          duplicatesList.appendChild(li);
-        }
-      });
-      if (!found) {
-        duplicatesList.innerHTML = '<li>Nenhuma repetição detectada ainda.</li>';
-      }
-    }
-    if (msg.type === 'prestMiner:adSaved') {
-      // exibe feedback simples
-      const li = document.createElement('li');
-      li.innerText = `Anúncio salvo: ${msg.adId || msg.message || ''}`;
-      duplicatesList.prepend(li);
-    }
-  } catch(e){ console.error(e); }
-});
+function displayAds(arr){
+  const container = document.getElementById('savedContainer');
+  container.innerHTML = '';
+  if (!Array.isArray(arr) || arr.length === 0){
+    container.innerHTML = '<div class="muted">Nenhum anúncio encontrado no JSON.</div>';
+    return;
+  }
+  arr.forEach(ad => {
+    const d = document.createElement('div');
+    d.className = 'ad-card';
+    d.innerHTML = `<strong>${ad.page || 'Anúncio'}</strong>
+                   <div style="margin-top:6px">${(ad.text || '').slice(0,800)}</div>
+                   <div style="margin-top:8px">
+                     <button class="btn" onclick='downloadJSON(${JSON.stringify(JSON.stringify(ad)).replace(/</g,"\\u003c")})'>Baixar JSON</button>
+                   </div>`;
+    container.appendChild(d);
+  });
+}
 
-/* On load, show friendly tip about extension presence */
-window.addEventListener('load', () => {
-  // small check: if we detect that the iframe's src refused (we can't reliably do cross-origin check),
-  // show a quick tip after a second.
-  setTimeout(()=> {
-    // Inform user how to proceed
-    const tip = document.createElement('div');
-    tip.className = 'muted';
-    tip.style.marginTop = '6px';
-    tip.innerHTML = 'Dica: instale a extensão PrestAgora Minerador e configure o endpoint da sua API no popup da extensão. Depois clique em "Ativar Minerador".';
-    document.querySelector('.frame-wrap').insertBefore(tip, document.getElementById('results'));
-  }, 700);
-});
+function clearDisplayed(){ document.getElementById('savedContainer').innerHTML = ''; }
+
+function downloadJSON(strified){
+  // strified is a JSON string double-encoded, decode first
+  try {
+    const s = JSON.parse(strified);
+    const blob = new Blob([s], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'anuncio.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(e){
+    alert('Erro ao baixar');
+  }
+}
 </script>
-
 </body>
 </html>
