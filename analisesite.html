@@ -45,6 +45,16 @@
   .sidebar a.active{
     background:#0b5ed7;
   }
+  .contas-lista{
+    padding-left:18px;
+    display:none;
+    margin-bottom:10px;
+  }
+  .conta-item{
+    padding:8px 0;
+    color:#fff;
+    font-size:14px;
+  }
 
   /* MAIN PADRÃO */
   .main{
@@ -162,13 +172,18 @@
 <body>
 
 <div class="sidebar">
-  <h2>PrestAgora Digital</h2>
+  <h2>PrestAgora</h2>
   <a href="dashboard.html">Dashboard</a>
   <a href="meusclientes.html">Meus Clientes</a>
-  <a href="meusclientes.html">Minha Agenda</a>
+  <a href="minhaagenda.html">Minha Agenda</a>
+
+  <!-- Contas Meta Ads (nova aba/expansível) -->
+  <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span id="setaConta">▼</span></a>
+  <div class="contas-lista" id="listaContas"></div>
+
   <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
   <a class="active" href="analisesite.html">Análise de Site</a>
-  <a href="#">Análise de Redes Sociais</a>
+  <a href="analiseredes.html">Análise de Redes Sociais</a>
   <a href="#" onclick="sair()">Sair</a>
 </div>
 
@@ -268,171 +283,163 @@ const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:30
 
 /* ---------- Helpers ------------------ */
 function q(s){ return document.querySelector(s); }
-function hide(e){ e.style.display='none'; }
-function show(e){ e.style.display='block'; }
+function hide(e){ if(e) e.style.display='none'; }
+function show(e){ if(e) e.style.display='block'; }
+
+/* ---------- Contas Meta Ads (sidebar) ---------- */
+function toggleContas(){
+  const lista = document.getElementById('listaContas');
+  const seta = document.getElementById('setaConta');
+  const aberto = lista.style.display === 'block';
+  lista.style.display = aberto ? 'none' : 'block';
+  seta.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function mostrarContas(){
+  const lista = document.getElementById('listaContas');
+  lista.innerHTML = '';
+  const contas = JSON.parse(localStorage.getItem('contas_meta') || '[]');
+  if(!contas || contas.length === 0){
+    lista.innerHTML = '<div class="conta-item">Nenhuma conta conectada</div>';
+    return;
+  }
+  contas.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'conta-item';
+    div.innerText = `• ${c.name || c.account_id || 'Conta'} (${c.account_id || '-'})`;
+    lista.appendChild(div);
+  });
+}
 
 /* ---------- State ------------------ */
 let lastReport = null;
 
-/* ---------- Submit ------------------ */
+/* ---------- Submit Analyze ---------- */
 async function submitAnalyze(){
   const input = q('#siteInput').value.trim();
-  if(!input){ return alert('Insira a URL.'); }
+  if(!input){ alert('Insira a URL do site.'); return; }
 
   show(q('#loading'));
   hide(q('#resultArea'));
 
   try {
-    const r = await fetch(API_BASE + '/api/analyze', {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ url: input })
+    const res = await fetch(API_BASE + '/api/analyze', {
+      method:'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ url: input })
     });
 
-    if(!r.ok){
-      throw new Error(await r.text());
+    if(!res.ok){
+      const txt = await res.text();
+      throw new Error('Erro na API: ' + txt);
     }
-
-    const data = await r.json();
+    const data = await res.json();
     lastReport = data;
-
     renderResult(data);
     saveToHistory(input, data);
-
-  } catch(e){
-    alert("Erro: " + e.message);
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao analisar: ' + err.message);
+  } finally {
+    hide(q('#loading'));
   }
-
-  hide(q('#loading'));
 }
 
-/* ---------- Render ------------------ */
-function renderResult(d){
+/* ---------- Render ---------- */
+function renderResult(data){
   show(q('#resultArea'));
 
-  q('#perfScore').innerText = (d.performance || 0) + " / 100";
-  q('#seoScore').innerText = (d.seoScore || 0) + " / 100";
-  q('#accScore').innerText = (d.accessibility || 0) + " / 100";
+  q('#perfScore').innerText = (data.performance || 0).toFixed(0) + ' / 100';
+  q('#seoScore').innerText = (data.seoScore || 0).toFixed(0) + ' / 100';
+  q('#accScore').innerText = (data.accessibility || 0).toFixed(0) + ' / 100';
 
-  q('#perfDetail').innerText = d.lighthouseSummary || "";
-  q('#seoDetail').innerText = d.seoSummary || "";
-  q('#accDetail').innerText = d.accessibilityDetail || "";
+  q('#perfDetail').innerText = data.lighthouseSummary || '';
+  q('#seoDetail').innerText = data.seoSummary || '';
+  q('#accDetail').innerText = data.accessibilityDetail || '';
 
   const audits = q('#audits');
-  audits.innerHTML = "";
-  (d.audits || []).forEach(a=>{
+  audits.innerHTML = '';
+  (data.audits || []).forEach(a=>{
     const li = document.createElement('li');
-    li.innerHTML = `<strong>${a.title}</strong><br><span class="small">${a.description}</span>`;
+    li.innerHTML = '<strong>' + a.title + '</strong><br><span class="small">' + a.description + '</span>';
     audits.appendChild(li);
   });
 
   const kw = q('#keywords');
-  kw.innerHTML = "";
-  (d.topKeywords || []).slice(0,20).forEach(k=>{
-    const c = document.createElement('span');
-    c.className = "chip";
-    c.innerText = k;
-    kw.appendChild(c);
+  kw.innerHTML = '';
+  (data.topKeywords || []).slice(0,20).forEach(k=>{
+    const d = document.createElement('span');
+    d.className = 'chip';
+    d.innerText = k;
+    kw.appendChild(d);
   });
 
-  updateChart(d);
+  updateChart(data);
 }
 
-/* ---------- Chart ------------------ */
+/* ---------- Chart ---------- */
 let chart;
-function updateChart(d){
-  const ctx = q("#chartPerf").getContext("2d");
+function updateChart(data){
+  const perf = data.performance || 0;
+  const seo = data.seoScore || 0;
+  const ctx = q('#chartPerf').getContext('2d');
   if(chart) chart.destroy();
-
-  chart = new Chart(ctx,{
-    type:"bar",
-    data:{
-      labels:["Performance","SEO"],
-      datasets:[{
-        label:"Score",
-        data:[d.performance || 0, d.seoScore || 0],
-        backgroundColor:["#0d6efd","#28a745"]
-      }]
-    },
-    options:{
-      responsive:true,
-      scales:{ y:{ beginAtZero:true, max:100 } }
-    }
+  chart = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:['Performance','SEO'], datasets:[{ label:'Score', data:[perf,seo], backgroundColor:['#0d6efd','#28a745'] }]},
+    options:{ responsive:true, scales:{ y:{ beginAtZero:true, max:100 } } }
   });
 }
 
-/* ---------- History ------------------ */
-function saveToHistory(url,data){
-  const h = JSON.parse(localStorage.getItem("pa_hist") || "[]");
-
-  h.unshift({
-    url,
-    when:new Date().toISOString(),
-    perf:data.performance || 0,
-    seo:data.seoScore || 0
-  });
-
-  localStorage.setItem("pa_hist", JSON.stringify(h.slice(0,40)));
-
+/* ---------- History ---------- */
+function saveToHistory(url, data){
+  const hist = JSON.parse(localStorage.getItem('pa_history') || '[]');
+  hist.unshift({ url, when: new Date().toISOString(), perf: data.performance || 0, seo: data.seoScore || 0, report: data });
+  localStorage.setItem('pa_history', JSON.stringify(hist.slice(0,50)));
   renderHistory();
 }
 
 function renderHistory(){
-  const h = JSON.parse(localStorage.getItem("pa_hist") || "[]");
-  const box = q("#historyList");
-  box.innerHTML = "";
-
-  if(h.length === 0){
-    box.innerHTML = `<div class="muted">Nenhum histórico ainda.</div>`;
-    return;
-  }
-
-  h.forEach(i=>{
-    const d = document.createElement("div");
-    d.className = "history-item";
-    d.innerHTML = `
-      <div>
-        <strong>${i.url}</strong>
-        <div class="small">${new Date(i.when).toLocaleString()}</div>
-      </div>
-      <div style="text-align:right">
-        <div class="small">P: ${i.perf}</div>
-        <div class="small">SEO: ${i.seo}</div>
-      </div>
-    `;
-    box.appendChild(d);
+  const hist = JSON.parse(localStorage.getItem('pa_history') || '[]');
+  const container = q('#historyList');
+  container.innerHTML = '';
+  if(hist.length===0){ container.innerHTML = '<div class="muted">Sem histórico.</div>'; return; }
+  hist.forEach(h=>{
+    const d = document.createElement('div');
+    d.className = 'history-item';
+    d.innerHTML = `<div><strong>${h.url}</strong><div class="small">${new Date(h.when).toLocaleString()}</div></div>
+                   <div style="text-align:right"><div class="small">P ${Math.round(h.perf)}</div><div class="small">SEO ${Math.round(h.seo)}</div></div>`;
+    d.addEventListener('click', ()=> {
+      if(confirm('Carregar relatório deste item?')) {
+        renderResult(h.report || {});
+      }
+    });
+    container.appendChild(d);
   });
 }
 renderHistory();
 
-/* ---------- Export ------------------ */
-function exportHistory(){
-  const h = localStorage.getItem("pa_hist") || "[]";
-  const blob = new Blob([h], { type:"application/json" });
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="historico_analises.json";
-  a.click();
-}
-
-function clearHistory(){
-  if(!confirm("Limpar histórico?")) return;
-  localStorage.removeItem("pa_hist");
-  renderHistory();
-}
-
+/* ---------- Export / Download ---------- */
 function downloadReport(){
-  if(!lastReport) return alert("Nenhum relatório para baixar.");
-  const b = new Blob([JSON.stringify(lastReport,null,2)], { type:"application/json" });
-  const a=document.createElement("a");
-  a.href = URL.createObjectURL(b);
-  a.download="relatorio.json";
+  if(!lastReport){ alert('Nenhum relatório para baixar.'); return; }
+  const blob = new Blob([JSON.stringify(lastReport, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'relatorio_site.json';
   a.click();
 }
 
-function sair(){
-  window.location.href="login.html";
-}
+function clearHistory(){ if(!confirm('Limpar histórico?')) return; localStorage.removeItem('pa_history'); renderHistory(); }
+function exportHistory(){ const h = localStorage.getItem('pa_history') || '[]'; const b = new Blob([h], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='historico_analises.json'; a.click(); }
+function sair(){ alert('Sair — você será redirecionado.'); window.location.href='login.html'; }
+
+/* ---------- Onload ---------- */
+window.onload = function(){
+  // mostrar contas meta ads caso já existam
+  mostrarContas();
+  // renderizar histórico previamente salvo
+  renderHistory();
+};
 </script>
 
 </body>
