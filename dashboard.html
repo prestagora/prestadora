@@ -50,7 +50,6 @@ body {
 }
 .btn:hover { background:#0b5ed7; }
 
-/* NOVO — GARANTE ALINHAMENTO TOTAL */
 .topbar .acoes {
     display:flex;
     align-items:center;
@@ -86,17 +85,17 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
     <div class="contas-lista" id="listaContas"></div>
     <a href="meusclientes.html">Meus Clientes</a>
 
-    <!-- 🔵 AJUSTE FEITO AQUI -->
     <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
 
-    <a href="#">Analise de sites</a>
+    <!-- 🔵 LINK AJUSTADO ABAIXO -->
+    <a href="analisesite.html">Analise de sites</a>
+
     <a href="#">Analise de redes sociais</a>
     <a href="#" onclick="sair()">Sair</a>
 </div>
 
 <div class="main">
 
-    <!-- TOPO COM BOTÕES ALINHADOS -->
     <div class="topbar">
         <h1>Dashboard</h1>
 
@@ -119,7 +118,6 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
     </div>
 
     <div class="flex-container">
-        <!-- Despesas -->
         <div class="despesas-card card">
             <h3>Minhas Despesas</h3>
             <label>Descrição</label>
@@ -137,14 +135,12 @@ input[type="text"], input[type="number"], select { width:100%; padding:8px; marg
             </table>
         </div>
 
-        <!-- Receita vs Despesas -->
         <div class="grafico-card card">
             <h3>Receita vs Despesas</h3>
             <canvas id="grafico"></canvas>
         </div>
     </div>
 
-    <!-- TEMPORIZADOR E GRÁFICO DE PRODUTIVIDADE -->
     <div class="card">
         <h3>Produtividade (Horas Trabalhadas)</h3>
         <canvas id="graficoProdutividade"></canvas>
@@ -312,7 +308,6 @@ function loginFacebook(){
     }, {scope:"ads_read,ads_management,business_management"});
 }
 
-// ----------------------- ONLOAD -----------------------
 window.onload = function(){
     atualizarTabela();
     atualizarGrafico();
