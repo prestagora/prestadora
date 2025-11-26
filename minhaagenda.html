@@ -1,294 +1,634 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minha Agenda - PrestAgora</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Minha Agenda — PrestAgora</title>
 
 <style>
-body {
-    margin: 0;
-    background: #f4f6f9;
-    font-family: Arial, sans-serif;
-}
+  /* Layout / cores padronizados com a plataforma */
+  :root{
+    --primary:#0d6efd;
+    --primary-dark:#0b5ed7;
+    --bg:#f4f6f9;
+    --card:#fff;
+    --muted:#666;
+    --accent:#0d6efd;
+    --accent-2:#08306b;
+    --border:rgba(0,0,0,0.06);
+  }
+  html,body{height:100%; margin:0; font-family:Arial, sans-serif; background:var(--bg); color:#222;}
+  .sidebar{
+    width:250px;
+    height:100vh;
+    background:var(--primary);
+    color:#fff;
+    position:fixed;
+    left:0; top:0;
+    padding-top:30px;
+    box-sizing:border-box;
+  }
+  .sidebar h2{ text-align:center; margin-bottom:24px; font-size:20px; padding:0 12px;}
+  .sidebar a{
+    display:block;
+    padding:12px 18px;
+    color:#fff;
+    text-decoration:none;
+    font-size:15px;
+  }
+  .sidebar a:hover{ background:var(--primary-dark); cursor:pointer; }
+  .sidebar .contas-lista{ padding-left:18px; display:none; }
+  .conta-item{ padding:6px 0; color:#fff; font-size:14px; }
 
-.sidebar {
-    width: 250px;
-    height: 100vh;
-    background: #0d6efd;
-    color: #fff;
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding-top: 30px;
-}
+  .main{ margin-left:250px; padding:28px; box-sizing:border-box; min-height:100vh; }
 
-.sidebar h2 { 
-    text-align:center; 
-    margin-bottom:30px; 
-    font-size:20px; 
-}
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  h1{ margin:0; font-size:22px; color:#333; }
+  .top-actions{ display:flex; gap:10px; align-items:center; }
 
-.sidebar a { 
-    display:block; 
-    padding:15px 20px; 
-    color:#fff; 
-    text-decoration:none; 
-    font-size:16px; 
-}
-
-.sidebar a:hover { 
-    background:#0b5ed7; 
-    cursor:pointer; 
-}
-
-.main { 
-    margin-left: 250px; 
-    padding: 30px; 
-}
-
-.topbar { 
-    display:flex; 
-    justify-content:space-between; 
-    align-items:center; 
-    margin-bottom:25px;
-    background:white;
-    padding:15px 20px;
-    border-radius:10px;
-    box-shadow:0 0 12px rgba(0,0,0,0.1);
-}
-
-.topbar h1 { 
-    margin:0; 
-    font-size:24px; 
-    color:#333; 
-}
-
-.card {
-    background:#fff;
-    padding:25px;
-    border-radius:10px;
-    box-shadow:0 0 12px rgba(0,0,0,0.1);
-    margin-bottom:25px;
-}
-
-.dias-semana {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 15px;
-}
-
-.dia-card {
-    background:#eef3ff;
-    padding:15px;
-    border-radius:10px;
-    text-align:center;
-    border-left: 5px solid #0d6efd;
-}
-
-.dia-card h3 {
-    margin: 0;
-    font-size:18px;
-    color:#0d6efd;
-    font-weight:700;
-}
-
-.dia-card p {
-    margin: 5px 0 0;
-    color:#333;
-}
-
-.calendarios {
-    display: flex;
-    gap: 20px;
-    margin-top: 25px;
-}
-
-.calendar-box {
-    flex: 1;
-    background: #fff;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 12px rgba(0,0,0,0.1);
-}
-
-.evento-btn {
-    background:#0d6efd;
-    color:white;
-    padding:8px 15px;
+  button.btn{
+    background:var(--primary);
+    color:#fff;
     border:none;
+    padding:9px 14px;
     border-radius:8px;
-    margin-top:10px;
     cursor:pointer;
-}
-.evento-btn:hover { background:#0b5ed7; }
+    font-size:14px;
+  }
+  button.btn.secondary{ background:#28a745; }
+  button.icon{ padding:6px 10px; border-radius:6px; }
+
+  .card{
+    background:var(--card);
+    padding:18px;
+    border-radius:10px;
+    box-shadow:0 0 12px var(--border);
+    margin-bottom:18px;
+  }
+
+  /* GRID SEMANAL */
+  .week-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap:12px;
+    align-items:start;
+  }
+
+  .day{
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid rgba(0,0,0,0.05);
+  }
+
+  .day-header{
+    background:var(--primary);
+    color:#fff;
+    padding:8px 10px;
+    font-weight:700;
+    text-align:center;
+    font-size:13px;
+  }
+
+  .day-body{
+    background:#fff;
+    min-height:520px;
+    max-height:62vh;
+    overflow:auto;
+  }
+
+  .row{
+    display:flex;
+    border-bottom:1px solid #eef2f7;
+    align-items:stretch;
+  }
+
+  .cell-time{
+    width:84px;
+    padding:8px;
+    background:#f6f8fb;
+    border-right:1px solid #eef2f7;
+    font-size:13px;
+    color:var(--muted);
+    box-sizing:border-box;
+  }
+
+  .cell-text{
+    flex:1;
+    padding:8px;
+    min-height:42px;
+    font-size:14px;
+    outline:none;
+    box-sizing:border-box;
+  }
+
+  /* editable visuals */
+  [contenteditable]:focus{
+    box-shadow:inset 0 0 0 2px rgba(13,110,253,0.08);
+    background: #fff;
+  }
+
+  .day-footer{
+    background:#f9fbff;
+    padding:8px;
+    text-align:center;
+    font-size:12px;
+    color:var(--muted);
+    border-top:1px solid #eef2f7;
+  }
+
+  .controls{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .small{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* responsive */
+  @media (max-width:1200px){
+    .week-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width:700px){
+    .week-grid{ grid-template-columns: 1fr; }
+    .cell-time{ width:100px; }
+  }
+
+  /* footer actions */
+  .agenda-actions{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+
+  .tools{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  .note{
+    font-size:13px;
+    color:var(--muted);
+  }
+
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>PrestAgora Digital</h2>
+  <h2>PrestAgora Digital</h2>
 
-    <a href="dashboard.html">Dashboard</a>
+  <a href="dashboard.html">Dashboard</a>
 
-    <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span class="seta" id="seta">▼</span></a>
-    <div id="listaContas" class="contas-lista"></div>
+    <div class="main">
 
-    <a href="meusclientes.html">Meus Clientes</a>
-    <a href="bibliotecaanuncios.html">Biblioteca de Anúncios</a>
-    <a href="analisesite.html">Análise de Sites</a>
-    <a href="analiseredes.html">Análise de Redes Sociais</a>
-    <a href="minhaagenda.html" style="background:#0b5ed7;">Minha Agenda</a>
-    <a href="#" onclick="sair()">Sair</a>
+  <div class="topbar">
+    <div>
+      <h1>Minha Agenda</h1>
+      <div class="small">Cadastre compromissos editando diretamente nas células. Edite horários na lateral.</div>
+    </div>
+
+    <div class="top-actions">
+      <div class="tools">
+        <button class="btn" onclick="exportAgenda()">Exportar</button>
+        <button class="btn" onclick="importAgenda()">Importar</button>
+        <button class="btn" onclick="limparAgenda()">Limpar</button>
+      </div>
+    </div>
+  </div>
+
+  <a href="#contas" onclick="toggleContas()">Contas Meta Ads <span id="setaConta">▼</span></a>
+  <div class="contas-lista" id="listaContas"></div>
+
+  <a href="meusclientes.html">Meus Clientes</a>
+  <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
+  <a href="analisesite.html">Análise de Site</a>
+  <a href="analiseredes.html">Análise de Redes Sociais</a>
+  <a href="#" onclick="sair()">Sair</a>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-    <div class="topbar">
-        <h1>Minha Agenda</h1>
+  <div class="topbar">
+    <div>
+      <h1>Minha Agenda</h1>
+      <div class="small">Cadastre compromissos editando diretamente nas células. Edite horários na lateral.</div>
     </div>
 
-    <!-- DIAS DA SEMANA -->
-    <div class="card">
-        <h2>Agenda Semanal</h2>
+    <div class="top-actions">
+      <div class="tools">
+        <button class="btn" onclick="exportAgenda()">Exportar</button>
+        <button class="btn" onclick="importAgenda()">Importar</button>
+        <button class="btn" onclick="limparAgenda()">Limpar</button>
+      </div>
+    </div>
+  </div>
 
-        <div class="dias-semana" id="diasSemana"></div>
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px;">
+      <div class="note">Edição inline: clique na lateral para editar horário ou no campo para inserir descrição. Pressione SALVAR para manter.</div>
+      <div class="agenda-actions">
+        <button class="btn" onclick="salvarAgenda()">Salvar Agenda</button>
+        <button class="btn secondary" onclick="addDefaultRowAll()">Adicionar linha padrão (08:00-18:00)</button>
+      </div>
     </div>
 
-    <!-- CALENDÁRIOS DOS 3 MESES -->
-    <div class="card">
-        <h2>Próximos 3 Meses</h2>
-
-        <div class="calendarios" id="calendarios"></div>
+    <!-- Semana: 7 colunas -->
+    <div class="week-grid" id="weekGrid">
+      <!-- Colunas geradas por JS -->
     </div>
+
+    <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px;">
+      <div class="small">Salvo localmente no browser (localStorage). Use Exportar/Importar para backup.</div>
+      <div>
+        <label style="margin-right:6px;" class="small">Checar notificações automaticamente</label>
+        <input type="checkbox" id="chkNotify" checked />
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendário rápido (opcional): selecionar data + hora para criar evento pontual) -->
+  <div class="card">
+    <h3 style="margin-top:0;">Adicionar evento pontual (data específica)</h3>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <input type="date" id="dateEvent" />
+      <input type="time" id="timeEvent" />
+      <input type="text" id="textEvent" placeholder="Descrição do evento" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;" />
+      <select id="notifyMethod" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
+        <option value="alert">Alerta na Plataforma</option>
+        <option value="desktop">Notificação do Sistema</option>
+      </select>
+      <button class="btn" onclick="addDateEvent()">Adicionar Evento</button>
+    </div>
+
+    <div id="dateEventsList" style="margin-top:12px;"></div>
+  </div>
 
 </div>
 
 <script>
-/* ---------- GERA DATAS AUTOMÁTICAS ---------- */
-function gerarDiasSemana() {
-    const hoje = new Date();
-    const diaSemana = hoje.getDay(); // 0 domingo, 1 segunda...
+/* ---------- Dados iniciais ---------- */
+const DAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+const STORAGE_KEY = 'agenda_prestagora_week';
+const STORAGE_NOTIFIED = 'agenda_prestagora_notified';
+const STORAGE_DATE_EVENTS = 'agenda_prestagora_dateevents';
+let agenda = {}; // dayIndex -> array of rows {time,text}
 
-    let segunda = new Date(hoje);
-    segunda.setDate(hoje.getDate() - (diaSemana - 1));
+/* ---------- Funções de sidebar / contas ---------- */
+function toggleContas(){
+  const lista = document.getElementById('listaContas');
+  const seta = document.getElementById('setaConta');
+  const aberto = lista.style.display === 'block';
+  lista.style.display = aberto ? 'none' : 'block';
+  seta.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+function mostrarContas(){
+  const lista = document.getElementById('listaContas');
+  lista.innerHTML = '';
+  const contas = JSON.parse(localStorage.getItem('contas_meta') || '[]');
+  if(!contas || contas.length === 0){
+    lista.innerHTML = '<div class="conta-item">Nenhuma conta conectada</div>';
+    return;
+  }
+  contas.forEach((c)=> {
+    const div = document.createElement('div');
+    div.className = 'conta-item';
+    div.innerText = `• ${c.name || c.account_id || 'Conta'} (${c.account_id || '-'})`;
+    lista.appendChild(div);
+  });
+}
+function sair(){ alert('Sair — você será redirecionado.'); window.location.href='login.html'; }
 
-    if (diaSemana === 0) {
-        segunda.setDate(hoje.getDate() - 6);
-    }
+/* ---------- Criação da grade semanal ---------- */
+function criarColunas(){
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = '';
+  for(let i=0;i<7;i++){
+    const dayBox = document.createElement('div');
+    dayBox.className = 'day card';
+    dayBox.dataset.day = i;
 
-    const nomes = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
-    const container = document.getElementById("diasSemana");
-    container.innerHTML = "";
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerText = DAYS[i];
 
-    for (let i = 0; i < 7; i++) {
-        let data = new Date(segunda);
-        data.setDate(segunda.getDate() + i);
+    const body = document.createElement('div');
+    body.className = 'day-body';
+    body.id = 'dayBody_'+i;
 
-        const formatada = data.toLocaleDateString("pt-BR");
+    const footer = document.createElement('div');
+    footer.className = 'day-footer';
+    footer.innerHTML = `<div style="display:flex; gap:8px; justify-content:center; align-items:center;">
+      <button class="icon" onclick="addRow(${i})" title="Adicionar linha">➕</button>
+      <button class="icon" onclick="clearDay(${i})" title="Limpar dia">🗑️</button>
+      <button class="icon" onclick="exportDay(${i})" title="Exportar dia">⬇️</button>
+    </div>`;
 
-        container.innerHTML += `
-            <div class="dia-card">
-                <h3>${nomes[i]}</h3>
-                <p>${formatada}</p>
-            </div>
-        `;
-    }
+    dayBox.appendChild(header);
+    dayBox.appendChild(body);
+    dayBox.appendChild(footer);
+
+    grid.appendChild(dayBox);
+  }
 }
 
-/* ---------- CALENDÁRIOS DOS PRÓXIMOS 3 MESES ---------- */
-function gerarCalendarios() {
-    const container = document.getElementById("calendarios");
-    container.innerHTML = "";
+/* cria uma linha editável (time + text) */
+function createRowElement(dayIndex, rowIndex, rowData){
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.dataset.day = dayIndex;
+  row.dataset.index = rowIndex;
 
-    const hoje = new Date();
+  const timeCell = document.createElement('div');
+  timeCell.className = 'cell-time';
+  timeCell.contentEditable = true;
+  timeCell.spellcheck = false;
+  timeCell.innerText = rowData && rowData.time ? rowData.time : '08:00';
 
-    for (let i = 0; i < 3; i++) {
-        let mes = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1);
-        let nomeMes = mes.toLocaleString("pt-BR", { month: "long" });
+  const textCell = document.createElement('div');
+  textCell.className = 'cell-text';
+  textCell.contentEditable = true;
+  textCell.spellcheck = false;
+  textCell.innerText = rowData && rowData.text ? rowData.text : '';
 
-        container.innerHTML += `
-            <div class="calendar-box">
-                <h3>${nomeMes} ${mes.getFullYear()}</h3>
-                <input type="date" onchange="abrirEvento('${nomeMes}', this.value)">
-            </div>
-        `;
-    }
+  row.appendChild(timeCell);
+  row.appendChild(textCell);
+
+  return row;
 }
 
-/* ---------- ADICIONAR EVENTO ---------- */
-function abrirEvento(mes, data) {
-    if (!data) return;
+/* adiciona linha ao dia (no DOM e agenda em memória) */
+function addRow(dayIndex, rowData){
+  const body = document.getElementById('dayBody_'+dayIndex);
+  // se não existir array, inicializa
+  if(!agenda[dayIndex]) agenda[dayIndex] = [];
+  const rowIndex = agenda[dayIndex].length;
+  agenda[dayIndex].push({ time: rowData && rowData.time ? rowData.time : '08:00', text: rowData && rowData.text ? rowData.text : '' });
+  const rowEl = createRowElement(dayIndex, rowIndex, agenda[dayIndex][rowIndex]);
+  body.appendChild(rowEl);
+}
 
-    const hora = prompt("Selecione a hora do evento (ex: 14:30)");
-    const titulo = prompt("Nome do evento:");
+/* adiciona linhas padrão 08:00 -> 18:00 (cada 30min) em todas colunas */
+function addDefaultRowAll(){
+  const times = [];
+  for(let h=8; h<=18; h++){
+    times.push((h<10?'0':'')+h+':00');
+    times.push((h<10?'0':'')+h+':30');
+  }
+  // remover last extra 18:30 if added
+  while(times.length && times[times.length-1] === '18:30') times.pop();
 
-    const eventos = JSON.parse(localStorage.getItem("eventosAgenda") || "[]");
-
-    eventos.push({
-        data,
-        hora,
-        titulo
+  for(let d=0; d<7; d++){
+    agenda[d] = [];
+    const body = document.getElementById('dayBody_'+d);
+    body.innerHTML = '';
+    times.forEach(t=>{
+      agenda[d].push({time:t, text:''});
+      const idx = agenda[d].length-1;
+      body.appendChild(createRowElement(d, idx, agenda[d][idx]));
     });
-
-    localStorage.setItem("eventosAgenda", JSON.stringify(eventos));
-
-    alert("Evento adicionado!");
+  }
 }
 
-/* ---------- NOTIFICAÇÕES AUTOMÁTICAS ---------- */
-function verificarEventos() {
-    const eventos = JSON.parse(localStorage.getItem("eventosAgenda") || "[]");
-    const agora = new Date();
+/* limpa dia */
+function clearDay(d){
+  if(!confirm('Limpar compromissos deste dia?')) return;
+  agenda[d] = [];
+  document.getElementById('dayBody_'+d).innerHTML = '';
+}
 
-    eventos.forEach(ev => {
-        const dataEv = new Date(ev.data + " " + ev.hora);
+/* exporta dia (JSON) */
+function exportDay(d){
+  const data = agenda[d] || [];
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `agenda_dia_${DAYS[d]}.json`;
+  a.click();
+}
 
-        if (Math.abs(dataEv - agora) < 60000) {
-            alert("🔔 Lembrete: " + ev.titulo + " agora!");
-        }
+/* ---------- Salvar / carregar agenda ---------- */
+function salvarAgenda(){
+  // percorre DOM para capturar valores atuais (caso usuário editou)
+  for(let d=0; d<7; d++){
+    const body = document.getElementById('dayBody_'+d);
+    const rows = Array.from(body.querySelectorAll('.row'));
+    agenda[d] = rows.map(r=>{
+      const time = (r.querySelector('.cell-time')?.innerText || '').trim();
+      const text = (r.querySelector('.cell-text')?.innerText || '').trim();
+      return {time, text};
     });
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(agenda));
+  alert('Agenda salva localmente!');
 }
 
-setInterval(verificarEventos, 30000);
-
-/* ---------- CONTAS META ADS (EXIBIÇÃO) ---------- */
-function toggleContas() {
-    const lista = document.getElementById("listaContas");
-    const seta = document.getElementById("seta");
-
-    if (lista.style.display === "block") {
-        lista.style.display = "none";
-        seta.textContent = "▼";
-    } else {
-        lista.style.display = "block";
-        seta.textContent = "▲";
+/* carregar do storage */
+function carregarAgenda(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  agenda = {};
+  for(let d=0; d<7; d++){ agenda[d]=[]; document.getElementById('dayBody_'+d).innerHTML = ''; }
+  if(raw){
+    try{
+      const parsed = JSON.parse(raw);
+      for(let d=0; d<7; d++){
+        const arr = parsed[d] || [];
+        arr.forEach(item => addRow(d, item));
+      }
+    }catch(e){
+      console.error('Erro ao carregar agenda:', e);
     }
+  } else {
+    // seeds: criar 8:00-12:00 e 13:00-17:00 vazio (mais profissional)
+    for(let d=0; d<7; d++){
+      agenda[d]=[];
+      const defaultTimes = ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'];
+      defaultTimes.forEach(t => addRow(d, {time:t, text:''}));
+    }
+  }
 }
 
-function carregarContas() {
-    const contas = JSON.parse(localStorage.getItem("contasMeta") || "[]");
+/* ---------- Export / Import ---------- */
+function exportAgenda(){
+  salvarAgenda();
+  const data = localStorage.getItem(STORAGE_KEY) || '{}';
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'agenda_prestagora.json';
+  a.click();
+}
 
-    const lista = document.getElementById("listaContas");
-    lista.innerHTML = "";
+function importAgenda(){
+  const input = document.createElement('input');
+  input.type='file';
+  input.accept='application/json';
+  input.onchange = e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      try{
+        const data = JSON.parse(ev.target.result);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        carregarAgenda();
+        alert('Agenda importada com sucesso!');
+      }catch(err){
+        alert('Arquivo inválido.');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
 
-    contas.forEach(c => {
-        const div = document.createElement("div");
-        div.style.padding = "10px 20px";
-        div.textContent = c.nome;
-        lista.appendChild(div);
+function limparAgenda(){
+  if(!confirm('Apagar toda agenda local?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  carregarAgenda();
+}
+
+/* ---------- Notificações (diárias) ---------- */
+function checkNotifications(){
+  if(!document.getElementById('chkNotify').checked) return;
+  const now = new Date();
+  const currentDayIndex = (now.getDay() + 6) % 7; // transformar domingo(0) -> 6, segunda->0
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const timestr = hh+':'+mm;
+
+  const notified = JSON.parse(localStorage.getItem(STORAGE_NOTIFIED) || '{}');
+  const todayKey = new Date().toISOString().slice(0,10);
+
+  const dayAgenda = agenda[currentDayIndex] || [];
+  dayAgenda.forEach((item, idx)=>{
+    if(!item || !item.time) return;
+    // comparar somente HH:MM (usuário deve escrever HH:MM)
+    const itemTime = item.time.trim();
+    if(itemTime === timestr){
+      const eventId = `${currentDayIndex}|${idx}|${itemTime}`;
+      if(notified[eventId] === todayKey) return; // já notificado hoje
+      // notificar
+      notifyUser(`Compromisso agora: ${item.text || '(sem descrição)'} — ${item.time}`);
+      // marcar notificado
+      notified[eventId] = todayKey;
+      localStorage.setItem(STORAGE_NOTIFIED, JSON.stringify(notified));
+    }
+  });
+
+  // verificar eventos com data específica
+  const dateEvents = JSON.parse(localStorage.getItem(STORAGE_DATE_EVENTS) || '[]');
+  dateEvents.forEach((ev, i)=>{
+    if(!ev.date || !ev.time) return;
+    if(ev.date === todayKey){
+      // comparar tempo HH:MM
+      if(ev.time === timestr){
+        const eventId = `date|${ev.date}|${ev.time}|${i}`;
+        if(notified[eventId] === todayKey) return;
+        notifyUser(`Evento do dia: ${ev.text || '(sem descrição)'} às ${ev.time}`);
+        notified[eventId] = todayKey;
+        localStorage.setItem(STORAGE_NOTIFIED, JSON.stringify(notified));
+      }
+    }
+  });
+}
+
+/* mostra notificação */
+function notifyUser(msg){
+  // tentar Notifications API
+  if("Notification" in window && Notification.permission === "granted"){
+    new Notification("PrestAgora — Lembrete", { body: msg });
+  } else if("Notification" in window && Notification.permission !== "denied"){
+    Notification.requestPermission().then(permission=>{
+      if(permission === "granted"){
+        new Notification("PrestAgora — Lembrete", { body: msg });
+      } else {
+        alert(msg);
+      }
     });
+  } else {
+    alert(msg);
+  }
 }
 
-/* ---------- START ---------- */
-window.onload = () => {
-    carregarContas();
-    gerarDiasSemana();
-    gerarCalendarios();
+/* ---------- Eventos com data específica ---------- */
+function addDateEvent(){
+  const date = document.getElementById('dateEvent').value;
+  const time = document.getElementById('timeEvent').value;
+  const text = document.getElementById('textEvent').value.trim();
+  if(!date || !time || !text){ alert('Preencha data, hora e descrição.'); return; }
+  const arr = JSON.parse(localStorage.getItem(STORAGE_DATE_EVENTS) || '[]');
+  arr.push({ date, time, text });
+  localStorage.setItem(STORAGE_DATE_EVENTS, JSON.stringify(arr));
+  document.getElementById('dateEvent').value = '';
+  document.getElementById('timeEvent').value = '';
+  document.getElementById('textEvent').value = '';
+  renderDateEvents();
 }
+
+function renderDateEvents(){
+  const list = JSON.parse(localStorage.getItem(STORAGE_DATE_EVENTS) || '[]');
+  const container = document.getElementById('dateEventsList');
+  container.innerHTML = '';
+  if(list.length===0){ container.innerHTML = '<div class="small">Nenhum evento pontual.</div>'; return; }
+  list.forEach((ev, i)=>{
+    const div = document.createElement('div');
+    div.style.display='flex';
+    div.style.justifyContent='space-between';
+    div.style.alignItems='center';
+    div.style.padding='8px 0';
+    div.style.borderBottom='1px solid #f1f1f1';
+    div.innerHTML = `<div><strong>${ev.date}</strong> ${ev.time} — ${ev.text}</div>
+                     <div style="display:flex; gap:6px;">
+                        <button class="btn" onclick="editDateEvent(${i})">Editar</button>
+                        <button class="btn" onclick="removeDateEvent(${i})">Remover</button>
+                     </div>`;
+    container.appendChild(div);
+  });
+}
+function removeDateEvent(i){
+  const arr = JSON.parse(localStorage.getItem(STORAGE_DATE_EVENTS) || '[]');
+  arr.splice(i,1);
+  localStorage.setItem(STORAGE_DATE_EVENTS, JSON.stringify(arr));
+  renderDateEvents();
+}
+function editDateEvent(i){
+  const arr = JSON.parse(localStorage.getItem(STORAGE_DATE_EVENTS) || '[]');
+  const ev = arr[i];
+  document.getElementById('dateEvent').value = ev.date;
+  document.getElementById('timeEvent').value = ev.time;
+  document.getElementById('textEvent').value = ev.text;
+  // remove original
+  arr.splice(i,1);
+  localStorage.setItem(STORAGE_DATE_EVENTS, JSON.stringify(arr));
+  renderDateEvents();
+}
+
+/* ---------- Inicialização ---------- */
+function init(){
+  criarColunas();
+  mostrarContas();
+  carregarAgenda();
+  renderDateEvents();
+
+  // salvar quando usuário sair da aba (conveniente)
+  window.addEventListener('beforeunload', ()=>{ salvarAgenda(); });
+
+  // iniciar verificação de notificações a cada 30s
+  setInterval(checkNotifications, 30000);
+}
+window.onload = init;
+
 </script>
-
 </body>
 </html>
