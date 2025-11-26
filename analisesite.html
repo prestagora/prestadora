@@ -9,95 +9,199 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  body{ margin:0; font-family:Arial, sans-serif; background:#f4f6f9; color:#222; }
-  .sidebar{ width:250px; height:100vh; background:#0d6efd; color:#fff; position:fixed; left:0; top:0; padding-top:30px; overflow-y:auto; }
-  .sidebar h2{ text-align:center; margin-bottom:20px; font-size:20px; }
-
-  .sidebar a{ display:block; padding:12px 18px; color:#fff; text-decoration:none; font-size:16px; }
-  .sidebar a:hover{ background:#0b5ed7; cursor:pointer; }
-
-  /* Submenu CONTAS */
-  .contas-lista {
-      display:none;
-      background:#0b5ed7;
-      padding-left:10px;
-  }
-  .contas-lista div {
-      padding:8px 18px;
-      font-size:14px;
-      border-bottom:1px solid rgba(255,255,255,0.1);
+  body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f6f9;
+    color:#222;
   }
 
-  .main{ margin-left:250px; padding:30px; }
-  .card{ background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.07); margin-bottom:20px; }
-  .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
-  h1{ margin:0; font-size:22px; color:#333; }
-  label{ font-weight:600; display:block; margin-bottom:6px; }
-  input[type=text]{ width:60%; padding:10px; border-radius:6px; border:1px solid #ddd; }
-  button.btn{ background:#0d6efd; color:#fff; border:none; padding:10px 14px; border-radius:6px; cursor:pointer; }
-  button.btn:hover{ background:#0b5ed7; }
+  /* SIDEBAR PADRÃO */
+  .sidebar{
+    width:250px;
+    height:100vh;
+    background:#0d6efd;
+    color:#fff;
+    position:fixed;
+    left:0;
+    top:0;
+    padding:40px 0;
+  }
+  .sidebar h2{
+    text-align:center;
+    margin-bottom:40px;
+    font-size:22px;
+  }
+  .sidebar a{
+    display:block;
+    padding:16px 22px;
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+  }
+  .sidebar a:hover{
+    background:#0b5ed7;
+  }
+  .sidebar a.active{
+    background:#0b5ed7;
+  }
 
-  .grid{ display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start; }
-  .muted{ color:#666; font-size:13px; margin-top:6px; }
-  .section-title{ font-size:16px; margin-bottom:8px; font-weight:700; }
-  .result-block{ margin-top:12px; }
-  .audit-list{ list-style:none; padding:0; margin:0; }
-  .audit-list li{ padding:8px; border-bottom:1px solid #f0f0f0; }
+  /* MAIN PADRÃO */
+  .main{
+    margin-left:250px;
+    padding:35px;
+  }
 
-  .chip{ display:inline-block; background:#eef5ff; color:#0d6efd; padding:6px 8px; border-radius:999px; margin:4px; font-size:13px; }
+  /* CARDS PADRÃO */
+  .card{
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(0,0,0,0.06);
+    margin-bottom:25px;
+  }
 
-  .history-item{ padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-  .history-item:hover{ background:#f8f9ff; }
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+  }
 
-  canvas{ background:transparent; }
+  h1{
+    margin:0;
+    font-size:24px;
+    color:#333;
+  }
+
+  label{
+    font-weight:600;
+    display:block;
+    margin-bottom:6px;
+  }
+
+  input[type=text]{
+    width:65%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    font-size:15px;
+  }
+
+  button.btn{
+    background:#0d6efd;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+  }
+
+  .muted{
+    color:#666;
+    font-size:14px;
+    margin-top:6px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:25px;
+    align-items:start;
+  }
+
+  .section-title{
+    font-size:18px;
+    margin-bottom:12px;
+    font-weight:700;
+  }
+
+  .result-block{
+    margin-top:18px;
+  }
+
+  .audit-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+  .audit-list li{
+    padding:10px 0;
+    border-bottom:1px solid #f1f1f1;
+  }
+
+  .chip{
+    display:inline-block;
+    background:#eef5ff;
+    color:#0d6efd;
+    padding:7px 10px;
+    border-radius:999px;
+    margin:5px;
+    font-size:14px;
+  }
+
+  .history-item{
+    padding:10px;
+    border-bottom:1px solid #eee;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .small{
+    font-size:14px;
+    color:#555;
+  }
+
+  canvas{
+    background:transparent;
+  }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <h2>PrestAgora Digital</h2>
-
+  <h2>PrestAgora</h2>
   <a href="dashboard.html">Dashboard</a>
-
-  <a onclick="toggleContas()">Contas Meta Ads ▼</a>
-  <div class="contas-lista" id="listaContas"></div>
-
   <a href="meusclientes.html">Meus Clientes</a>
   <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
-  <a href="analisesite.html" style="background:#0b5ed7;">Análise de Site</a>
+  <a class="active" href="analisesite.html">Análise de Site</a>
   <a href="#">Análise de Redes Sociais</a>
   <a href="#" onclick="sair()">Sair</a>
 </div>
 
 <div class="main">
+
   <div class="card topbar">
     <div>
       <h1>Análise Profissional de Site</h1>
-      <div class="muted">Insira um site para obter performance, SEO, acessibilidade e palavras-chave principais.</div>
+      <div class="muted">Insira a URL do site para obter performance, SEO e palavras-chave.</div>
     </div>
-
-    <div style="text-align:right">
+    <div>
       <button class="btn" onclick="exportHistory()">Exportar Histórico</button>
-      <button class="btn" style="background:#28a745;margin-left:8px;" onclick="clearHistory()">Limpar Histórico</button>
+      <button class="btn" style="background:#28a745;margin-left:10px;" onclick="clearHistory()">Limpar Histórico</button>
     </div>
   </div>
 
   <div class="card">
     <label for="siteInput">URL do Site</label>
     <input type="text" id="siteInput" placeholder="https://exemplo.com" />
-    <button class="btn" style="margin-left:8px;" onclick="submitAnalyze()">Analisar</button>
-    <div id="info" class="muted">Insira sempre com HTTPS:// para melhor precisão.</div>
+    <button class="btn" style="margin-left:10px;" onclick="submitAnalyze()">Analisar</button>
+    <div id="info" class="muted">Use a URL completa (inclua https://).</div>
   </div>
 
   <div class="grid">
 
+    <!-- RESULTADOS -->
     <div class="card">
       <div class="section-title">Resultados</div>
 
-      <div id="loading" style="display:none;">⏳ Carregando análise...</div>
+      <div id="loading" style="display:none;">⏳ Carregando...</div>
 
-      <div id="resultArea" class="result-block" style="display:none;">
-        <div style="display:flex; gap:18px; align-items:center;">
+      <div id="resultArea" style="display:none;">
+
+        <div style="display:flex; gap:25px; align-items:center; margin-bottom:20px;">
           <div>
             <div class="small">Performance</div>
             <h2 id="perfScore">-</h2>
@@ -117,187 +221,217 @@
           </div>
         </div>
 
-        <hr>
+        <hr style="margin:20px 0;">
 
         <div>
-          <div class="section-title">Sugestões & Auditorias</div>
+          <div class="section-title">Sugestões</div>
           <ul id="audits" class="audit-list"></ul>
         </div>
 
-        <hr>
+        <hr style="margin:20px 0;">
 
         <div>
-          <div class="section-title">Palavras-chave mais prováveis</div>
+          <div class="section-title">Palavras-chave estimadas</div>
           <div id="keywords" style="display:flex; flex-wrap:wrap;"></div>
         </div>
 
-        <div style="margin-top:12px;">
+        <div style="margin-top:20px;">
           <button class="btn" onclick="downloadReport()">Baixar Relatório (JSON)</button>
         </div>
+
       </div>
     </div>
 
-    <!-- GRÁFICO + HISTÓRICO -->
+    <!-- LATERAL -->
     <div>
+
       <div class="card">
         <div class="section-title">Gráfico: Performance x SEO</div>
-        <canvas id="chartPerf" width="350" height="220"></canvas>
+        <canvas id="chartPerf" width="380" height="240"></canvas>
       </div>
 
-      <div class="card" style="margin-top:12px;">
-        <div class="section-title">Histórico de análises</div>
-        <div id="historyList" style="max-height:320px; overflow:auto;"></div>
+      <div class="card" style="margin-top:25px;">
+        <div class="section-title">Histórico</div>
+        <div id="historyList" style="max-height:350px; overflow:auto;"></div>
       </div>
+
     </div>
+
   </div>
+
 </div>
 
 <script>
-/* ---------- SUBMENU CONTAS ---------- */
-function toggleContas(){
-   const div = document.getElementById("listaContas");
-   div.style.display = div.style.display === "block" ? "none" : "block";
-}
-
-/* ---------- API CONFIG ---------- */
+/* ---------- Config ------------------ */
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api';
 
+/* ---------- Helpers ------------------ */
 function q(s){ return document.querySelector(s); }
-function show(e){ e.style.display=''; }
 function hide(e){ e.style.display='none'; }
+function show(e){ e.style.display='block'; }
 
+/* ---------- State ------------------ */
 let lastReport = null;
 
-/* ---------- ANALISAR SITE ---------- */
+/* ---------- Submit ------------------ */
 async function submitAnalyze(){
-  const url = q('#siteInput').value.trim();
-  if(!url){ alert("Insira a URL!"); return; }
+  const input = q('#siteInput').value.trim();
+  if(!input){ return alert('Insira a URL.'); }
 
   show(q('#loading'));
   hide(q('#resultArea'));
 
-  try{
-    const res = await fetch(API_BASE + "/api/analyze", {
+  try {
+    const r = await fetch(API_BASE + '/api/analyze', {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ url })
+      body:JSON.stringify({ url: input })
     });
 
-    const data = await res.json();
+    if(!r.ok){
+      throw new Error(await r.text());
+    }
+
+    const data = await r.json();
     lastReport = data;
 
     renderResult(data);
-    saveToHistory(url, data);
+    saveToHistory(input, data);
 
-  }catch(err){
-    alert("Erro ao analisar: " + err.message);
+  } catch(e){
+    alert("Erro: " + e.message);
   }
 
   hide(q('#loading'));
 }
 
-/* ---------- RENDER RESULTADO ---------- */
-function renderResult(data){
+/* ---------- Render ------------------ */
+function renderResult(d){
   show(q('#resultArea'));
 
-  q('#perfScore').innerText = data.performance || 0;
-  q('#seoScore').innerText = data.seoScore || 0;
-  q('#accScore').innerText = data.accessibility || 0;
+  q('#perfScore').innerText = (d.performance || 0) + " / 100";
+  q('#seoScore').innerText = (d.seoScore || 0) + " / 100";
+  q('#accScore').innerText = (d.accessibility || 0) + " / 100";
 
-  q('#perfDetail').innerText = data.lighthouseSummary || '';
-  q('#seoDetail').innerText = data.seoSummary || '';
-  q('#accDetail').innerText = data.accessibilityDetail || '';
+  q('#perfDetail').innerText = d.lighthouseSummary || "";
+  q('#seoDetail').innerText = d.seoSummary || "";
+  q('#accDetail').innerText = d.accessibilityDetail || "";
 
   const audits = q('#audits');
   audits.innerHTML = "";
-  (data.audits || []).forEach(a=>{
-    audits.innerHTML += `<li><strong>${a.title}</strong> — <span class="small">${a.description}</span></li>`;
+  (d.audits || []).forEach(a=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${a.title}</strong><br><span class="small">${a.description}</span>`;
+    audits.appendChild(li);
   });
 
   const kw = q('#keywords');
   kw.innerHTML = "";
-  (data.topKeywords || []).forEach(k=>{
-    kw.innerHTML += `<span class="chip">${k}</span>`;
+  (d.topKeywords || []).slice(0,20).forEach(k=>{
+    const c = document.createElement('span');
+    c.className = "chip";
+    c.innerText = k;
+    kw.appendChild(c);
   });
 
-  updateChart(data);
+  updateChart(d);
 }
 
-/* ---------- GRÁFICO ---------- */
+/* ---------- Chart ------------------ */
 let chart;
-function updateChart(data){
-  const ctx = q('#chartPerf');
+function updateChart(d){
+  const ctx = q("#chartPerf").getContext("2d");
   if(chart) chart.destroy();
 
   chart = new Chart(ctx,{
-    type:'bar',
+    type:"bar",
     data:{
-      labels:['Performance','SEO'],
+      labels:["Performance","SEO"],
       datasets:[{
-        label:'Score',
-        data:[data.performance || 0, data.seoScore || 0],
-        backgroundColor:['#0d6efd','#28a745']
+        label:"Score",
+        data:[d.performance || 0, d.seoScore || 0],
+        backgroundColor:["#0d6efd","#28a745"]
       }]
     },
-    options:{ responsive:true, scales:{y:{beginAtZero:true, max:100}} }
+    options:{
+      responsive:true,
+      scales:{ y:{ beginAtZero:true, max:100 } }
+    }
   });
 }
 
-/* ---------- HISTÓRICO ---------- */
+/* ---------- History ------------------ */
 function saveToHistory(url,data){
-  const hist = JSON.parse(localStorage.getItem("pa_history") || "[]");
-  hist.unshift({
+  const h = JSON.parse(localStorage.getItem("pa_hist") || "[]");
+
+  h.unshift({
     url,
     when:new Date().toISOString(),
-    perf:data.performance||0,
-    seo:data.seoScore||0
+    perf:data.performance || 0,
+    seo:data.seoScore || 0
   });
-  localStorage.setItem("pa_history", JSON.stringify(hist.slice(0,50)));
+
+  localStorage.setItem("pa_hist", JSON.stringify(h.slice(0,40)));
+
   renderHistory();
 }
 
 function renderHistory(){
-  const hist = JSON.parse(localStorage.getItem("pa_history") || "[]");
-  const box = q('#historyList');
+  const h = JSON.parse(localStorage.getItem("pa_hist") || "[]");
+  const box = q("#historyList");
   box.innerHTML = "";
 
-  if(hist.length===0){
-    box.innerHTML = "<div class='muted'>Nenhum histórico salvo.</div>";
+  if(h.length === 0){
+    box.innerHTML = `<div class="muted">Nenhum histórico ainda.</div>`;
     return;
   }
 
-  hist.forEach(h=>{
-    box.innerHTML += `
-      <div class="history-item">
-        <div><strong>${h.url}</strong><div class="small">${new Date(h.when).toLocaleString()}</div></div>
-        <div style="text-align:right"><div class="small">P ${h.perf}</div><div class="small">SEO ${h.seo}</div></div>
-      </div>`;
+  h.forEach(i=>{
+    const d = document.createElement("div");
+    d.className = "history-item";
+    d.innerHTML = `
+      <div>
+        <strong>${i.url}</strong>
+        <div class="small">${new Date(i.when).toLocaleString()}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="small">P: ${i.perf}</div>
+        <div class="small">SEO: ${i.seo}</div>
+      </div>
+    `;
+    box.appendChild(d);
   });
 }
 renderHistory();
 
-/* ---------- DOWNLOAD ---------- */
-function downloadReport(){
-  if(!lastReport){ alert("Nenhum relatório disponível."); return; }
-
-  const blob = new Blob([JSON.stringify(lastReport,null,2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = "relatorio_site.json";
-  a.click();
-}
-
-function clearHistory(){ localStorage.removeItem("pa_history"); renderHistory(); }
+/* ---------- Export ------------------ */
 function exportHistory(){
-  const h = localStorage.getItem("pa_history") || "[]";
-  const blob = new Blob([h],{type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = "historico_analises.json";
+  const h = localStorage.getItem("pa_hist") || "[]";
+  const blob = new Blob([h], { type:"application/json" });
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="historico_analises.json";
   a.click();
 }
 
-function sair(){ alert("Saindo..."); window.location.href = "login.html"; }
+function clearHistory(){
+  if(!confirm("Limpar histórico?")) return;
+  localStorage.removeItem("pa_hist");
+  renderHistory();
+}
+
+function downloadReport(){
+  if(!lastReport) return alert("Nenhum relatório para baixar.");
+  const b = new Blob([JSON.stringify(lastReport,null,2)], { type:"application/json" });
+  const a=document.createElement("a");
+  a.href = URL.createObjectURL(b);
+  a.download="relatorio.json";
+  a.click();
+}
+
+function sair(){
+  window.location.href="login.html";
+}
 </script>
 
 </body>
