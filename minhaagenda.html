@@ -1,1 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minha Agenda — PrestAgora</title>
+
+<style>
+    body{
+        margin:0;
+        font-family:Arial, sans-serif;
+        background:#f4f6f9;
+        color:#222;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+        width:250px;
+        height:100vh;
+        background:#0d6efd;
+        color:#fff;
+        position:fixed;
+        left:0;
+        top:0;
+        padding:40px 0;
+    }
+    .sidebar h2{
+        text-align:center;
+        margin-bottom:40px;
+        font-size:22px;
+    }
+    .sidebar a{
+        display:block;
+        padding:16px 22px;
+        color:#fff;
+        text-decoration:none;
+        font-size:16px;
+    }
+    .sidebar a:hover{
+        background:#0b5ed7;
+    }
+    .sidebar a.active{
+        background:#0b5ed7;
+    }
+
+    /* MAIN */
+    .main{
+        margin-left:250px;
+        padding:35px;
+    }
+
+    /* CARD */
+    .card{
+        background:#fff;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 0 12px rgba(0,0,0,0.06);
+        margin-bottom:25px;
+    }
+
+    h1{
+        margin:0;
+        font-size:24px;
+        color:#333;
+    }
+
+    /* Semanas */
+    .week-grid{
+        display:grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap:15px;
+        margin-top:20px;
+    }
+
+    .day-box{
+        background:#fff;
+        border-radius:12px;
+        padding:15px;
+        box-shadow:0 0 10px rgba(0,0,0,0.05);
+        min-height:150px;
+    }
+
+    .day-title{
+        font-weight:bold;
+        margin-bottom:10px;
+        font-size:16px;
+        color:#0d6efd;
+    }
+
+    /* Calendário */
+    .calendar-container{
+        display:grid;
+        grid-template-columns: repeat(3,1fr);
+        gap:25px;
+        margin-top:30px;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+        background:#fff;
+        border-radius:12px;
+        overflow:hidden;
+        box-shadow:0 0 10px rgba(0,0,0,0.06);
+    }
+
+    th{
+        background:#0d6efd;
+        color:#fff;
+        padding:10px;
+        text-align:center;
+    }
+
+    td{
+        text-align:center;
+        padding:10px;
+        cursor:pointer;
+    }
+
+    td:hover{
+        background:#eef5ff;
+    }
+
+    .selected{
+        background:#d0e4ff !important;
+        border-radius:6px;
+    }
+
+    /* Adicionar evento */
+    .event-form{
+        margin-top:20px;
+        display:flex;
+        gap:10px;
+        align-items:center;
+    }
+
+    input, select{
+        padding:10px;
+        border-radius:6px;
+        border:1px solid #ccc;
+        font-size:14px;
+    }
+
+    button{
+        background:#0d6efd;
+        color:#fff;
+        padding:10px 20px;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+    }
+
+    .event-list{
+        margin-top:20px;
+    }
+
+    .event-item{
+        padding:10px;
+        background:#fff;
+        border-radius:8px;
+        margin-bottom:10px;
+        box-shadow:0 0 8px rgba(0,0,0,0.05);
+    }
+
+    .notif{
+        background:#ffc107;
+        padding:12px;
+        text-align:center;
+        border-radius:8px;
+        font-weight:bold;
+        margin-bottom:20px;
+        display:none;
+    }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>PrestAgora Digital</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="meusclientes.html">Meus Clientes</a>
+    <a class="active" href="minhaagenda.html">Minha Agenda</a>
+    <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
+    <a href="analisesite.html">Análise de Site</a>
+    <a href="analiseredes.html">Análise de Redes Sociais</a>
+    <a href="#" onclick="sair()">Sair</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="notif" id="notifArea"></div>
+
+    <div class="card">
+        <h1>Minha Agenda</h1>
+        <p class="muted">Gerencie seus compromissos semanais e mensais com notificações automáticas.</p>
+    </div>
+
+    <!-- SEMANA ATUAL -->
+    <div class="card">
+        <h2>Semana Atual</h2>
+
+        <div class="week-grid" id="weekContainer"></div>
+    </div>
+
+    <!-- CALENDÁRIO 3 MESES -->
+    <div class="card">
+        <h2>Calendário (3 meses)</h2>
+        <div class="calendar-container" id="calendarArea"></div>
+    </div>
+
+    <!-- ADICIONAR EVENTO -->
+    <div class="card">
+        <h2>Adicionar Evento</h2>
+
+        <div>
+            <strong>Data selecionada: </strong>
+            <span id="selectedDateText">Nenhuma</span>
+        </div>
+
+        <div class="event-form">
+            <input type="time" id="eventTime">
+            <input type="text" id="eventTitle" placeholder="Descrição do compromisso">
+            <button onclick="addEvent()">Adicionar</button>
+        </div>
+
+        <div class="event-list" id="eventList"></div>
+    </div>
+
+</div>
+
+<script>
+
+/* ------------------ SEMANA ATUAL ------------------ */
+
+const weekNames = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+
+function renderWeek(){
+    const container = document.getElementById("weekContainer");
+    container.innerHTML = "";
+
+    const today = new Date();
+    const currentMonday = new Date(today);
+    currentMonday.setDate(today.getDate() - today.getDay() + 1); // segunda
+
+    for(let i=0;i<7;i++){
+        let day = new Date(currentMonday);
+        day.setDate(currentMonday.getDate() + i);
+
+        const box = document.createElement("div");
+        box.className = "day-box";
+
+        box.innerHTML = `
+            <div class="day-title">${weekNames[day.getDay()]} - ${day.toLocaleDateString()}</div>
+            <div id="w_${day.toLocaleDateString()}"></div>
+        `;
+
+        container.appendChild(box);
+    }
+}
+
+renderWeek();
+
+/* ------------------ CALENDÁRIOS ------------------ */
+
+function generateCalendar(monthOffset){
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + monthOffset;
+
+    const date = new Date(year, month, 1);
+    const monthName = date.toLocaleDateString("pt-BR", { month:"long", year:"numeric" });
+
+    let html = `<table><tr><th colspan="7">${monthName.toUpperCase()}</th></tr>`;
+    html += `
+        <tr>
+            <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th>
+            <th>Qui</th><th>Sex</th><th>Sáb</th>
+        </tr>
+    `;
+
+    let dayOfWeek = date.getDay();
+
+    html += "<tr>";
+
+    for(let i=0; i<dayOfWeek; i++) html += "<td></td>";
+
+    while(date.getMonth() === (now.getMonth()+monthOffset)){
+        const d = date.getDate();
+        const iso = new Date(date).toISOString().split("T")[0];
+
+        html += `<td onclick="selectDate('${iso}')">${d}</td>`;
+
+        if(date.getDay() === 6) html += "</tr><tr>";
+
+        date.setDate(date.getDate()+1);
+    }
+
+    html += "</tr></table>";
+    return html;
+}
+
+function renderCalendars(){
+    const area = document.getElementById("calendarArea");
+    area.innerHTML = "";
+    area.innerHTML += generateCalendar(0);
+    area.innerHTML += generateCalendar(1);
+    area.innerHTML += generateCalendar(2);
+}
+
+renderCalendars();
+
+/* ------------------ EVENTOS ------------------ */
+
+let selectedDate = null;
+let events = JSON.parse(localStorage.getItem("pa_events") || "[]");
+
+function selectDate(iso){
+    selectedDate = iso;
+    document.getElementById("selectedDateText").innerText = iso;
+    renderEvents();
+}
+
+function addEvent(){
+    if(!selectedDate){ alert("Selecione uma data no calendário."); return; }
+    const time = document.getElementById("eventTime").value;
+    const title = document.getElementById("eventTitle").value.trim();
+
+    if(time==="" || title===""){ alert("Preencha horário e descrição."); return; }
+
+    events.push({ date:selectedDate, time, title });
+    localStorage.setItem("pa_events", JSON.stringify(events));
+
+    document.getElementById("eventTitle").value="";
+    renderEvents();
+}
+
+function renderEvents(){
+    const list = document.getElementById("eventList");
+    list.innerHTML = "";
+
+    const filtered = events.filter(e => e.date === selectedDate);
+
+    if(filtered.length === 0){
+        list.innerHTML = "<i>Nenhum evento nesta data.</i>";
+        return;
+    }
+
+    filtered.forEach(ev=>{
+        const div = document.createElement("div");
+        div.className = "event-item";
+        div.innerHTML = `<strong>${ev.time}</strong> — ${ev.title}`;
+        list.appendChild(div);
+    });
+}
+
+/* ------------------ NOTIFICAÇÕES ------------------ */
+
+function checkNotifications(){
+    const now = new Date();
+    const isoToday = now.toISOString().split("T")[0];
+    const timeNow = now.toTimeString().slice(0,5);
+
+    events.forEach(ev=>{
+        if(ev.date === isoToday && ev.time === timeNow){
+            showNotification(`Lembrete: ${ev.title}`);
+        }
+    });
+}
+
+function showNotification(msg){
+    const n = document.getElementById("notifArea");
+    n.innerText = msg;
+    n.style.display = "block";
+
+    setTimeout(()=> n.style.display="none", 7000);
+}
+
+setInterval(checkNotifications, 60000);
+
+/* ------------------ SAIR ------------------ */
+function sair(){
+    alert("Saindo...");
+    window.location.href = "login.html";
+}
+
+</script>
+</body>
+</html>
 
