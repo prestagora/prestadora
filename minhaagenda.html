@@ -1,235 +1,360 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Minha Agenda</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Agenda - PrestAgora</title>
 
-<!-- ESTILOS PADRÕES DA SUA PLATAFORMA -->
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #0d1117;
-        color: #ffffff;
-        padding: 20px;
-    }
+body {
+    margin: 0;
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
 
-    h1 {
-        color: #ffffff;
-        margin-bottom: 20px;
-    }
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #0d6efd;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 30px;
+}
 
-    .event-box {
-        background: #161b22;
-        border: 1px solid #30363d;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-    }
+.sidebar h2 {
+    text-align:center;
+    margin-bottom:30px;
+}
 
-    .event-box h2 {
-        margin-top: 0;
-    }
+.sidebar a {
+    display:block;
+    padding:15px 20px;
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+}
 
-    .event-box input, .event-box textarea {
-        width: 100%;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #30363d;
-        background: #0d1117;
-        color: white;
-        margin-bottom: 10px;
-    }
+.sidebar a:hover {
+    background:#0b5ed7;
+    cursor:pointer;
+}
 
-    .event-box button {
-        width: 100%;
-        padding: 10px;
-        background: #238636;
-        border: none;
-        border-radius: 6px;
-        color: white;
-        cursor: pointer;
-    }
+/* MAIN */
+.main {
+    margin-left: 250px;
+    padding: 30px;
+}
 
-    .agenda-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        margin-top: 20px;
-    }
+.topbar h1 {
+    margin:0 0 25px 0;
+    font-size:26px;
+    color:#333;
+}
 
-    .day-column {
-        background: #11161c;
-        border: 1px solid #30363d;
-        padding: 15px;
-        border-radius: 10px;
-    }
+/* EVENTOS */
+.eventos-full {
+    width: 100%;
+    background:#fff;
+    padding:25px;
+    margin-bottom:25px;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(0,0,0,0.1);
+    border-left:4px solid #0d6efd;
+}
 
-    .day-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: #58a6ff;
-    }
+.eventos-full h2 {
+    margin-top:0;
+    font-size:22px;
+    color:#0d6efd;
+    font-weight:bold;
+}
 
-    .task {
-        background: #0d1117;
-        border: 1px solid #30363d;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-    }
+.eventos-full label {
+    font-weight:bold;
+}
 
-    .task textarea {
-        width: 100%;
-        background: transparent;
-        border: none;
-        color: white;
-        resize: none;
-        height: 50px;
-    }
+.eventos-full input,
+.eventos-full textarea {
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    margin-top:5px;
+}
 
-    .task-controls {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 5px;
-    }
+.eventos-flex {
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+}
 
-    .task-controls button {
-        background: #8b0000;
-        border: none;
-        padding: 4px 7px;
-        border-radius: 4px;
-        cursor: pointer;
-        color: white;
-        font-size: 12px;
-    }
+.eventos-flex div {
+    flex:1;
+}
 
-    .add-btn {
-        width: 100%;
-        background: #238636;
-        border: none;
-        padding: 8px;
-        border-radius: 6px;
-        color: white;
-        cursor: pointer;
-        margin-top: 8px;
-    }
+.salvar-evento-btn {
+    background:#0d6efd;
+    border:none;
+    padding:12px;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    width:200px;
+    font-weight:bold;
+}
+
+.lista-eventos {
+    margin-top:15px;
+    padding: 10px;
+    background: #f1f5ff;
+    border-radius: 8px;
+}
+
+/* AGENDA */
+.agenda-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.agenda-grid-row2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.dia-coluna {
+    background:#fff;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.dia-coluna h3 {
+    text-align:center;
+    margin-top:0;
+    color:#0d6efd;
+    font-weight:bold;
+}
+
+.linha {
+    display:flex;
+    margin-bottom:10px;
+    gap:5px;
+}
+
+.linha input {
+    flex:1;
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+.remove-btn {
+    background:#dc3545;
+    border:none;
+    padding:8px;
+    border-radius:6px;
+    color:#fff;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.add-btn {
+    width:100%;
+    padding:8px;
+    border:none;
+    background:#198754;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.add-btn:hover {
+    background:#157347;
+}
+
+.salvar-btn {
+    width:100%;
+    padding:8px;
+    border:none;
+    background:#0d6efd;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:15px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>Minha Agenda</h1>
-
-<!-- ======================================== -->
-<!--                 EVENTOS                  -->
-<!-- ======================================== -->
-<div class="event-box">
-    <h2>Eventos</h2>
-
-    <input type="date" id="event-date" />
-    <input type="time" id="event-time" />
-    <textarea id="event-description" placeholder="Descrição do evento..."></textarea>
-
-    <button onclick="salvarEvento()">Salvar Evento</button>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>PrestAgora Digital</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#">Contas Meta Ads</a>
+    <a href="meusclientes.html">Meus Clientes</a>
+    <a href="minhaagenda.html" style="background:#0b5ed7;">Minha Agenda</a>
+    <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
+    <a href="analisesite.html">Análise de sites</a>
+    <a href="#" onclick="sair()">Sair</a>
 </div>
 
-<!-- ======================================== -->
-<!--           COLUNAS DA AGENDA              -->
-<!-- ======================================== -->
+<!-- MAIN -->
+<div class="main">
 
-<div class="agenda-grid">
-    <!-- Segunda -->
-    <div class="day-column">
-        <div class="day-title">Segunda</div>
-        <div id="segunda"></div>
-        <button class="add-btn" onclick="addCompromisso('segunda')">+ Adicionar compromisso</button>
+    <div class="topbar"><h1>Minha Agenda</h1></div>
+
+    <!-- EVENTOS -->
+    <div class="eventos-full">
+        <h2>Eventos</h2>
+
+        <div class="eventos-flex">
+            <div>
+                <label>Data</label>
+                <input type="date" id="eventData">
+            </div>
+            <div>
+                <label>Hora</label>
+                <input type="time" id="eventHora">
+            </div>
+            <div>
+                <label>Descrição</label>
+                <input type="text" id="eventDesc" placeholder="Ex: reunião com cliente...">
+            </div>
+        </div>
+
+        <button class="salvar-evento-btn" onclick="salvarEvento()">Salvar Evento</button>
+
+        <div class="lista-eventos" id="listaEventos"></div>
     </div>
 
-    <!-- Terça -->
-    <div class="day-column">
-        <div class="day-title">Terça</div>
-        <div id="terca"></div>
-        <button class="add-btn" onclick="addCompromisso('terca')">+ Adicionar compromisso</button>
-    </div>
+    <!-- AGENDA — LINHA 1 -->
+    <div class="agenda-grid" id="linha1"></div>
 
-    <!-- Quarta -->
-    <div class="day-column">
-        <div class="day-title">Quarta</div>
-        <div id="quarta"></div>
-        <button class="add-btn" onclick="addCompromisso('quarta')">+ Adicionar compromisso</button>
-    </div>
+    <!-- AGENDA — LINHA 2 -->
+    <div class="agenda-grid-row2" id="linha2"></div>
+
 </div>
-
-<div class="agenda-grid" style="margin-top: 30px;">
-    <!-- Quinta -->
-    <div class="day-column">
-        <div class="day-title">Quinta</div>
-        <div id="quinta"></div>
-        <button class="add-btn" onclick="addCompromisso('quinta')">+ Adicionar compromisso</button>
-    </div>
-
-    <!-- Sexta -->
-    <div class="day-column">
-        <div class="day-title">Sexta</div>
-        <div id="sexta"></div>
-        <button class="add-btn" onclick="addCompromisso('sexta')">+ Adicionar compromisso</button>
-    </div>
-
-    <!-- Sábado -->
-    <div class="day-column">
-        <div class="day-title">Sábado</div>
-        <div id="sabado"></div>
-        <button class="add-btn" onclick="addCompromisso('sabado')">+ Adicionar compromisso</button>
-    </div>
-</div>
-
-<!-- ======================================== -->
-<!--                SCRIPT                     -->
-<!-- ======================================== -->
 
 <script>
-function addCompromisso(day) {
-    const container = document.getElementById(day);
+const dias = [
+    "Segunda","Terça","Quarta",
+    "Quinta","Sexta","Sábado"
+];
 
-    const task = document.createElement("div");
-    task.classList.add("task");
+/* Montagem da agenda */
+function montarAgenda() {
+    let html1 = "";
+    let html2 = "";
 
-    task.innerHTML = `
-        <textarea placeholder="Descreva seu compromisso..."></textarea>
-        <div class="task-controls">
-            <button onclick="this.parentNode.parentNode.remove()">Remover</button>
+    dias.forEach((dia, index) => {
+        const colunaHTML = `
+            <div class="dia-coluna" id="dia_${index}">
+                <h3>${dia}</h3>
+
+                <div id="linhas_${index}">
+                    ${criarLinha(index)}
+                    ${criarLinha(index)}
+                    ${criarLinha(index)}
+                </div>
+
+                <button class="add-btn" onclick="adicionarLinha(${index})">+ Adicionar</button>
+                <button class="salvar-btn" onclick="salvarDia(${index})">Salvar</button>
+            </div>
+        `;
+
+        if (index < 3) html1 += colunaHTML;
+        else html2 += colunaHTML;
+    });
+
+    document.getElementById("linha1").innerHTML = html1;
+    document.getElementById("linha2").innerHTML = html2;
+
+    carregarAgenda();
+}
+
+/* Linha de compromisso */
+function criarLinha(index) {
+    return `
+        <div class="linha">
+            <input type="text" placeholder="08:00">
+            <input type="text" placeholder="Compromisso...">
+            <button class="remove-btn" onclick="this.parentNode.remove()">X</button>
         </div>
     `;
-
-    container.appendChild(task);
 }
 
-function salvarEvento() {
-    const date = document.getElementById("event-date").value;
-    const time = document.getElementById("event-time").value;
-    const desc = document.getElementById("event-description").value;
+function adicionarLinha(index) {
+    document.getElementById("linhas_" + index).innerHTML += criarLinha(index);
+}
 
-    if (!date || !time || !desc) {
-        alert("Preencha todos os campos do evento!");
-        return;
+/* Salvar dados */
+function salvarDia(index) {
+    const linhas = [...document.querySelectorAll(`#linhas_${index} .linha`)];
+    const dados = linhas.map(l => ({
+        hora: l.children[0].value,
+        desc: l.children[1].value
+    }));
+
+    localStorage.setItem("agendaDia_" + index, JSON.stringify(dados));
+    alert("Agenda salva!");
+}
+
+/* Carregar dados */
+function carregarAgenda() {
+    for (let i = 0; i < dias.length; i++) {
+        const salvo = JSON.parse(localStorage.getItem("agendaDia_" + i) || "[]");
+        const container = document.getElementById("linhas_" + i);
+
+        if (salvo.length > 0) {
+            container.innerHTML = "";
+            salvo.forEach(item => {
+                container.innerHTML += `
+                <div class="linha">
+                    <input value="${item.hora}">
+                    <input value="${item.desc}">
+                    <button class="remove-btn" onclick="this.parentNode.remove()">X</button>
+                </div>`;
+            });
+        }
     }
-
-    alert("Evento salvo! (notificações serão ativadas no sistema)");
 }
-</script>
 
-<script>
-window.onload = function () {
-    // Adiciona 3 compromissos iniciais por dia automaticamente
-    ["segunda", "terca", "quarta", "quinta", "sexta", "sabado"].forEach(dia => {
-        addCompromisso(dia);
-        addCompromisso(dia);
-        addCompromisso(dia);
-    });
-};
-</script>
+/* EVENTOS */
+function salvarEvento() {
+    const data = eventData.value;
+    const hora = eventHora.value;
+    const desc = eventDesc.value;
 
+    if (!data || !hora || !desc) return alert("Preencha tudo!");
+
+    const evento = { data, hora, desc };
+    const lista = JSON.parse(localStorage.getItem("eventos") || "[]");
+
+    lista.push(evento);
+    localStorage.setItem("eventos", JSON.stringify(lista));
+
+    carregarEventos();
+}
+
+function carregarEventos() {
+    const lista = JSON.parse(localStorage.getItem("eventos") || "[]");
+
+    listaEventos.innerHTML = lista.map(e => `
+        <div><strong>${e.data}</strong> ${e.hora} — ${e.desc}</div>
+    `).join('');
+}
+
+/* Inicializar */
+montarAgenda();
+carregarEventos();
+</script>
 </body>
 </html>
