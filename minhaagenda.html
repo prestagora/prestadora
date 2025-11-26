@@ -12,6 +12,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
+/* SIDEBAR */
 .sidebar {
     width: 250px;
     height: 100vh;
@@ -26,7 +27,6 @@ body {
 .sidebar h2 {
     text-align:center;
     margin-bottom:30px;
-    font-size:20px;
 }
 
 .sidebar a {
@@ -42,141 +42,68 @@ body {
     cursor:pointer;
 }
 
+/* MAIN */
 .main {
     margin-left: 250px;
     padding: 30px;
 }
 
-.topbar {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-}
-
 .topbar h1 {
-    margin:0;
-    font-size:24px;
+    margin:0 0 25px 0;
+    font-size:26px;
     color:#333;
 }
 
-.card {
+/* EVENTOS */
+.eventos-full {
+    width: 100%;
     background:#fff;
     padding:25px;
-    border-radius:10px;
-    box-shadow:0 0 12px rgba(0,0,0,0.1);
     margin-bottom:25px;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(0,0,0,0.1);
+    border-left:4px solid #0d6efd;
 }
 
-.agenda-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+.eventos-full h2 {
+    margin-top:0;
+    font-size:22px;
+    color:#0d6efd;
+    font-weight:bold;
 }
 
-.dia-card {
-    width: 300px;
-    min-height: 450px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+.eventos-full label {
+    font-weight:bold;
 }
 
-.dia-card h3 {
-    margin: 0 0 15px 0;
-    font-size: 20px;
-    color: #0d6efd;
-    font-weight: bold;
-}
-
-.tabela-agenda {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.tabela-agenda th,
-.tabela-agenda td {
-    border-bottom: 1px solid #ddd;
-    padding: 6px;
-}
-
-.tabela-agenda input {
-    width: 100%;
-    padding: 6px;
-    border: none;
-    outline: none;
-}
-
-.salvar-btn {
-    background:#0d6efd;
-    width:100%;
-    border:none;
-    margin-top:15px;
-    padding:10px;
-    color:#fff;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-.salvar-btn:hover {
-    background:#0b5ed7;
-}
-
-/* EVENTOS - NOVO E MAIS PROFISSIONAL */
-.eventos-card {
-    width: 330px;
-    min-height: 480px;
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.12);
-    border-left: 4px solid #0d6efd;
-}
-
-.eventos-card h3 {
-    margin: 0 0 15px 0;
-    font-size: 22px;
-    color: #0d6efd;
-    font-weight: bold;
-}
-
-.eventos-card label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-.eventos-card input,
-.eventos-card textarea {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    outline: none;
-    margin-top: 5px;
-    margin-bottom: 12px;
-    font-size: 14px;
-}
-
-.eventos-card textarea {
-    height: 80px;
-    resize: none;
-}
-
-.notificacao-btn {
-    background:#198754;
-    border:none;
+.eventos-full input,
+.eventos-full textarea {
     width:100%;
     padding:10px;
+    border:1px solid #ccc;
     border-radius:6px;
-    color:#fff;
-    cursor:pointer;
     margin-top:5px;
 }
 
-.notificacao-btn:hover {
-    background:#157347;
+.eventos-flex {
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.eventos-flex div {
+    flex:1;
+}
+
+.salvar-evento-btn {
+    background:#0d6efd;
+    border:none;
+    padding:12px;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    width:200px;
+    font-weight:bold;
 }
 
 .lista-eventos {
@@ -184,17 +111,66 @@ body {
     padding: 10px;
     background: #f1f5ff;
     border-radius: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    border-left: 3px solid #0d6efd;
 }
 
-.evento-item {
-    padding: 8px;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    margin-bottom: 10px;
+/* AGENDA NOVO LAYOUT */
+.agenda-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
+}
+
+.dia-coluna {
+    background:#fff;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.dia-coluna h3 {
+    text-align:center;
+    margin-top:0;
+    color:#0d6efd;
+    font-weight:bold;
+}
+
+.linha {
+    display:flex;
+    margin-bottom:10px;
+    gap:5px;
+}
+
+.linha input {
+    flex:1;
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+.add-btn {
+    width:100%;
+    padding:8px;
+    border:none;
+    background:#198754;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.add-btn:hover {
+    background:#157347;
+}
+
+.salvar-btn {
+    width:100%;
+    padding:8px;
+    border:none;
+    background:#0d6efd;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:15px;
 }
 </style>
 </head>
@@ -204,159 +180,146 @@ body {
 <!-- SIDEBAR -->
 <div class="sidebar">
     <h2>PrestAgora Digital</h2>
-
     <a href="dashboard.html">Dashboard</a>
-
     <a href="#">Contas Meta Ads</a>
-
     <a href="meusclientes.html">Meus Clientes</a>
     <a href="minhaagenda.html" style="background:#0b5ed7;">Minha Agenda</a>
     <a href="bibliotecaanuncios.html">Biblioteca de anúncios</a>
-    <a href="analisesite.html">Analise de sites</a>
-    <a href="#">Analise de redes sociais</a>
+    <a href="analisesite.html">Análise de sites</a>
     <a href="#" onclick="sair()">Sair</a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
-    <div class="topbar">
-        <h1>Minha Agenda</h1>
-    </div>
 
-    <div class="agenda-container">
+    <div class="topbar"><h1>Minha Agenda</h1></div>
 
-        <!-- AGENDA DOS DIAS -->
-        <script>
-            const dias = [
-                "Segunda-feira",
-                "Terça-feira",
-                "Quarta-feira",
-                "Quinta-feira",
-                "Sexta-feira",
-                "Sábado",
-                "Domingo"
-            ];
+    <!-- EVENTOS EM FULL WIDTH -->
+    <div class="eventos-full">
+        <h2>Eventos</h2>
 
-            document.write(`
-                ${dias.map((dia, index) => `
-                    <div class='dia-card'>
-                        <h3>${dia}</h3>
-                        <table class='tabela-agenda'>
-                            <thead>
-                                <tr>
-                                    <th style='width:70px;'>Horário</th>
-                                    <th>Compromisso</th>
-                                </tr>
-                            </thead>
-                            <tbody id='agenda_${index}'>
-                                ${Array.from({ length: 12 }).map((_, i) => `
-                                    <tr>
-                                        <td><input type="text" placeholder="08:00"></td>
-                                        <td><input type="text" placeholder="Novo compromisso..."></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-
-                        <button class="salvar-btn" onclick="salvarDia(${index})">Salvar</button>
-                    </div>
-                `).join('')}
-            `);
-        </script>
-
-        <!-- EVENTOS - NOVO CARD -->
-        <div class="eventos-card">
-            <h3>Eventos</h3>
-
-            <label>Data do evento</label>
-            <input type="date" id="eventData">
-
-            <label>Horário</label>
-            <input type="time" id="eventHora">
-
-            <label>Descrição</label>
-            <textarea id="eventDesc" placeholder="Ex: Reunião importante com cliente..."></textarea>
-
-            <button class="salvar-btn" onclick="salvarEvento()">Salvar Evento</button>
-            <button class="notificacao-btn" onclick="ativarNotificacao()">Ativar Notificação do Sistema</button>
-
-            <div class="lista-eventos" id="listaEventos"></div>
+        <div class="eventos-flex">
+            <div>
+                <label>Data</label>
+                <input type="date" id="eventData">
+            </div>
+            <div>
+                <label>Hora</label>
+                <input type="time" id="eventHora">
+            </div>
+            <div>
+                <label>Descrição</label>
+                <input type="text" id="eventDesc" placeholder="Ex: Reunião de alinhamento...">
+            </div>
         </div>
 
+        <button class="salvar-evento-btn" onclick="salvarEvento()">Salvar Evento</button>
+
+        <div class="lista-eventos" id="listaEventos"></div>
     </div>
+
+    <!-- NOVA AGENDA EM HORIZONTAL -->
+    <div class="agenda-grid" id="agendaGrid"></div>
 </div>
 
 <script>
+const diasSemana = [
+    "Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"
+];
+
+/* CRIA COLUNAS HORIZONTAIS */
+function montarAgenda() {
+    let html = "";
+
+    diasSemana.forEach((dia, index) => {
+        html += `
+        <div class="dia-coluna" id="dia_${index}">
+            <h3>${dia}</h3>
+
+            <div id="linhas_${index}">
+                ${criarLinha(index)}
+                ${criarLinha(index)}
+                ${criarLinha(index)}
+            </div>
+
+            <button class="add-btn" onclick="adicionarLinha(${index})">+ Adicionar</button>
+
+            <button class="salvar-btn" onclick="salvarDia(${index})">Salvar</button>
+        </div>`;
+    });
+
+    document.getElementById("agendaGrid").innerHTML = html;
+
+    carregarAgenda();
+}
+
+function criarLinha(index) {
+    return `
+        <div class="linha">
+            <input type="text" placeholder="08:00">
+            <input type="text" placeholder="Compromisso...">
+        </div>
+    `;
+}
+
+function adicionarLinha(index) {
+    document.getElementById("linhas_" + index).innerHTML += criarLinha(index);
+}
+
 function salvarDia(index) {
-    const linhas = [...document.querySelectorAll(`#agenda_${index} tr`)];
-    
-    const dados = linhas.map(linha => ({
-        hora: linha.children[0].querySelector("input").value,
-        texto: linha.children[1].querySelector("input").value
+    const linhas = [...document.querySelectorAll(`#linhas_${index} .linha`)];
+    const dados = linhas.map(l => ({
+        hora: l.children[0].value,
+        desc: l.children[1].value
     }));
 
-    localStorage.setItem("agenda_" + index, JSON.stringify(dados));
-    alert("Agenda salva com sucesso!");
+    localStorage.setItem("agendaDia_" + index, JSON.stringify(dados));
+    alert("Agenda salva!");
+}
+
+function carregarAgenda() {
+    for (let i = 0; i < 7; i++) {
+        const salvo = JSON.parse(localStorage.getItem("agendaDia_" + i) || "[]");
+        const container = document.getElementById("linhas_" + i);
+
+        if (salvo.length > 0) {
+            container.innerHTML = "";
+            salvo.forEach(item => {
+                container.innerHTML += `
+                <div class="linha">
+                    <input value="${item.hora}">
+                    <input value="${item.desc}">
+                </div>`;
+            });
+        }
+    }
 }
 
 function salvarEvento() {
-    const data = document.getElementById("eventData").value;
-    const hora = document.getElementById("eventHora").value;
-    const desc = document.getElementById("eventDesc").value;
+    const data = eventData.value;
+    const hora = eventHora.value;
+    const desc = eventDesc.value;
 
-    if (!data || !hora || !desc) {
-        alert("Preencha todos os campos do evento!");
-        return;
-    }
+    if (!data || !hora || !desc) return alert("Preencha tudo!");
 
     const evento = { data, hora, desc };
-    const eventos = JSON.parse(localStorage.getItem("eventos") || "[]");
+    const lista = JSON.parse(localStorage.getItem("eventos") || "[]");
 
-    eventos.push(evento);
-    localStorage.setItem("eventos", JSON.stringify(eventos));
+    lista.push(evento);
+    localStorage.setItem("eventos", JSON.stringify(lista));
 
     carregarEventos();
-    alert("Evento salvo!");
 }
 
 function carregarEventos() {
-    const eventos = JSON.parse(localStorage.getItem("eventos") || "[]");
-    const lista = document.getElementById("listaEventos");
-
-    lista.innerHTML = eventos.map(e => `
-        <div class="evento-item">
-            <strong>${e.data}</strong> às <strong>${e.hora}</strong><br>
-            ${e.desc}
-        </div>
+    const lista = JSON.parse(localStorage.getItem("eventos") || "[]");
+    listaEventos.innerHTML = lista.map(e => `
+        <div><strong>${e.data}</strong> ${e.hora} — ${e.desc}</div>
     `).join('');
 }
 
-function ativarNotificacao() {
-    Notification.requestPermission().then(perm => {
-        if (perm === "granted") {
-            new Notification("Notificações ativadas com sucesso!");
-        } else {
-            alert("Você precisa permitir notificações no navegador.");
-        }
-    });
-}
-
-window.onload = () => {
-    carregarEventos();
-
-    for (let i = 0; i < 7; i++) {
-        const dados = JSON.parse(localStorage.getItem("agenda_" + i) || "[]");
-        const linhas = document.querySelectorAll(`#agenda_${i} tr`);
-
-        dados.forEach((item, idx) => {
-            if (linhas[idx]) {
-                linhas[idx].children[0].querySelector("input").value = item.hora;
-                linhas[idx].children[1].querySelector("input").value = item.texto;
-            }
-        });
-    }
-};
+montarAgenda();
+carregarEventos();
 </script>
-
 </body>
 </html>
