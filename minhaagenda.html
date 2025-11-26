@@ -14,7 +14,7 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-    width: 230px;
+    width: 250px;
     height: 100vh;
     background: #0d6efd;
     color: #fff;
@@ -34,7 +34,7 @@ body {
     padding:15px 20px;
     color:#fff;
     text-decoration:none;
-    font-size:15px;
+    font-size:16px;
 }
 
 .sidebar a:hover {
@@ -44,7 +44,7 @@ body {
 
 /* MAIN */
 .main {
-    margin-left: 230px;
+    margin-left: 250px;
     padding: 30px;
 }
 
@@ -54,88 +54,78 @@ body {
     color:#333;
 }
 
-/* EVENTOS */
+/* EVENTOS - MAIS COMPACTO */
 .eventos-full {
     width: 100%;
     background:#fff;
     padding:20px;
-    margin-bottom:25px;
+    margin-bottom:20px;
     border-radius:12px;
-    box-shadow:0 0 12px rgba(0,0,0,0.1);
+    box-shadow:0 0 12px rgba(0,0,0,0.08);
     border-left:4px solid #0d6efd;
+    max-width: 1100px;
 }
 
 .eventos-full h2 {
-    margin:0 0 15px 0;
+    margin-top:0;
     font-size:20px;
     color:#0d6efd;
     font-weight:bold;
 }
 
-.eventos-full label {
-    font-weight:bold;
+.eventos-flex {
+    display: grid;
+    grid-template-columns: 150px 120px 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
 .eventos-full input {
     width:100%;
-    padding:8px;
+    padding:10px;
     border:1px solid #ccc;
     border-radius:6px;
-    margin-top:5px;
-}
-
-.eventos-flex {
-    display:flex;
-    gap:15px;
-    margin-bottom:15px;
-}
-
-.eventos-flex div {
-    flex:1;
 }
 
 .salvar-evento-btn {
     background:#0d6efd;
     border:none;
-    padding:10px;
+    padding:10px 18px;
     color:#fff;
     border-radius:6px;
     cursor:pointer;
-    width:180px;
     font-weight:bold;
+    margin-bottom:10px;
 }
 
 .lista-eventos {
-    margin-top:15px;
+    margin-top:10px;
     padding: 10px;
     background: #f1f5ff;
     border-radius: 8px;
     font-size: 14px;
 }
 
-/* AGENDA */
-.agenda-grid,
-.agenda-grid-row2 {
+/* AGENDA ADAPTADA */
+.agenda-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 15px;
-    margin-bottom: 20px;
+    max-width: 1100px;
 }
 
 .dia-coluna {
     background:#fff;
     padding:12px;
     border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-    min-width: 0; /* ← garante que NÃO estoura a largura */
+    box-shadow:0 0 10px rgba(0,0,0,0.08);
 }
 
 .dia-coluna h3 {
     text-align:center;
-    margin:0 0 10px 0;
-    color:#0d6efd;
-    font-weight:bold;
+    margin-top:0;
     font-size:16px;
+    color:#0d6efd;
 }
 
 .linha {
@@ -149,17 +139,16 @@ body {
     padding:7px;
     border:1px solid #ccc;
     border-radius:6px;
-    font-size:13px;
 }
 
 .remove-btn {
     background:#dc3545;
     border:none;
-    padding:6px 8px;
-    border-radius:6px;
-    color:#fff;
+    color:white;
+    padding:5px 8px;
+    border-radius:5px;
     cursor:pointer;
-    font-size:11px;
+    font-size:12px;
 }
 
 .add-btn {
@@ -171,7 +160,6 @@ body {
     border-radius:6px;
     cursor:pointer;
     margin-top:5px;
-    font-size:14px;
 }
 
 .salvar-btn {
@@ -183,7 +171,6 @@ body {
     border-radius:6px;
     cursor:pointer;
     margin-top:10px;
-    font-size:14px;
 }
 </style>
 </head>
@@ -212,18 +199,9 @@ body {
         <h2>Eventos</h2>
 
         <div class="eventos-flex">
-            <div>
-                <label>Data</label>
-                <input type="date" id="eventData">
-            </div>
-            <div>
-                <label>Hora</label>
-                <input type="time" id="eventHora">
-            </div>
-            <div>
-                <label>Descrição</label>
-                <input type="text" id="eventDesc" placeholder="Ex: reunião com cliente...">
-            </div>
+            <input type="date" id="eventData">
+            <input type="time" id="eventHora">
+            <input type="text" id="eventDesc" placeholder="Descrição do evento...">
         </div>
 
         <button class="salvar-evento-btn" onclick="salvarEvento()">Salvar Evento</button>
@@ -231,67 +209,58 @@ body {
         <div class="lista-eventos" id="listaEventos"></div>
     </div>
 
-    <!-- AGENDA — LINHA 1 -->
-    <div class="agenda-grid" id="linha1"></div>
-
-    <!-- AGENDA — LINHA 2 -->
-    <div class="agenda-grid-row2" id="linha2"></div>
-
+    <!-- AGENDA -->
+    <div class="agenda-grid" id="agendaGrid"></div>
 </div>
 
 <script>
-const dias = [
-    "Segunda","Terça","Quarta",
-    "Quinta","Sexta","Sábado"
-];
+const diasSemana = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 
-/* Montagem da agenda */
-function montarAgenda() {
-    let html1 = "";
-    let html2 = "";
-
-    dias.forEach((dia, index) => {
-        const colunaHTML = `
-            <div class="dia-coluna" id="dia_${index}">
-                <h3>${dia}</h3>
-
-                <div id="linhas_${index}">
-                    ${criarLinha(index)}
-                    ${criarLinha(index)}
-                    ${criarLinha(index)}
-                </div>
-
-                <button class="add-btn" onclick="adicionarLinha(${index})">+ Adicionar</button>
-                <button class="salvar-btn" onclick="salvarDia(${index})">Salvar</button>
-            </div>
-        `;
-
-        if (index < 3) html1 += colunaHTML;
-        else html2 += colunaHTML;
-    });
-
-    document.getElementById("linha1").innerHTML = html1;
-    document.getElementById("linha2").innerHTML = html2;
-
-    carregarAgenda();
-}
-
-/* Linha de compromisso */
+/* CRIAR LINHAS COM BOTÃO DE REMOVER */
 function criarLinha(index) {
     return `
         <div class="linha">
             <input type="text" placeholder="08:00">
             <input type="text" placeholder="Compromisso...">
-            <button class="remove-btn" onclick="this.parentNode.remove()">X</button>
+            <button class="remove-btn" onclick="removerLinha(this)">X</button>
         </div>
     `;
+}
+
+function removerLinha(btn) {
+    btn.parentElement.remove();
+}
+
+/* MONTAR AGENDA */
+function montarAgenda() {
+    let html = "";
+
+    diasSemana.forEach((dia, index) => {
+        html += `
+        <div class="dia-coluna" id="dia_${index}">
+            <h3>${dia}</h3>
+
+            <div id="linhas_${index}">
+                ${criarLinha(index)}
+                ${criarLinha(index)}
+                ${criarLinha(index)}
+            </div>
+
+            <button class="add-btn" onclick="adicionarLinha(${index})">+ Adicionar</button>
+            <button class="salvar-btn" onclick="salvarDia(${index})">Salvar</button>
+        </div>`;
+    });
+
+    document.getElementById("agendaGrid").innerHTML = html;
+
+    carregarAgenda();
 }
 
 function adicionarLinha(index) {
     document.getElementById("linhas_" + index).innerHTML += criarLinha(index);
 }
 
-/* Salvar dados */
+/* SALVAR DIA */
 function salvarDia(index) {
     const linhas = [...document.querySelectorAll(`#linhas_${index} .linha`)];
     const dados = linhas.map(l => ({
@@ -303,9 +272,9 @@ function salvarDia(index) {
     alert("Agenda salva!");
 }
 
-/* Carregar dados */
+/* CARREGAR AGENDA */
 function carregarAgenda() {
-    for (let i = 0; i < dias.length; i++) {
+    for (let i = 0; i < 6; i++) {
         const salvo = JSON.parse(localStorage.getItem("agendaDia_" + i) || "[]");
         const container = document.getElementById("linhas_" + i);
 
@@ -316,7 +285,7 @@ function carregarAgenda() {
                 <div class="linha">
                     <input value="${item.hora}">
                     <input value="${item.desc}">
-                    <button class="remove-btn" onclick="this.parentNode.remove()">X</button>
+                    <button class="remove-btn" onclick="removerLinha(this)">X</button>
                 </div>`;
             });
         }
@@ -342,15 +311,14 @@ function salvarEvento() {
 
 function carregarEventos() {
     const lista = JSON.parse(localStorage.getItem("eventos") || "[]");
-
     listaEventos.innerHTML = lista.map(e => `
         <div><strong>${e.data}</strong> ${e.hora} — ${e.desc}</div>
     `).join('');
 }
 
-/* Inicializar */
 montarAgenda();
 carregarEventos();
 </script>
+
 </body>
 </html>
