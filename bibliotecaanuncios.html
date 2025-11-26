@@ -83,7 +83,10 @@ body {
 
     <a href="meusclientes.html">Meus Clientes</a>
     <a href="bibliotecaanuncios.html" style="background:#0b5ed7;">Biblioteca de anúncios</a>
-    <a href="#">Analise de sites</a>
+
+    <!-- FUNÇÃO ADICIONADA AQUI -->
+    <a href="#" onclick="irParaAnaliseDeSite()">Analise de sites</a>
+
     <a href="#">Analise de redes sociais</a>
     <a href="#" onclick="sair()">Sair</a>
 </div>
@@ -111,6 +114,11 @@ body {
 </div>
 
 <script>
+/* --------------------- IR PARA ANALISE DE SITE --------------------- */
+function irParaAnaliseDeSite() {
+    window.location.href = "analisesite.html";
+}
+
 /* --------------------- ABRIR BIBLIOTECA --------------------- */
 function abrirBiblioteca() {
     window.open(
